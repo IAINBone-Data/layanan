@@ -1,5 +1,5 @@
 // PENTING: Ganti URL di bawah ini dengan URL Web App BARU dari Google Apps Script Anda
-const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxu1YWWO2e9bKwMxa8kY33zC4ZQDm4LkKUiPl7W-5xJM1_wNAZc1f_x479K_T-Rv8REVw/exec';
+const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxFNfsrq5DDZ-A_LCeFHRVNZQsWYM3rZmFNq2Q8Jw_6lTCumNOTsKTahYlVyG7UcfiXuw/exec';
 
 document.addEventListener('DOMContentLoaded', function() {
 
