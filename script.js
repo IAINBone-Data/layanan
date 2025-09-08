@@ -1,5 +1,5 @@
 // PENTING: Ganti URL di bawah ini dengan URL Web App BARU dari Google Apps Script Anda
-const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxFNfsrq5DDZ-A_LCeFHRVNZQsWYM3rZmFNq2Q8Jw_6lTCumNOTsKTahYlVyG7UcfiXuw/exec';
+const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxu1YWWO2e9bKwMxa8kY33zC4ZQDm4LkKUiPl7W-5xJM1_wNAZc1f_x479K_T-Rv8REVw/exec';
 
 document.addEventListener('DOMContentLoaded', function() {
 
@@ -796,8 +796,8 @@ document.addEventListener('DOMContentLoaded', function() {
         permohonanForm.dataset.targetSheetId = sheetId;
         
         // --- ROUTING FORM BERDASARKAN NAMA LAYANAN ---
-        // Anda dapat mengganti "Suket Kuliah" dengan nama layanan yang sesuai
-        if (layananName.toLowerCase().includes('suket kuliah')) {
+        // PERUBAHAN: Dibuat lebih fleksibel, akan cocok dengan "Suket Kuliah", "Permohonan Suket", dll.
+        if (layananName.toLowerCase().includes('suket')) {
             permohonanForm.innerHTML = `<div class="text-center p-8"><div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-brand-green mx-auto"></div><p class="mt-4 text-gray-600">Memuat formulir...</p></div>`;
             renderSuketKuliahForm(allFields, pengolah, layananName);
         } else {
@@ -1045,22 +1045,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function handleMobileTracking(e) {
-        e.preventDefault();
-        setTrackingLoading(true, 'mobileTrackButton');
-        const resultContainer = document.getElementById('mobileTrackingResult');
-        resultContainer.innerHTML = '';
-        const permohonanId = document.getElementById('mobilePermohonanId').value;
-        const selectedOption = document.getElementById('mobileTrackingLayananSelect').value;
-        if (!selectedOption) {
-            onTrackSuccess({ error: 'Silakan pilih jenis layanan.' }, 'mobile');
-            return;
-        }
-        const { name: sheetName, id: sheetId } = JSON.parse(selectedOption);
-        const url = `${GAS_WEB_APP_URL}?action=trackPermohonan&permohonanId=${encodeURIComponent(permohonanId)}&sheetName=${encodeURIComponent(sheetName)}&sheetId=${encodeURIComponent(sheetId)}`;
-        fetch(url)
-            .then(res => res.json())
-            .then(result => onTrackSuccess(result, 'mobile'))
-            .catch(err => onTrackFailure(err, 'mobile'));
+// ... existing-code ...
     }
 
     function onTrackSuccess(result, view = 'desktop') {
@@ -1120,3 +1105,4 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
+
