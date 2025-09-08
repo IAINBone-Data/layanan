@@ -1,5 +1,5 @@
 // PENTING: Ganti URL di bawah ini dengan URL Web App BARU dari Google Apps Script Anda
-const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzDTu-BtFYAAeIDOeQa-gPUNY2iUOHJjhEj94h3vDfRlB1ETII6dO-Vi4_UFo81aY9Ueg/exec';
+const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxu1YWWO2e9bKwMxa8kY33zC4ZQDm4LkKUiPl7W-5xJM1_wNAZc1f_x479K_T-Rv8REVw/exec';
 
 document.addEventListener('DOMContentLoaded', function() {
 
@@ -648,156 +648,139 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             const response = await fetch(GAS_WEB_APP_URL + '?action=getFakultasProdiData');
             const data = await response.json();
-            if (data && !data.error) {
-                prodiFakultasDataCache = data;
-                return data;
-            }
-            throw new Error(data.error || 'Data tidak valid');
+            if (data.error) throw new Error(data.error);
+            prodiFakultasDataCache = data;
+            return data;
         } catch (error) {
-            console.error('Gagal mengambil data Fakultas/Prodi:', error);
-            showNotificationModal('Error', 'Gagal memuat data Program Studi. Silakan coba lagi.', 'error');
-            return null;
+            console.error("Gagal mengambil data Fakultas/Prodi:", error);
+            return null; // Mengembalikan null jika ada error
         }
     }
     
     async function renderSuketKuliahForm(allFields, pengolah, layananName) {
-        const dataProdi = await getProdiFakultasData();
-        if (!dataProdi) {
-            permohonanForm.innerHTML = `<p class="text-red-500">Gagal memuat data. Silakan tutup dan buka kembali form ini.</p>`;
+        const data = await getProdiFakultasData();
+        if (!data) {
+            permohonanForm.innerHTML = `<p class="text-red-500 text-center">Gagal memuat data. Silakan tutup dan buka kembali form ini.</p>`;
             return;
         }
-    
+
         let formHtml = `<input type="hidden" name="Pengolah" value="${pengolah}" />`;
         formHtml += `<input type="hidden" name="Jenis Layanan" value="${layananName}" />`;
-    
-        // 1. Dropdown Unit Kerja Layanan
-        const unitKerjaOptions = ['Rektorat', 'Fakultas Syariah dan Hukum Islam', 'Fakultas Tarbiyah', 'Fakultas Ekonomi dan Bisnis Islam', 'Fakultas Ushuluddin dan Dakwah', 'Pascasarjana'];
-        let unitKerjaOptHtml = unitKerjaOptions.map(opt => `<option value="${opt}">${opt}</option>`).join('');
-        formHtml += `
-            <div class="col-span-1 md:col-span-2 mb-4">
-                <label for="unit-kerja-layanan" class="block text-sm font-medium text-gray-700 mb-1">Unit Kerja Layanan *</label>
+        let fieldsHtml = '';
+
+        // PERUBAHAN: Teks deskripsi dipindahkan ke atas
+        fieldsHtml += `
+            <div class="mb-4 md:col-span-2">
+                <p class="text-xs text-blue-600 bg-blue-50 p-2 rounded-md mb-2">Jika diperuntukkan sebagai dasar pembayaran Tunjangan Penghasilan Orang Tua maka silakan pilih Unit Kerja Layanan "Rektorat"</p>
+                <label for="unit-kerja-layanan" class="block text-sm font-medium text-gray-700 mb-1">Unit Kerja Layanan <span class="text-red-500">*</span></label>
                 <select id="unit-kerja-layanan" name="Unit Kerja Layanan" required class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm">
                     <option value="" disabled selected>-- Pilih Unit Kerja --</option>
-                    ${unitKerjaOptHtml}
+                    <option>Rektorat</option>
+                    <option>Biro AUAK</option>
+                    <option>Fakultas Syariah dan Hukum Islam</option>
+                    <option>Fakultas Tarbiyah</option>
+                    <option>Fakultas Ekonomi dan Bisnis Islam</option>
+                    <option>Fakultas Ushuluddin dan Dakwah</option>
+                    <option>Pascasarjana</option>
                 </select>
-                <p id="unit-kerja-desc" class="text-xs text-gray-500 mt-1" style="display: none;">Jika diperuntukkan sebagai dasar pembayaran Tunjangan Penghasilan Orang Tua maka silakan pilih Unit Kerja Layanan "Rektorat"</p>
             </div>
         `;
-    
+        
         allFields.forEach(field => {
             const fieldId = `form-input-${field.replace(/\s+/g, '-')}`;
             const fieldLower = field.toLowerCase().trim();
-            let isRequired = !fieldLower.includes('orang tua'); // Secara default, data ortu tidak wajib
-            let inputElement = '';
-            let description = '';
+            let isRequired = !['email', 'telepon'].includes(fieldLower) && !fieldLower.includes('orang tua');
+            let inputHtml = '';
             let wrapperClass = 'mb-4';
-            let fieldWrapperAttributes = '';
-    
-            if (fieldLower.includes('orang tua')) {
-                fieldWrapperAttributes = ' data-group="orang-tua" style="display: none;"'; // Sembunyikan by default
+            let fieldLabel = field;
+            if (isRequired) {
+                fieldLabel += ` <span class="text-red-500">*</span>`;
             }
 
-            // 6. Dropdown Semester
-            if (fieldLower.includes('semester')) {
-                const semesters = ['I (Satu)', 'II (Dua)', 'III (Tiga)', 'IV (Empat)', 'V (Lima)', 'VI (Enam)', 'VII (Tujuh)', 'VIII (Delapan)', 'IX (Sembilan)', 'X (Sepuluh)', 'XI (Sebelas)', 'XII (Dua Belas)', 'XIII (Tiga Belas)', 'XIV (Empat Belas)'];
-                const optionsHtml = semesters.map(s => `<option value="${s}">${s}</option>`).join('');
-                inputElement = `<select id="${fieldId}" name="${field}" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm" required><option value="" disabled selected>-- Pilih Semester --</option>${optionsHtml}</select>`;
-            
-            // 7. Dropdown Jenis Kelamin
-            } else if (fieldLower.includes('jenis kelamin')) {
-                inputElement = `<select id="${fieldId}" name="${field}" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm" required><option value="" disabled selected>-- Pilih --</option><option>Laki-laki</option><option>Perempuan</option></select>`;
-            
-            // 8. Dropdown Prodi
-            } else if (fieldLower.includes('prodi')) {
-                const prodiOptions = dataProdi.map(p => `<option value="${p.prodi}">${p.prodi}</option>`).join('');
-                inputElement = `<select id="${fieldId}" name="${field}" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm" required><option value="" disabled selected>-- Pilih Program Studi --</option>${prodiOptions}</select>`;
-            
-            // 9. Input Fakultas (Readonly)
-            } else if (fieldLower.includes('fakultas')) {
-                inputElement = `<input type="text" id="${fieldId}" name="${field}" class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm bg-gray-100" readonly required>`;
-            
-            // 10. Dropdown Tahun Akademik Dinamis
-            } else if (fieldLower.includes('tahun akademik')) {
-                const currentYear = new Date().getFullYear();
-                const years = [`${currentYear - 2}/${currentYear - 1}`, `${currentYear - 1}/${currentYear}`, `${currentYear}/${currentYear + 1}`];
-                const optionsHtml = years.map(y => `<option value="${y}" ${y === `${currentYear - 1}/${currentYear}` ? 'selected' : ''}>${y}</option>`).join('');
-                inputElement = `<select id="${fieldId}" name="${field}" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm" required>${optionsHtml}</select>`;
-            
-            } else {
-                 // 3, 4, 5. Input biasa dengan deskripsi
-                if (fieldLower.includes('tempat lahir')) {
-                    description = `<p class="text-xs text-gray-500 mt-1">DIISI SESUAI TEMPAT LAHIR. CONTOH: Watampone, Bone, Kel. Macege, dll</p>`;
-                } else if (fieldLower.includes('tanggal lahir')) {
-                    description = `<p class="text-xs text-gray-500 mt-1">DIISI SESUAI TANGGAL LAHIR. CONTOH: 20 September 2000, 1 Oktober 1999, dll</p>`;
-                } else if (fieldLower.includes('alamat')) {
-                    description = `<p class="text-xs text-gray-500 mt-1">DIISI SESUAI DENGAN ALAMAT PADA KTP</p>`;
-                }
-                const inputType = (fieldLower.includes('tanggal lahir')) ? 'date' : 'text';
-                inputElement = `<input type="${inputType}" id="${fieldId}" name="${field}" class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" ${isRequired ? 'required' : ''} />`;
+            switch (fieldLower) {
+                case 'tempat lahir':
+                    inputHtml = `<input type="text" id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" />
+                                 <p class="text-xs text-gray-500 mt-1">DIISI SESUAI TEMPAT LAHIR. CONTOH: Watampone, Bone, Kel. Macege, dll</p>`;
+                    break;
+                case 'tanggal lahir':
+                     inputHtml = `<input type="date" id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" />
+                                  <p class="text-xs text-gray-500 mt-1">DIISI SESUAI TANGGAL LAHIR. CONTOH: 20 September 2000, 1 Oktober 1999, dll</p>`;
+                    break;
+                case 'alamat':
+                    inputHtml = `<textarea id="${fieldId}" name="${field}" required rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm"></textarea>
+                                 <p class="text-xs text-gray-500 mt-1">DIISI SESUAI DENGAN ALAMAT PADA KTP</p>`;
+                    wrapperClass += ' md:col-span-2';
+                    break;
+                case 'semester':
+                    const semesterOptions = ['I (Satu)', 'II (Dua)', 'III (Tiga)', 'IV (Empat)', 'V (Lima)', 'VI (Enam)', 'VII (Tujuh)', 'VIII (Delapan)', 'IX (Sembilan)', 'X (Sepuluh)', 'XI (Sebelas)', 'XII (Dua Belas)', 'XIII (Tiga Belas)', 'XIV (Empat Belas)'];
+                    inputHtml = `<select id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm">
+                                    <option value="" disabled selected>-- Pilih --</option>
+                                    ${semesterOptions.map(o => `<option value="${o}">${o}</option>`).join('')}
+                                 </select>`;
+                    break;
+                case 'jenis kelamin':
+                    inputHtml = `<select id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm">
+                                    <option value="" disabled selected>-- Pilih --</option>
+                                    <option>Laki-laki</option><option>Perempuan</option>
+                                 </select>`;
+                    break;
+                case 'prodi':
+                    const prodiOptions = data.map(item => `<option value="${item.prodi}">${item.prodi}</option>`).join('');
+                    inputHtml = `<select id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm">
+                                    <option value="" disabled selected>-- Pilih Prodi --</option>
+                                    ${prodiOptions}
+                                 </select>`;
+                    break;
+                case 'fakultas':
+                    inputHtml = `<input type="text" id="${fieldId}" name="${field}" readonly class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm bg-gray-100" />`;
+                    break;
+                case 'tahun akademik':
+                    const currentYear = new Date().getFullYear();
+                    const years = [`${currentYear - 2}/${currentYear - 1}`, `${currentYear - 1}/${currentYear}`, `${currentYear}/${currentYear + 1}`];
+                    const yearOptions = years.map(y => `<option value="${y}" ${ (new Date().getMonth() > 6 ? years[2] : years[1]) === y ? 'selected' : ''}>${y}</option>`).join('');
+                    inputHtml = `<select id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm">
+                                    ${yearOptions}
+                                 </select>`;
+                    break;
+                default:
+                    inputHtml = `<input type="text" id="${fieldId}" name="${field}" ${isRequired ? 'required' : ''} class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" />`;
+                    break;
             }
-            
-            formHtml += `
-                <div class="${wrapperClass}"${fieldWrapperAttributes}>
-                    <label for="${fieldId}" class="block text-sm font-medium text-gray-700 mb-1">${field}${isRequired ? ' *' : ''}</label>
-                    ${inputElement}
-                    ${description}
+             fieldsHtml += `
+                <div class="${wrapperClass}" ${fieldLower.includes('orang tua') ? 'data-group="orang-tua" style="display:none;"' : ''}>
+                    <label for="${fieldId}" class="block text-sm font-medium text-gray-700 mb-1">${fieldLabel}</label>
+                    ${inputHtml}
                 </div>`;
         });
-    
-        permohonanForm.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 gap-x-4">${formHtml}</div>`;
-    
-        // Tambahkan event listeners setelah form di-render
-        const unitKerjaSelect = document.getElementById('unit-kerja-layanan');
-        const prodiSelect = document.getElementById('form-input-Prodi'); // Sesuaikan dengan ID
-        const fakultasInput = document.getElementById('form-input-Fakultas'); // Sesuaikan dengan ID
-    
-        // 2. Event listener untuk Unit Kerja Layanan
+
+        formHtml += `<div class="grid grid-cols-1 md:grid-cols-2 gap-x-4">${fieldsHtml}</div>`;
+        permohonanForm.innerHTML = formHtml;
+        
+        // --- Event Listeners untuk form Suket Kuliah ---
+        const prodiSelect = permohonanForm.querySelector('[name="Prodi"]');
+        const fakultasInput = permohonanForm.querySelector('[name="Fakultas"]');
+        prodiSelect.addEventListener('change', function() {
+            const selectedProdi = this.value;
+            const match = data.find(item => item.prodi === selectedProdi);
+            if (match) {
+                fakultasInput.value = match.fakultas;
+            }
+        });
+
+        const unitKerjaSelect = permohonanForm.querySelector('#unit-kerja-layanan');
         unitKerjaSelect.addEventListener('change', function() {
             const isRektorat = this.value === 'Rektorat';
-            const desc = document.getElementById('unit-kerja-desc');
-            desc.style.display = isRektorat ? 'block' : 'none';
-    
-            document.querySelectorAll('[data-group="orang-tua"]').forEach(el => {
-                el.style.display = isRektorat ? 'block' : 'none';
-                // Membuat field orang tua wajib diisi jika Rektorat dipilih
-                const input = el.querySelector('input, select, textarea');
-                if (input) {
+            const orangTuaFields = permohonanForm.querySelectorAll('[data-group="orang-tua"]');
+            orangTuaFields.forEach(field => {
+                field.style.display = isRektorat ? 'block' : 'none';
+                const input = field.querySelector('input, select, textarea');
+                if(input) {
                     input.required = isRektorat;
                 }
             });
         });
-
-        // 9. Event listener untuk Prodi -> Fakultas
-        if(prodiSelect && fakultasInput) {
-            prodiSelect.addEventListener('change', function() {
-                const selectedProdi = this.value;
-                const match = dataProdi.find(item => item.prodi === selectedProdi);
-                fakultasInput.value = match ? match.fakultas : '';
-            });
-        }
-    }
-
-
-    function openFormModal(event) {
-        const card = event.currentTarget;
-        const { formFields, layananName, pengolah, sheet, sheetId } = card.dataset;
-        if (!formFields || !sheet) return;
-        modalTitle.textContent = `Formulir ${layananName}`;
-        const allFields = formFields.split(',').map(field => field.trim());
-        permohonanForm.dataset.targetSheet = sheet;
-        permohonanForm.dataset.targetSheetId = sheetId;
-        
-        // --- ROUTING FORM BERDASARKAN NAMA LAYANAN ---
-        // PERUBAHAN: Dibuat lebih fleksibel, akan cocok dengan "Suket Kuliah", "Permohonan Suket", dll.
-        if (layananName.toLowerCase().includes('suket')) {
-            permohonanForm.innerHTML = `<div class="text-center p-8"><div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-brand-green mx-auto"></div><p class="mt-4 text-gray-600">Memuat formulir...</p></div>`;
-            renderSuketKuliahForm(allFields, pengolah, layananName);
-        } else {
-            // Logika form lain yang sudah ada sebelumnya
-            renderGenericForm(allFields, pengolah, layananName);
-        }
-    
-        formModal.classList.remove('hidden');
+        // Trigger sekali untuk set state awal
+        unitKerjaSelect.dispatchEvent(new Event('change'));
     }
 
     /**
@@ -1208,7 +1191,22 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function handleMobileTracking(e) {
-// ... existing-code ...
+        e.preventDefault();
+        setTrackingLoading(true, 'mobileTrackButton');
+        const resultContainer = document.getElementById('mobileTrackingResult');
+        resultContainer.innerHTML = '';
+        const permohonanId = document.getElementById('mobilePermohonanId').value;
+        const selectedOption = document.getElementById('mobileTrackingLayananSelect').value;
+        if (!selectedOption) {
+            onTrackSuccess({ error: 'Silakan pilih jenis layanan.' }, 'mobile');
+            return;
+        }
+        const { name: sheetName, id: sheetId } = JSON.parse(selectedOption);
+        const url = `${GAS_WEB_APP_URL}?action=trackPermohonan&permohonanId=${encodeURIComponent(permohonanId)}&sheetName=${encodeURIComponent(sheetName)}&sheetId=${encodeURIComponent(sheetId)}`;
+        fetch(url)
+            .then(res => res.json())
+            .then(result => onTrackSuccess(result, 'mobile'))
+            .catch(err => onTrackFailure(err, 'mobile'));
     }
 
     function onTrackSuccess(result, view = 'desktop') {
