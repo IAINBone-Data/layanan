@@ -1,6 +1,44 @@
 // PENTING: Ganti URL di bawah ini dengan URL Web App BARU dari Google Apps Script Anda
 const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzDTu-BtFYAAeIDOeQa-gPUNY2iUOHJjhEj94h3vDfRlB1ETII6dO-Vi4_UFo81aY9Ueg/exec';
 
+// --- BARU: Data store lokal untuk informasi akademik ---
+// Ini menggantikan panggilan fetch ke Google Sheet, membuat form lebih cepat.
+const DATA_AKADEMIK = [
+    { prodi: 'Hukum Keluarga Islam', fakultas: 'Fakultas Syariah dan Hukum Islam' },
+    { prodi: 'Hukum Tatanegara', fakultas: 'Fakultas Syariah dan Hukum Islam' },
+    { prodi: 'Hukum Ekonomi Syariah', fakultas: 'Fakultas Syariah dan Hukum Islam' },
+    { prodi: 'Pendidikan Agama Islam', fakultas: 'Fakultas Tarbiyah' },
+    { prodi: 'Pendidikan Bahasa Arab', fakultas: 'Fakultas Tarbiyah' },
+    { prodi: 'Tadris Bahasa Inggris', fakultas: 'Fakultas Tarbiyah' },
+    { prodi: 'Manajemen Pendidikan Islam', fakultas: 'Fakultas Tarbiyah' },
+    { prodi: 'Pendidikan Guru Madrasah Ibtidaiyah', fakultas: 'Fakultas Tarbiyah' },
+    { prodi: 'Pendidikan Islam Anak Usia Dini', fakultas: 'Fakultas Tarbiyah' },
+    { prodi: 'S3 Pendidikan Agama Islam', fakultas: 'Pascasarjana' },
+    { prodi: 'S2 Pendidikan Agama Islam', fakultas: 'Pascasarjana' },
+    { prodi: 'S2 Pendidikan Bahasa Arab', fakultas: 'Pascasarjana' },
+    { prodi: 'S2 Ekonomi Syariah', fakultas: 'Pascasarjana' },
+    { prodi: 'S2 Hukum Keluarga Islam', fakultas: 'Pascasarjana' },
+    { prodi: 'S2 Hukum Tatanegara', fakultas: 'Pascasarjana' },
+    { prodi: 'Ilmu Al-Qur\'an Dan Tafsir', fakultas: 'Fakultas Ushuluddin dan Dakwah' },
+    { prodi: 'Komunikasi Dan Penyiaran Islam', fakultas: 'Fakultas Ushuluddin dan Dakwah' },
+    { prodi: 'Bimbingan Penyuluhan Islam', fakultas: 'Fakultas Ushuluddin dan Dakwah' },
+    { prodi: 'Ekonomi Syariah', fakultas: 'Fakultas Ekonomi dan Bisnis Islam' },
+    { prodi: 'Perbankan Syariah', fakultas: 'Fakultas Ekonomi dan Bisnis Islam' },
+    { prodi: 'Akuntansi Syariah', fakultas: 'Fakultas Ekonomi dan Bisnis Islam' },
+    { prodi: 'Manajemen Bisnis Syariah', fakultas: 'Fakultas Ekonomi dan Bisnis Islam' }
+];
+
+const UNIT_KERJA_LAYANAN = [
+    'Rektorat',
+    'Fakultas Syariah dan Hukum Islam',
+    'Fakultas Tarbiyah',
+    'Fakultas Ekonomi dan Bisnis Islam',
+    'Fakultas Ushuluddin dan Dakwah',
+    'Pascasarjana'
+];
+// --- AKHIR DARI DATA BARU ---
+
+
 document.addEventListener('DOMContentLoaded', function() {
 
     function showNotificationModal(title, message, type = 'info') {
@@ -77,7 +115,8 @@ document.addEventListener('DOMContentLoaded', function() {
     let semuaLayanan = [];
     let currentUserType = 'Umum';
     let calendarDataCache = {}; // Cache global untuk data kalender
-    let prodiFakultasDataCache = null;
+    // DIHAPUS: Cache untuk prodi/fakultas tidak lagi diperlukan karena data sekarang lokal.
+    // let prodiFakultasDataCache = null; 
 
 
     loadAllPublicData();
@@ -506,11 +545,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     let textColorClass = getTextColorForBg(warna);
                     let iconBgStyle = `style="background-color: rgba(0,0,0,0.2)"`;
                     cardHtml = `<a href="${link}" target="_blank" rel="noopener noreferrer" class="flex items-start p-3 rounded-xl shadow-sm hover:opacity-90 transition-opacity duration-300 h-full ${textColorClass}" ${bgColorStyle}>
-                <div class="rounded-lg p-2.5 mr-3" ${iconBgStyle}>
-                  <i class="fas fa-bullhorn text-lg"></i>
-                </div>
-                <p class="font-medium text-xs">${infoText}</p>
-              </a>`;
+                    <div class="rounded-lg p-2.5 mr-3" ${iconBgStyle}>
+                      <i class="fas fa-bullhorn text-lg"></i>
+                    </div>
+                    <p class="font-medium text-xs">${infoText}</p>
+                  </a>`;
                 }
                 slide.innerHTML = cardHtml;
                 infoWrapper.appendChild(slide);
@@ -555,11 +594,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 let textColorClass = getTextColorForBg(bgColor);
                 button.className = `flex items-center p-2 rounded-xl shadow-sm hover:opacity-90 transition-opacity duration-300 ${textColorClass}`;
                 button.innerHTML = `
-              <div class="bg-black bg-opacity-20 rounded-lg p-2 mr-2">
-                <i class="fas fa-${icon} text-lg"></i>
-              </div>
-              <p class="font-medium text-xs">${infoText}</p>
-            `;
+                  <div class="bg-black bg-opacity-20 rounded-lg p-2 mr-2">
+                    <i class="fas fa-${icon} text-lg"></i>
+                  </div>
+                  <p class="font-medium text-xs">${infoText}</p>
+                `;
                 pinnedWrapper.appendChild(button);
             }
         });
@@ -606,10 +645,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     textColor = randomColor.text;
                 }
                 quickLink.innerHTML = `
-                  <div class="w-12 h-12 rounded-xl flex items-center justify-center text-xl ${bgColor} ${textColor}" ${styleAttr}>
-                      <i class="fas fa-${icon}"></i>
-                  </div>
-                  <p class="text-xs font-medium">${infoText}</p>
+                    <div class="w-12 h-12 rounded-xl flex items-center justify-center text-xl ${bgColor} ${textColor}" ${styleAttr}>
+                        <i class="fas fa-${icon}"></i>
+                    </div>
+                    <p class="text-xs font-medium">${infoText}</p>
                 `;
                 quicklinkWrapper.appendChild(quickLink);
             }
@@ -641,6 +680,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- FORM RENDERING LOGIC ---
 
+    // DIHAPUS: Fungsi ini tidak lagi diperlukan karena data prodi/fakultas sekarang disimpan secara lokal di script.
+    /*
     async function getProdiFakultasData() {
         if (prodiFakultasDataCache) {
             return prodiFakultasDataCache;
@@ -656,31 +697,26 @@ document.addEventListener('DOMContentLoaded', function() {
             return null; // Mengembalikan null jika ada error
         }
     }
+    */
     
-    async function renderSuketKuliahForm(allFields, pengolah, layananName) {
-        const data = await getProdiFakultasData();
-        if (!data) {
-            permohonanForm.innerHTML = `<p class="text-red-500 text-center">Gagal memuat data. Silakan tutup dan buka kembali form ini.</p>`;
-            return;
-        }
-
+    // DIUBAH: Fungsi ini dioptimalkan untuk menggunakan data lokal (DATA_AKADEMIK & UNIT_KERJA_LAYANAN).
+    // Tidak lagi `async` karena tidak ada proses `await`.
+    function renderSuketKuliahForm(allFields, pengolah, layananName) {
+        
         let formHtml = `<input type="hidden" name="Pengolah" value="${pengolah}" />`;
         formHtml += `<input type="hidden" name="Jenis Layanan" value="${layananName}" />`;
         let fieldsHtml = '';
 
-        // PERUBAHAN: Teks deskripsi dipindahkan ke atas
+        // Opsi untuk dropdown "Unit Kerja Layanan" diambil dari konstanta
+        const unitKerjaOptions = UNIT_KERJA_LAYANAN.map(unit => `<option value="${unit}">${unit}</option>`).join('');
+
         fieldsHtml += `
             <div class="mb-4 md:col-span-2">
                 <p class="text-xs text-blue-600 bg-blue-50 p-2 rounded-md mb-2">Jika diperuntukkan sebagai dasar pembayaran Tunjangan Penghasilan Orang Tua maka silakan pilih Unit Kerja Layanan "Rektorat"</p>
                 <label for="unit-kerja-layanan" class="block text-sm font-medium text-gray-700 mb-1">Unit Kerja Layanan <span class="text-red-500">*</span></label>
                 <select id="unit-kerja-layanan" name="Unit Kerja Layanan" required class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm">
                     <option value="" disabled selected>-- Pilih Unit Kerja --</option>
-                    <option>Rektorat</option>
-                    <option>Fakultas Syariah dan Hukum Islam</option>
-                    <option>Fakultas Tarbiyah</option>
-                    <option>Fakultas Ekonomi dan Bisnis Islam</option>
-                    <option>Fakultas Ushuluddin dan Dakwah</option>
-                    <option>Pascasarjana</option>
+                    ${unitKerjaOptions}
                 </select>
             </div>
         `;
@@ -713,24 +749,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 case 'semester':
                     const semesterOptions = ['I (Satu)', 'II (Dua)', 'III (Tiga)', 'IV (Empat)', 'V (Lima)', 'VI (Enam)', 'VII (Tujuh)', 'VIII (Delapan)', 'IX (Sembilan)', 'X (Sepuluh)', 'XI (Sebelas)', 'XII (Dua Belas)', 'XIII (Tiga Belas)', 'XIV (Empat Belas)'];
                     inputHtml = `<select id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm">
-                                    <option value="" disabled selected>-- Pilih --</option>
-                                    ${semesterOptions.map(o => `<option value="${o}">${o}</option>`).join('')}
-                                 </select>`;
+                                     <option value="" disabled selected>-- Pilih --</option>
+                                     ${semesterOptions.map(o => `<option value="${o}">${o}</option>`).join('')}
+                                   </select>`;
                     break;
                 case 'jenis kelamin':
                     inputHtml = `<select id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm">
-                                    <option value="" disabled selected>-- Pilih --</option>
-                                    <option>Laki-laki</option><option>Perempuan</option>
-                                 </select>`;
+                                     <option value="" disabled selected>-- Pilih --</option>
+                                     <option>Laki-laki</option><option>Perempuan</option>
+                                   </select>`;
                     break;
                 case 'prodi':
-                    const prodiOptions = data.map(item => `<option value="${item.prodi}">${item.prodi}</option>`).join('');
+                    // Opsi prodi akan diisi oleh event listener, awalnya kosong
                     inputHtml = `<select id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm">
-                                    <option value="" disabled selected>-- Pilih Prodi --</option>
-                                    ${prodiOptions}
-                                 </select>`;
+                                     <option value="" disabled selected>-- Pilih Unit Kerja dulu --</option>
+                                   </select>`;
                     break;
                 case 'fakultas':
+                    // Fakultas akan diisi otomatis dan dibuat readonly
                     inputHtml = `<input type="text" id="${fieldId}" name="${field}" readonly class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm bg-gray-100" />`;
                     break;
                 case 'tahun akademik':
@@ -738,8 +774,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     const years = [`${currentYear - 2}/${currentYear - 1}`, `${currentYear - 1}/${currentYear}`, `${currentYear}/${currentYear + 1}`];
                     const yearOptions = years.map(y => `<option value="${y}" ${ (new Date().getMonth() > 6 ? years[2] : years[1]) === y ? 'selected' : ''}>${y}</option>`).join('');
                     inputHtml = `<select id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm">
-                                    ${yearOptions}
-                                 </select>`;
+                                     ${yearOptions}
+                                   </select>`;
                     break;
                 default:
                     inputHtml = `<input type="text" id="${fieldId}" name="${field}" ${isRequired ? 'required' : ''} class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" />`;
@@ -755,20 +791,16 @@ document.addEventListener('DOMContentLoaded', function() {
         formHtml += `<div class="grid grid-cols-1 md:grid-cols-2 gap-x-4">${fieldsHtml}</div>`;
         permohonanForm.innerHTML = formHtml;
         
-        // --- Event Listeners untuk form Suket Kuliah ---
+        // --- Event Listeners untuk form Suket Kuliah (LOGIKA BARU) ---
+        const unitKerjaSelect = permohonanForm.querySelector('#unit-kerja-layanan');
         const prodiSelect = permohonanForm.querySelector('[name="Prodi"]');
         const fakultasInput = permohonanForm.querySelector('[name="Fakultas"]');
-        prodiSelect.addEventListener('change', function() {
-            const selectedProdi = this.value;
-            const match = data.find(item => item.prodi === selectedProdi);
-            if (match) {
-                fakultasInput.value = match.fakultas;
-            }
-        });
 
-        const unitKerjaSelect = permohonanForm.querySelector('#unit-kerja-layanan');
         unitKerjaSelect.addEventListener('change', function() {
-            const isRektorat = this.value === 'Rektorat';
+            const selectedUnit = this.value;
+            const isRektorat = selectedUnit === 'Rektorat';
+
+            // 1. Logika untuk menampilkan field Orang Tua
             const orangTuaFields = permohonanForm.querySelectorAll('[data-group="orang-tua"]');
             orangTuaFields.forEach(field => {
                 field.style.display = isRektorat ? 'block' : 'none';
@@ -777,7 +809,31 @@ document.addEventListener('DOMContentLoaded', function() {
                     input.required = isRektorat;
                 }
             });
+
+            // 2. Logika untuk memfilter prodi berdasarkan unit kerja
+            prodiSelect.innerHTML = '<option value="" disabled selected>-- Pilih Prodi --</option>'; // Reset prodi
+            fakultasInput.value = ''; // Reset fakultas
+
+            if (selectedUnit && !isRektorat) {
+                const filteredProdis = DATA_AKADEMIK.filter(item => item.fakultas === selectedUnit);
+                filteredProdis.forEach(item => {
+                    prodiSelect.innerHTML += `<option value="${item.prodi}">${item.prodi}</option>`;
+                });
+                prodiSelect.disabled = false;
+            } else {
+                 prodiSelect.innerHTML = '<option value="" disabled selected>-- Tidak ada prodi --</option>';
+                 prodiSelect.disabled = true;
+            }
         });
+
+        prodiSelect.addEventListener('change', function() {
+            const selectedProdi = this.value;
+            const match = DATA_AKADEMIK.find(item => item.prodi === selectedProdi);
+            if (match) {
+                fakultasInput.value = match.fakultas;
+            }
+        });
+        
         // Trigger sekali untuk set state awal
         unitKerjaSelect.dispatchEvent(new Event('change'));
     }
@@ -931,7 +987,7 @@ document.addEventListener('DOMContentLoaded', function() {
                   ${lainnyaHtml}
               </div>
           </div>
-      `;
+        `;
         permohonanForm.innerHTML = formHtml;
         const laporCheckbox = document.getElementById('lapor-terlapor-checkbox');
         const terlaporSection = document.getElementById('terlapor-section');
@@ -961,7 +1017,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function renderGenericForm(allFields, pengolah, layananName) {
         let formHtml = `<input type="hidden" name="Pengolah" value="${pengolah}" />`;
         formHtml += `<input type="hidden" name="Jenis Layanan" value="${layananName}" />`;
-    
+        
         let fieldsContainerHtml = '';
         allFields.forEach(field => {
             const fieldId = `form-input-${field.replace(/\s+/g, '-')}`;
@@ -994,7 +1050,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Router untuk menentukan fungsi render mana yang akan dipanggil
         if (lowerLayananName.includes('suket')) {
-            permohonanForm.innerHTML = `<div class="text-center p-8"><div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-brand-green mx-auto"></div><p class="mt-4 text-gray-600">Memuat formulir...</p></div>`;
+            // Tampilan loading tidak diperlukan karena form sekarang render secara instan
             renderSuketKuliahForm(allFields, pengolah, layananName);
         } else if (lowerLayananName.includes('peminjaman')) {
             renderPeminjamanForm(allFields, pengolah, layananName);
