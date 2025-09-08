@@ -676,7 +676,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 <select id="unit-kerja-layanan" name="Unit Kerja Layanan" required class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm">
                     <option value="" disabled selected>-- Pilih Unit Kerja --</option>
                     <option>Rektorat</option>
-                    <option>Biro AUAK</option>
                     <option>Fakultas Syariah dan Hukum Islam</option>
                     <option>Fakultas Tarbiyah</option>
                     <option>Fakultas Ekonomi dan Bisnis Islam</option>
