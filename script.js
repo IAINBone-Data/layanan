@@ -1,9 +1,6 @@
 // PENTING: Ganti URL di bawah ini dengan URL Web App BARU dari Google Apps Script Anda
 const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzDTu-BtFYAAeIDOeQa-gPUNY2iUOHJjhEj94h3vDfRlB1ETII6dO-Vi4_UFo81aY9Ueg/exec';
 
-// Mengimpor semua fungsi dari module forms.js
-import * as formRenderer from './forms.js';
-
 document.addEventListener('DOMContentLoaded', function() {
 
     function showNotificationModal(title, message, type = 'info') {
@@ -656,16 +653,10 @@ document.addEventListener('DOMContentLoaded', function() {
             return data;
         } catch (error) {
             console.error("Gagal mengambil data Fakultas/Prodi:", error);
-            return null; // Mengembalikan null jika ada error
+            return null;
         }
     }
     
-    // Fungsi-fungsi render form sekarang berada di forms.js
-
-
-    /**
-     * DIPERBARUI: Fungsi ini sekarang menjadi router untuk memanggil render function yang sesuai
-     */
     async function openFormModal(event) {
         const card = event.currentTarget;
         const { formFields, layananName, pengolah, sheet, sheetId } = card.dataset;
@@ -677,19 +668,16 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const lowerLayananName = layananName.toLowerCase();
 
-        // Router untuk menentukan fungsi render mana yang akan dipanggil
         if (lowerLayananName.includes('suket')) {
             permohonanForm.innerHTML = `<div class="text-center p-8"><div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-brand-green mx-auto"></div><p class="mt-4 text-gray-600">Memuat formulir...</p></div>`;
-            // Ambil data prodi lalu render formnya
             const prodiData = await getProdiFakultasData();
-            formRenderer.renderSuketKuliahForm(permohonanForm, allFields, pengolah, layananName, prodiData);
+            renderSuketKuliahForm(permohonanForm, allFields, pengolah, layananName, prodiData);
         } else if (lowerLayananName.includes('peminjaman')) {
-            formRenderer.renderPeminjamanForm(permohonanForm, allFields, pengolah, layananName);
+            renderPeminjamanForm(permohonanForm, allFields, pengolah, layananName);
         } else if (lowerLayananName.includes('pengaduan')) {
-            formRenderer.renderPengaduanForm(permohonanForm, allFields, pengolah, layananName);
+            renderPengaduanForm(permohonanForm, allFields, pengolah, layananName);
         } else {
-            // Fallback untuk form lain yang tidak memiliki perlakuan khusus
-            formRenderer.renderGenericForm(permohonanForm, allFields, pengolah, layananName);
+            renderGenericForm(permohonanForm, allFields, pengolah, layananName);
         }
     
         formModal.classList.remove('hidden');
@@ -953,5 +941,4 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
-"
 
