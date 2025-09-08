@@ -1,6 +1,7 @@
 /**
  * File: forms.js
  * Description: Module to render various forms for the public service application.
+ * All functions are now global and will be loaded directly by index.html.
  */
 
 /**
@@ -11,7 +12,7 @@
  * @param {string} layananName - The name of the service.
  * @param {Array<Object>} prodiData - The fetched data for prodi and fakultas.
  */
-export function renderSuketKuliahForm(permohonanForm, allFields, pengolah, layananName, prodiData) {
+function renderSuketKuliahForm(permohonanForm, allFields, pengolah, layananName, prodiData) {
     if (!prodiData) {
         permohonanForm.innerHTML = `<p class="text-red-500 text-center">Gagal memuat data. Silakan tutup dan buka kembali form ini.</p>`;
         return;
@@ -142,7 +143,7 @@ export function renderSuketKuliahForm(permohonanForm, allFields, pengolah, layan
  * @param {string[]} allFields - Array of field names from the sheet configuration.
  * @param {string} pengolah - The processing unit.
  */
-export function renderPeminjamanForm(permohonanForm, allFields, pengolah) {
+function renderPeminjamanForm(permohonanForm, allFields, pengolah) {
     let formHtml = `<input type="hidden" name="Pengolah" value="${pengolah}" />`;
     let fieldsContainerHtml = '';
 
@@ -208,7 +209,7 @@ export function renderPeminjamanForm(permohonanForm, allFields, pengolah) {
  * @param {string} pengolah - The processing unit.
  * @param {string} layananName - The name of the service.
  */
-export function renderPengaduanForm(permohonanForm, allFields, pengolah, layananName) {
+function renderPengaduanForm(permohonanForm, allFields, pengolah, layananName) {
     let formHtml = `<input type="hidden" name="Pengolah" value="${pengolah}" />`;
     formHtml += `<input type="hidden" name="Jenis Layanan" value="${layananName}" />`;
     
@@ -320,7 +321,7 @@ export function renderPengaduanForm(permohonanForm, allFields, pengolah, layanan
  * @param {string} pengolah - The processing unit.
  * @param {string} layananName - The name of the service.
  */
-export function renderGenericForm(permohonanForm, allFields, pengolah, layananName) {
+function renderGenericForm(permohonanForm, allFields, pengolah, layananName) {
     let formHtml = `<input type="hidden" name="Pengolah" value="${pengolah}" />`;
     formHtml += `<input type="hidden" name="Jenis Layanan" value="${layananName}" />`;
 
@@ -338,3 +339,4 @@ export function renderGenericForm(permohonanForm, allFields, pengolah, layananNa
     formHtml += `<div class="grid grid-cols-1 md:grid-cols-2 gap-x-4">${fieldsContainerHtml}</div>`;
     permohonanForm.innerHTML = formHtml;
 }
+
