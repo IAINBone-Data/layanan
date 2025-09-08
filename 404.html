@@ -40,8 +40,11 @@
         window.onload = function() {
             const iframe = document.getElementById('content-iframe');
             const notFoundDiv = document.getElementById('not-found');
-            // Dapatkan path dari URL. Contoh: untuk 'domain.com/admin', path-nya adalah '/admin'
-            const path = window.location.pathname;
+            // Dapatkan path dari URL dan hapus garis miring di akhir jika ada
+            let path = window.location.pathname;
+            if (path.length > 1 && path.endsWith('/')) {
+                path = path.slice(0, -1);
+            }
 
             // Daftar URL yang akan ditampilkan berdasarkan path-nya
             // Anda bisa menambahkan rute baru di sini
@@ -52,7 +55,7 @@
                 },
                 '/lacak': {
                     // !!! PENTING: Ganti URL di bawah ini dengan URL untuk halaman "lacak" Anda
-                    url: 'https://script.google.com/macros/s/AKfycbyQoYPCtNkfhOCIWfYkh1WCd8Q4TKIyQpWGpXOv2YbiEeu8VLOKu6H2IHvhgtL764ajOg/exec',
+                    url: 'MASUKKAN_URL_GOOGLE_SCRIPT_UNTUK_LACAK_DI_SINI',
                     title: 'Lacak Layanan'
                 }
                 // Contoh jika ingin menambah rute lain:
@@ -79,3 +82,4 @@
     </script>
 </body>
 </html>
+
