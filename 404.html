@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Layanan IAIN Bone</title> <!-- Judul Halaman Dinamis -->
+    <style>
+        /* Menghilangkan margin dan padding default dari body */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden; /* Mencegah scroll bar pada body */
+            font-family: sans-serif; /* Font default untuk teks */
+        }
+        /* Mengatur iframe agar mengisi seluruh halaman */
+        .fullscreen-iframe {
+            width: 100%;
+            height: 100vh; /* 100% dari tinggi viewport */
+            border: none; /* Menghilangkan border iframe */
+        }
+    </style>
+</head>
+<body>
+    <!-- 
+      Konten iframe ini akan diisi secara dinamis oleh JavaScript 
+      berdasarkan path URL yang diakses pengguna.
+    -->
+    <iframe id="content-iframe" class="fullscreen-iframe" title="Tampilan Aplikasi"></iframe>
+    
+    <!-- Elemen ini akan ditampilkan jika URL yang diakses tidak terdaftar -->
+    <div id="not-found" style="display: none; text-align: center; padding-top: 50px;">
+        <h1>404: Halaman Tidak Ditemukan</h1>
+        <p>Maaf, halaman yang Anda cari tidak ada.</p>
+        <p><a href="/">Kembali ke Beranda</a></p>
+    </div>
+
+    <script>
+        // Jalankan skrip ini setelah seluruh halaman HTML selesai dimuat
+        window.onload = function() {
+            const iframe = document.getElementById('content-iframe');
+            const notFoundDiv = document.getElementById('not-found');
+            // Dapatkan path dari URL. Contoh: untuk 'domain.com/admin', path-nya adalah '/admin'
+            const path = window.location.pathname;
+
+            // Daftar URL yang akan ditampilkan berdasarkan path-nya
+            // Anda bisa menambahkan rute baru di sini
+            const routes = {
+                '/admin': {
+                    url: 'https://script.google.com/macros/s/AKfycbz7wJaeIKmPaNfIpo0PKNmG2Vhj1wgvGTNwTnw2Oe7qnC50oslsm2Onr0M_PPSS111u/exec',
+                    title: 'Admin Layanan'
+                },
+                '/lacak': {
+                    // !!! PENTING: Ganti URL di bawah ini dengan URL untuk halaman "lacak" Anda
+                    url: 'https://script.google.com/macros/s/AKfycbyQoYPCtNkfhOCIWfYkh1WCd8Q4TKIyQpWGpXOv2YbiEeu8VLOKu6H2IHvhgtL764ajOg/exec',
+                    title: 'Lacak Layanan'
+                }
+                // Contoh jika ingin menambah rute lain:
+                // '/kontak': {
+                //    url: 'URL_GOOGLE_SCRIPT_KONTAK',
+                //    title: 'Hubungi Kami'
+                // }
+            };
+
+            // Cari apakah path saat ini ada di dalam daftar routes
+            const route = routes[path];
+
+            if (route) {
+                // Jika path ditemukan, atur sumber (src) iframe dan judul halaman
+                iframe.src = route.url;
+                document.title = route.title;
+            } else {
+                // Jika path tidak ditemukan, sembunyikan iframe dan tampilkan pesan "tidak ditemukan"
+                iframe.style.display = 'none';
+                notFoundDiv.style.display = 'block';
+                document.title = 'Halaman Tidak Ditemukan';
+            }
+        };
+    </script>
+</body>
+</html>
