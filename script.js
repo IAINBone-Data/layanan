@@ -391,9 +391,16 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         const groupedLayananData = filteredData.reduce((acc, layanan) => {
-            const kategori = getValueCaseInsensitive(layanan, 'Kategori') || 'Lainnya';
-            if (!acc[kategori]) acc[kategori] = [];
-            acc[kategori].push(layanan);
+            const kategoriString = getValueCaseInsensitive(layanan, 'Kategori') || 'Lainnya';
+            const kategoriList = kategoriString.split(',').map(k => k.trim());
+
+            kategoriList.forEach(kategori => {
+                if (!acc[kategori]) {
+                    acc[kategori] = [];
+                }
+                acc[kategori].push(layanan);
+            });
+            
             return acc;
         }, {});
         const categories = Object.keys(groupedLayananData);
@@ -475,9 +482,16 @@ document.addEventListener('DOMContentLoaded', function() {
         container.innerHTML = '';
         const layananTampil = semuaLayanan.filter(layanan => (getValueCaseInsensitive(layanan, 'jenis') || '').toLowerCase() !== 'setting');
         const groupedData = layananTampil.reduce((acc, layanan) => {
-            const kategori = getValueCaseInsensitive(layanan, 'Kategori') || 'Lainnya';
-            if (!acc[kategori]) acc[kategori] = [];
-            acc[kategori].push(layanan);
+            const kategoriString = getValueCaseInsensitive(layanan, 'Kategori') || 'Lainnya';
+            const kategoriList = kategoriString.split(',').map(k => k.trim());
+
+            kategoriList.forEach(kategori => {
+                if (!acc[kategori]) {
+                    acc[kategori] = [];
+                }
+                acc[kategori].push(layanan);
+            });
+            
             return acc;
         }, {});
         for (const kategori in groupedData) {
@@ -1322,5 +1336,3 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
-"
-
