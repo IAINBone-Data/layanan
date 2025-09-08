@@ -77,7 +77,6 @@ document.addEventListener('DOMContentLoaded', function() {
     let semuaLayanan = [];
     let currentUserType = 'Umum';
     let calendarDataCache = {}; // Cache global untuk data kalender
-    // BARU: Cache sisi klien untuk data Fakultas dan Prodi
     let prodiFakultasDataCache = null;
 
 
@@ -640,12 +639,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // --- PERUBAHAN UTAMA: Logika form dipisah dan diperbarui ---
+    // --- FORM RENDERING LOGIC ---
 
-    /**
-     * BARU: Fungsi untuk mengambil data Fakultas/Prodi dengan caching.
-     * @returns {Promise<Array>}
-     */
     async function getProdiFakultasData() {
         if (prodiFakultasDataCache) {
             return prodiFakultasDataCache;
@@ -665,9 +660,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    /**
-     * BARU: Fungsi khusus untuk membuat dan menangani form "Suket Kuliah"
-     */
     async function renderSuketKuliahForm(allFields, pengolah, layananName) {
         const dataProdi = await getProdiFakultasData();
         if (!dataProdi) {
@@ -809,58 +801,229 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     /**
-     * FUNGSI LAMA yang direfaktor untuk form generik
+     * BARU: Fungsi terpisah untuk merender form Peminjaman
      */
-    function renderGenericForm(allFields, pengolah, layananName) {
-        let formHtml = `<input type="hidden" id="pengolah-input" name="Pengolah" value="${pengolah}" />`;
-        formHtml += `<input type="hidden" name="Jenis Layanan" value="${layananName}" />`;
-    
-        const isPeminjaman = layananName && layananName.toLowerCase().includes('peminjaman');
-        const isPengaduan = layananName && layananName.toLowerCase().includes('pengaduan');
-    
-        if (isPengaduan) {
-            // ... (logika form pengaduan yang sudah ada, tidak diubah)
-            // ...
-        } else {
-            let fieldsContainerHtml = '';
-            if (isPeminjaman) {
-                // ... (logika form peminjaman yang sudah ada, tidak diubah)
-                // ...
+    function renderPeminjamanForm(allFields, pengolah, layananName) {
+        let formHtml = `<input type="hidden" name="Pengolah" value="${pengolah}" />`;
+        let fieldsContainerHtml = '';
+
+        // Mengembalikan dropdown Unit Kerja Layanan
+        const unitKerjaOptions = ['Rektorat', 'Fakultas Syariah dan Hukum Islam', 'Fakultas Tarbiyah', 'Fakultas Ekonomi dan Bisnis Islam', 'Fakultas Ushuluddin dan Dakwah', 'Pascasarjana'];
+        let unitKerjaOptHtml = unitKerjaOptions.map(opt => `<option value="${opt}">${opt}</option>`).join('');
+        fieldsContainerHtml += `
+            <div class="mb-4 md:col-span-2">
+                <label for="unit-kerja-layanan" class="block text-sm font-medium text-gray-700 mb-1">Unit Kerja Layanan</label>
+                <select id="unit-kerja-layanan" name="Unit Kerja Layanan" required class="w-full px-4 py-2 border border-yellow-300 rounded-lg bg-yellow-50 text-sm focus:ring-yellow-400 focus:border-yellow-400">
+                <option value="" disabled selected>-- Pilih Unit Kerja --</option>
+                ${unitKerjaOptHtml}
+                </select>
+            </div>
+        `;
+
+        // Mengembalikan dropdown Jenis Layanan
+        fieldsContainerHtml += `
+            <div class="mb-4 md:col-span-2">
+                <label for="jenis-layanan-peminjaman" class="block text-sm font-medium text-gray-700 mb-1">Jenis Layanan</label>
+                <select id="jenis-layanan-peminjaman" name="Jenis Layanan" required class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm">
+                    <option value="" disabled selected>-- Pilih --</option>
+                    <option>Peminjaman Tempat</option>
+                    <option>Peminjaman Kendaraan</option>
+                </select>
+            </div>
+        `;
+
+        allFields.forEach(field => {
+            if (field.toLowerCase().trim() === 'jenis layanan') {
+                return; // Lewati field ini karena sudah dibuat custom di atas
             }
-            allFields.forEach(field => {
-                 if (isPeminjaman && field.toLowerCase().trim() === 'jenis layanan') {
-                    return;
-                }
-                const fieldId = field.replace(/\s+/g, '-');
-                const fieldLower = field.toLowerCase().trim();
-                let description = '';
-                const descriptions = {
-                    'nama': 'Nama Organisasi atau Individu',
-                    'perihal': 'Contoh: Permohonan Peminjaman Aula Utama / Bus',
-                    'kegiatan': 'Contoh: FESTASI III Biru 17 Kampus V UNM Parepare di Pare Pare',
-                    'email': 'Silakan mengisi Email atau Telepon untuk memudahkan penyampaian informasi pelayanan.',
-                    'telepon': 'Silakan mengisi Email atau Telepon untuk memudahkan penyampaian informasi pelayanan.'
-                };
-                if (descriptions[fieldLower]) {
-                    description = `<p class="text-xs text-gray-500 mt-1">${descriptions[fieldLower]}</p>`;
-                }
-                const isRequired = !['email', 'telepon'].includes(fieldLower);
-                const inputType = (fieldLower.includes('tanggal') || fieldLower.includes('tgl')) ? 'date' : 'text';
-                fieldsContainerHtml += `
-                    <div class="mb-4">
-                        <label for="${fieldId}" class="block text-sm font-medium text-gray-700 mb-1">${field}</label>
-                        <input type="${inputType}" id="${fieldId}" name="${field}" ${isRequired ? 'required' : ''} class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" />
-                        ${description}
-                    </div>
-                `;
-            });
-             formHtml += `<div class="grid grid-cols-1 md:grid-cols-2 gap-x-4">${fieldsContainerHtml}</div>`;
-        }
-    
+            const fieldId = `form-input-${field.replace(/\s+/g, '-')}`;
+            const fieldLower = field.toLowerCase().trim();
+            let description = '';
+            const descriptions = {
+                'nama': 'Nama Organisasi atau Individu',
+                'perihal': 'Contoh: Permohonan Peminjaman Aula Utama / Bus',
+                'kegiatan': 'Contoh: FESTASI III Biru 17 Kampus V UNM Parepare di Pare Pare',
+                'email': 'Silakan mengisi Email atau Telepon untuk memudahkan penyampaian informasi pelayanan.',
+                'telepon': 'Silakan mengisi Email atau Telepon untuk memudahkan penyampaian informasi pelayanan.'
+            };
+            if (descriptions[fieldLower]) {
+                description = `<p class="text-xs text-gray-500 mt-1">${descriptions[fieldLower]}</p>`;
+            }
+            const isRequired = !['email', 'telepon'].includes(fieldLower);
+            const inputType = (fieldLower.includes('tanggal') || fieldLower.includes('tgl')) ? 'date' : 'text';
+            fieldsContainerHtml += `
+                <div class="mb-4">
+                    <label for="${fieldId}" class="block text-sm font-medium text-gray-700 mb-1">${field}</label>
+                    <input type="${inputType}" id="${fieldId}" name="${field}" ${isRequired ? 'required' : ''} class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" />
+                    ${description}
+                </div>
+            `;
+        });
+        
+        formHtml += `<div class="grid grid-cols-1 md:grid-cols-2 gap-x-4">${fieldsContainerHtml}</div>`
         permohonanForm.innerHTML = formHtml;
-        // ... (event listener untuk form pengaduan jika ada)
+    }
+    
+    /**
+     * BARU: Fungsi terpisah untuk merender form Pengaduan
+     */
+    function renderPengaduanForm(allFields, pengolah, layananName) {
+        let formHtml = `<input type="hidden" name="Pengolah" value="${pengolah}" />`;
+        formHtml += `<input type="hidden" name="Jenis Layanan" value="${layananName}" />`;
+        
+        let pelaporHtml = '';
+        let terlaporHtml = '';
+        let lainnyaHtml = '';
+        const satuanKerjaOptions = ['Rektorat', 'Biro AUAK', 'Fakultas Syariah dan Hukum Islam', 'Fakultas Tarbiyah', 'Fakultas Ekonomi dan Bisnis Islam', 'Fakultas Ushuluddin dan Dakwah', 'Pascasarjana', 'Lembaga Penjaminan Mutu', 'Lembaga Penelitian dan Pengabdian Masyarakat', 'Satuan Pengawasan Internal', 'UPT TIPD', 'UPT Perpustakaan', 'UPT Bahasa', 'UPT Mahad Al Jamiah'];
+        const jenisAduanOptions = ['Korupsi / Pungli', 'Pelayanan Publik', 'Penyalahgunaan Wewenang', 'Tata Laksana / Regulasi', 'Hukum / HAM', 'Kepegawian', 'Umum'];
+        
+        allFields.forEach(field => {
+            const fieldId = `form-input-${field.replace(/\s+/g, '-')}`;
+            const fieldLower = field.toLowerCase();
+            let isRequired = !['email', 'telepon', 'anonim', 'rahasia', 'file'].includes(fieldLower.replace(/ identitas pelapor| pelapor/g, ''));
+            let fieldInputHtml = '';
+            let wrapperClass = 'mb-4';
+            if (fieldLower.includes('anonim')) {
+                fieldInputHtml = `<div class="flex items-center mt-2"><input type="checkbox" id="${fieldId}" name="${field}" class="h-4 w-4 text-green-800 border-gray-300 rounded focus:ring-green-800" /><label for="${fieldId}" class="ml-2 text-sm text-gray-600">Saya ingin identitas saya sebagai ANONIM, yang tidak dapat dilihat oleh Terlapor dan publik</label></div>`;
+                wrapperClass = 'md:col-span-2';
+            } else if (fieldLower.includes('rahasia')) {
+                fieldInputHtml = `<div class="flex items-center mt-2"><input type="checkbox" id="${fieldId}" name="${field}" class="h-4 w-4 text-green-800 border-gray-300 rounded focus:ring-green-800" /><label for="${fieldId}" class="ml-2 text-sm text-gray-600">Saya ingin Isi Laporan Saya menjadi Rahasia oleh Publik</label></div>`;
+                wrapperClass = 'md:col-span-2';
+            } else {
+                let inputElement = '';
+                if (fieldLower.includes('jenis kelamin')) {
+                    inputElement = `<select id="${fieldId}" name="${field}" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm" required><option value="" disabled selected>-- Pilih --</option><option>Laki-laki</option><option>Perempuan</option></select>`;
+                } else if (fieldLower.includes('email')) {
+                    inputElement = `<input type="email" id="${fieldId}" name="${field}" class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" />`;
+                } else if (fieldLower.includes('telepon')) {
+                    inputElement = `<input type="number" id="${fieldId}" name="${field}" class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" />`;
+                } else if (fieldLower.includes('jenis identitas')) {
+                    inputElement = `<select id="${fieldId}" name="${field}" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm" required><option value="" disabled selected>-- Pilih --</option><option>KTP</option><option>Visa</option><option>SIM</option></select>`;
+                } else if (fieldLower.includes('satuan kerja') || fieldLower.includes('unit kerja')) {
+                    const optionsHtml = satuanKerjaOptions.map(opt => `<option>${opt}</option>`).join('');
+                    inputElement = `<select id="${fieldId}" name="${field}" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm" required><option value="" disabled selected>-- Pilih Satuan Kerja --</option>${optionsHtml}</select>`;
+                } else if (fieldLower === 'jenis') {
+                    const optionsHtml = jenisAduanOptions.map(opt => `<option>${opt}</option>`).join('');
+                    inputElement = `<select id="${fieldId}" name="${field}" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm" required><option value="" disabled selected>-- Pilih Jenis Aduan --</option>${optionsHtml}</select>`;
+                } else if (fieldLower.includes('isi laporan') || fieldLower.includes('harapan') || fieldLower.includes('topik')) {
+                    inputElement = `<textarea id="${fieldId}" name="${field}" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" ${isRequired ? 'required' : ''}></textarea>`;
+                    wrapperClass += ' md:col-span-2';
+                } else if (fieldLower.includes('file')) {
+                    inputElement = `<input type="file" id="${fieldId}" name="${field}" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100" />`;
+                    wrapperClass += ' md:col-span-2';
+                } else {
+                    inputElement = `<input type="text" id="${fieldId}" name="${field}" class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" ${isRequired ? 'required' : ''} />`;
+                }
+                fieldInputHtml = `<label for="${fieldId}" class="block text-sm font-medium text-gray-700 mb-1">${field}</label>${inputElement}`;
+            }
+            const fieldWrapperHtml = `<div class="${wrapperClass}">${fieldInputHtml}</div>`;
+            if (fieldLower.includes('pelapor')) {
+                pelaporHtml += fieldWrapperHtml;
+            } else if (fieldLower.includes('terlapor')) {
+                terlaporHtml += fieldWrapperHtml;
+            } else {
+                lainnyaHtml += fieldWrapperHtml;
+            }
+        });
+        formHtml += `
+          <div class="mb-4">
+              <label class="flex items-center cursor-pointer">
+                  <input type="checkbox" id="lapor-terlapor-checkbox" class="h-4 w-4 text-green-800 border-gray-300 rounded focus:ring-green-800" />
+                  <span class="ml-3 text-sm font-medium text-gray-800">Saya ingin melaporkan Terlapor</span>
+              </label>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6">
+              <div>
+                  <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">Informasi Pelapor</h3>
+                  ${pelaporHtml}
+              </div>
+              <div id="terlapor-section">
+                  <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">Informasi Terlapor</h3>
+                  ${terlaporHtml}
+              </div>
+          </div>
+          <div class="mt-4">
+              <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">Informasi Lainnya</h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6">
+                  ${lainnyaHtml}
+              </div>
+          </div>
+      `;
+        permohonanForm.innerHTML = formHtml;
+        const laporCheckbox = document.getElementById('lapor-terlapor-checkbox');
+        const terlaporSection = document.getElementById('terlapor-section');
+        if (laporCheckbox && terlaporSection) {
+            const terlaporInputs = terlaporSection.querySelectorAll('input, select, textarea');
+            const updateTerlaporState = (shouldBeEnabled) => {
+                terlaporSection.classList.toggle('section-disabled', !shouldBeEnabled);
+                terlaporInputs.forEach(input => {
+                    input.disabled = !shouldBeEnabled;
+                    const inputName = input.name.toLowerCase();
+                    if (!inputName.includes('anonim') && !inputName.includes('rahasia')) {
+                        input.required = shouldBeEnabled;
+                    }
+                });
+            };
+            updateTerlaporState(false);
+            laporCheckbox.addEventListener('change', (e) => {
+                updateTerlaporState(e.target.checked);
+            });
+        }
     }
 
+
+    /**
+     * Fungsi untuk form generik/umum
+     */
+    function renderGenericForm(allFields, pengolah, layananName) {
+        let formHtml = `<input type="hidden" name="Pengolah" value="${pengolah}" />`;
+        formHtml += `<input type="hidden" name="Jenis Layanan" value="${layananName}" />`;
+    
+        let fieldsContainerHtml = '';
+        allFields.forEach(field => {
+            const fieldId = `form-input-${field.replace(/\s+/g, '-')}`;
+            const isRequired = !['email', 'telepon'].includes(field.toLowerCase().trim());
+            fieldsContainerHtml += `
+                <div class="mb-4">
+                    <label for="${fieldId}" class="block text-sm font-medium text-gray-700 mb-1">${field}</label>
+                    <input type="text" id="${fieldId}" name="${field}" ${isRequired ? 'required' : ''} class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" />
+                </div>
+            `;
+        });
+        formHtml += `<div class="grid grid-cols-1 md:grid-cols-2 gap-x-4">${fieldsContainerHtml}</div>`;
+        permohonanForm.innerHTML = formHtml;
+    }
+
+
+    /**
+     * DIPERBARUI: Fungsi ini sekarang menjadi router untuk memanggil render function yang sesuai
+     */
+    function openFormModal(event) {
+        const card = event.currentTarget;
+        const { formFields, layananName, pengolah, sheet, sheetId } = card.dataset;
+        if (!formFields || !sheet) return;
+        modalTitle.textContent = `Formulir ${layananName}`;
+        const allFields = formFields.split(',').map(field => field.trim());
+        permohonanForm.dataset.targetSheet = sheet;
+        permohonanForm.dataset.targetSheetId = sheetId;
+        
+        const lowerLayananName = layananName.toLowerCase();
+
+        // Router untuk menentukan fungsi render mana yang akan dipanggil
+        if (lowerLayananName.includes('suket')) {
+            permohonanForm.innerHTML = `<div class="text-center p-8"><div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-brand-green mx-auto"></div><p class="mt-4 text-gray-600">Memuat formulir...</p></div>`;
+            renderSuketKuliahForm(allFields, pengolah, layananName);
+        } else if (lowerLayananName.includes('peminjaman')) {
+            renderPeminjamanForm(allFields, pengolah, layananName);
+        } else if (lowerLayananName.includes('pengaduan')) {
+            renderPengaduanForm(allFields, pengolah, layananName);
+        } else {
+            // Fallback untuk form lain yang tidak memiliki perlakuan khusus
+            renderGenericForm(allFields, pengolah, layananName);
+        }
+    
+        formModal.classList.remove('hidden');
+    }
 
     function handlePermohonanSubmit(e) {
         e.preventDefault();
