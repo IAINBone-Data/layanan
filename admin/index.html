@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tampilan Google Script</title>
+    <style>
+        /* Menghilangkan margin dan padding default dari body */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden; /* Mencegah scroll bar pada body */
+        }
+        /* Mengatur iframe agar mengisi seluruh halaman */
+        .fullscreen-iframe {
+            width: 100%;
+            height: 100vh; /* 100% dari tinggi viewport */
+            border: none; /* Menghilangkan border iframe */
+        }
+    </style>
+</head>
+<body>
+    <!-- 
+      Iframe ini akan menampilkan konten dari URL Google Script Anda.
+      Atribut 'src' berisi URL yang Anda berikan.
+      Atribut 'class' digunakan untuk menerapkan styling dari CSS di atas.
+    -->
+    <iframe class="fullscreen-iframe" src="https://script.google.com/macros/s/AKfycbz7wJaeIKmPaNfIpo0PKNmG2Vhj1wgvGTNwTnw2Oe7qnC50oslsm2Onr0M_PPSS111u/exec" title="Tampilan Aplikasi Google Script"></iframe>
+</body>
+</html>
