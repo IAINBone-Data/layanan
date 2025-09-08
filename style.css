@@ -1,0 +1,112 @@
+/* General Body and Font Styles */
+body { 
+    font-family: 'Inter', sans-serif; 
+    background-color: #f9fafb; 
+}
+@media (max-width: 767px) { 
+    body { 
+        padding-bottom: 100px; 
+    } 
+}
+
+/* Brand Colors */
+.bg-brand-green { 
+    background-color: #1a3a3a; 
+}
+.text-brand-green { 
+    color: #1a3a3a; 
+}
+
+/* FullCalendar Customization */
+:root {
+    --fc-border-color: #e5e7eb;
+    --fc-daygrid-event-dot-width: 8px;
+    --fc-today-bg-color: rgba(220, 252, 231, 0.5);
+    --fc-button-bg-color: #1a3a3a;
+    --fc-button-active-bg-color: #2a6464;
+    --fc-button-hover-bg-color: #2a6464;
+}
+.fc .fc-toolbar-title { 
+    font-size: 1.25em; 
+}
+.fc .fc-daygrid-day.fc-day-today { 
+    background-color: var(--fc-today-bg-color); 
+}
+
+/* Swiper Slider Customization */
+.info-swiper.info-grid .swiper-wrapper { 
+    display: grid; 
+    grid-template-columns: repeat(1, 1fr); 
+    gap: 1.5rem; 
+}
+@media (min-width: 768px) { 
+    .info-swiper.info-grid .swiper-wrapper { 
+        grid-template-columns: repeat(2, 1fr); 
+    } 
+}
+.info-swiper { 
+    position: relative; 
+    padding-bottom: 30px; 
+}
+.swiper-pagination { 
+    bottom: 0 !important; 
+}
+.swiper-pagination-bullet { 
+    background-color: #d1d5db; 
+    opacity: 1; 
+}
+.swiper-pagination-bullet-active { 
+    background-color: #1a3a3a !important; 
+}
+.layanan-tabs-swiper .swiper-slide { 
+    width: auto !important; 
+}
+
+/* Tab and Toggle Button Styles */
+.layanan-tab { 
+    transition: all 0.3s ease; 
+    padding: 6px 16px; 
+    border-radius: 99px; 
+    white-space: nowrap; 
+    font-size: 12px; 
+    color: #6b7280; 
+}
+.layanan-tab.active { 
+    color: #1a3a3a; 
+    font-weight: 700; 
+    background-color: #f3f4f6; 
+}
+.toggle-btn { 
+    transition: all 0.3s ease-in-out; 
+}
+.toggle-btn.active {
+    background-color: white;
+    color: #1f2937;
+    font-weight: 600;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+/* Modal and Disabled Section Styles */
+#notificationModal.visible #notificationModalContent { 
+    transform: scale(1); 
+    opacity: 1; 
+}
+.section-disabled { 
+    opacity: 0.5; 
+    pointer-events: none; 
+    transition: opacity 0.3s ease-in-out; 
+}
+input:disabled, select:disabled, textarea:disabled { 
+    background-color: #f3f4f6; 
+    cursor: not-allowed; 
+}
+
+/* Responsive Adjustments for Mobile */
+@media (max-width: 767px) {
+    .fc .fc-toolbar-title { font-size: 1.1em; }
+    .fc .fc-button { padding: .2em .5em; font-size: 0.9em; }
+    .fc-daygrid-event-harness, .fc-list-event-title { font-size: 0.8em !important; }
+    #calendarModal .w-full { max-height: 95vh; }
+    .fc .fc-col-header-cell-cushion { font-weight: normal; font-size: 0.75em; }
+    .fc .fc-daygrid-day-number { font-size: 0.8em; }
+}
