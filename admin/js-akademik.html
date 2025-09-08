@@ -1,0 +1,217 @@
+<script defer>
+// --- Handler Global untuk Edit, Hapus, dan Cetak ---
+window.handleEditAkademikData = function(rowIndex, data) {
+    document.getElementById('akademikModalTitle').textContent = 'Edit Data Keterangan';
+    const form = document.getElementById('akademikDataForm');
+    form.reset();
+   
+    let formHtml = `<input type="hidden" id="rowIndex" name="rowIndex" value="${rowIndex}">`;
+    let fieldsHtml = '';
+    window.akademikHeaders.forEach(header => {
+        let value = data[header] || '';
+        let inputType = 'text';
+        if (header.toLowerCase().includes('tanggal')) {
+            inputType = 'date';
+            if (value && value.includes('/')) {
+                const parts = value.split('/');
+                if (parts.length === 3) {
+                    value = `${parts[2]}-${parts[1]}-${parts[0]}`;
+                }
+            }
+        }
+       
+        fieldsHtml += `
+            <div>
+                <label for="akademik-${header}" class="block text-sm font-medium text-gray-700">${header}</label>
+                <input type="${inputType}" name="${header}" id="akademik-${header}" value="${String(value).replace(/"/g, '&quot;')}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+            </div>
+        `;
+    });
+   
+    form.innerHTML = formHtml + `<div class="grid grid-cols-1 md:grid-cols-2 gap-4">${fieldsHtml}</div>`;
+    document.getElementById('akademikDataModal').classList.remove('hidden');
+}
+window.handleDeleteAkademikData = function(rowIndex) {
+    showConfirmationModal(
+        'Konfirmasi Hapus',
+        'Apakah Anda yakin ingin menghapus data ini?',
+        'Ya, Hapus',
+        () => {
+            google.script.run
+                .withSuccessHandler(() => {
+                    showNotificationModal('Berhasil', 'Data berhasil dihapus.', 'success');
+                    document.dispatchEvent(new Event('reload-data'));
+                })
+                .withFailureHandler(err => showNotificationModal('Gagal', 'Gagal menghapus data: ' + err.message, 'error'))
+                .deleteAkademikData(rowIndex);
+        }
+    );
+}
+window.handlePrintSuketKuliah = function(printButton, data) {
+    const originalIcon = printButton.innerHTML;
+    printButton.innerHTML = `<i class="fas fa-spinner fa-spin"></i>`;
+    printButton.disabled = true;
+    google.script.run
+        .withSuccessHandler((htmlContent) => {
+            const newTab = window.open();
+            newTab.document.write(htmlContent);
+            newTab.document.close();
+            printButton.innerHTML = originalIcon;
+            printButton.disabled = false;
+        })
+        .withFailureHandler((err) => {
+            showNotificationModal('Gagal', 'Gagal membuat surat: ' + err.message, 'error');
+            printButton.innerHTML = originalIcon;
+            printButton.disabled = false;
+        })
+        .getHtmlSuketKuliah(data);
+}
+document.addEventListener('DOMContentLoaded', function() {
+    // --- Selektor Elemen ---
+    const addAkademikDataBtn = document.getElementById('addAkademikDataBtn');
+    const akademikDataModal = document.getElementById('akademikDataModal');
+    const akademikModalTitle = document.getElementById('akademikModalTitle');
+    const akademikDataForm = document.getElementById('akademikDataForm');
+    const closeAkademikModalBtn = document.getElementById('closeAkademikModalBtn');
+    const cancelAkademikModalBtn = document.getElementById('cancelAkademikModalBtn');
+    // --- Event Listeners ---
+    if(addAkademikDataBtn) addAkademikDataBtn.addEventListener('click', handleAddAkademikData);
+    if(closeAkademikModalBtn) closeAkademikModalBtn.addEventListener('click', closeAkademikModal);
+    if(cancelAkademikModalBtn) cancelAkademikModalBtn.addEventListener('click', closeAkademikModal);
+    if(akademikDataForm) akademikDataForm.addEventListener('submit', handleSaveAkademikData);
+    // --- Fungsi CRUD ---
+    function handleAddAkademikData() {
+        akademikModalTitle.textContent = 'Tambah Data Keterangan';
+        akademikDataForm.reset();
+       
+        let formHtml = '<input type="hidden" id="rowIndex" name="rowIndex">';
+        let fieldsHtml = '';
+        window.akademikHeaders.forEach(header => {
+            const inputType = header.toLowerCase().includes('tanggal') ? 'date' : 'text';
+            fieldsHtml += `
+                <div>
+                    <label for="akademik-${header}" class="block text-sm font-medium text-gray-700">${header}</label>
+                    <input type="${inputType}" name="${header}" id="akademik-${header}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                </div>
+            `;
+        });
+       
+        akademikDataForm.innerHTML = formHtml + `<div class="grid grid-cols-1 md:grid-cols-2 gap-4">${fieldsHtml}</div>`;
+        akademikDataModal.classList.remove('hidden');
+    }
+    function handleSaveAkademikData(e) {
+        e.preventDefault();
+        const saveBtn = document.getElementById('saveAkademikDataBtn');
+        const btnSpan = saveBtn.querySelector('span');
+        const originalText = btnSpan.textContent;
+        btnSpan.innerHTML = `<i class="fas fa-spinner fa-spin"></i>`;
+        saveBtn.disabled = true;
+        const formData = new FormData(e.target);
+        const dataObject = Object.fromEntries(formData.entries());
+        const rowIndex = dataObject.rowIndex;
+        const serverFunction = rowIndex ? 'updateAkademikData' : 'addAkademikData';
+        const params = rowIndex ? [rowIndex, dataObject] : [dataObject];
+        google.script.run
+            .withSuccessHandler(response => {
+                if (response.success) {
+                    closeAkademikModal();
+                    showNotificationModal('Berhasil', 'Data berhasil disimpan.', 'success');
+                    document.dispatchEvent(new Event('reload-data'));
+                } else {
+                    showNotificationModal('Gagal', 'Gagal menyimpan data: ' + response.message, 'error');
+                }
+                btnSpan.textContent = originalText;
+                saveBtn.disabled = false;
+            })
+            .withFailureHandler(err => {
+                showNotificationModal('Error', 'Terjadi kesalahan: ' + err.message, 'error');
+                btnSpan.textContent = originalText;
+                saveBtn.disabled = false;
+            })
+            [serverFunction](...params);
+    }
+    function closeAkademikModal() {
+        akademikDataModal.classList.add('hidden');
+    }
+    // --- FUNGSI RENDER HALAMAN (DIPERBARUI) ---
+    window.renderAkademikPage = function(headers, data) {
+        const headersContainer = document.getElementById('akademik-headers');
+        const bodyContainer = document.getElementById('akademik-body');
+        const cardsContainer = document.getElementById('akademik-cards');
+        headersContainer.innerHTML = '';
+        bodyContainer.innerHTML = '';
+        cardsContainer.innerHTML = '';
+       
+        window.akademikHeaders = headers;
+        if (!headers || headers.length === 0) return;
+       
+        const columnsToShow = {
+            'IDPermohonan': 'ID',
+            'Tanggal': 'Tanggal',
+            'Jenis Layanan': 'Jenis',
+            'Nama': 'Nama',
+            'NIM': 'NIM',
+            'Prodi': 'Prodi'
+        };
+        const displayHeaders = Object.values(columnsToShow);
+        const originalHeaders = Object.keys(columnsToShow);
+        let tableHeadersHtml = displayHeaders.map(header =>
+            `<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">${header}</th>`
+        ).join('');
+        tableHeadersHtml += `<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>`;
+        headersContainer.innerHTML = tableHeadersHtml;
+       
+        if (!data || data.length === 0) {
+            const colspan = displayHeaders.length + 1;
+            bodyContainer.innerHTML = `<tr><td colspan="${colspan}" class="p-4 text-center text-gray-500">Tidak ada data.</td></tr>`;
+            cardsContainer.innerHTML = `<div class="p-4 text-center text-gray-500">Tidak ada data.</div>`;
+            return;
+        }
+
+        let allRowsHtml = '';
+        let allCardsHtml = '';
+        data.forEach((item, index) => {
+            let rowHtml = '<tr>';
+            originalHeaders.forEach(header => {
+                let cellContent = item[header] || '';
+                rowHtml += `<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${cellContent}</td>`;
+            });
+           
+            // --- Tombol Aksi ---
+            let aksiButtons = `
+                <button onclick="window.handleEditAkademikData(${index}, ${JSON.stringify(item).replace(/"/g, '&quot;')})" class="w-8 h-8 inline-flex items-center justify-center bg-blue-100 text-blue-600 rounded-md hover:bg-blue-200" title="Edit Data"><i class="fas fa-pencil-alt"></i></button>
+                <button onclick="window.handleDeleteAkademikData(${index})" class="w-8 h-8 inline-flex items-center justify-center bg-red-100 text-red-600 rounded-md hover:bg-red-200" title="Hapus Data"><i class="fas fa-trash-alt"></i></button>
+            `;
+           
+            // Tambahkan tombol print hanya jika jenisnya "Suket Kuliah"
+            if (item['Jenis Layanan'] && item['Jenis Layanan'].toLowerCase().includes('suket kuliah')) {
+                aksiButtons = `
+                    <button onclick="window.handlePrintSuketKuliah(this, ${JSON.stringify(item).replace(/"/g, '&quot;')})" class="w-8 h-8 inline-flex items-center justify-center bg-green-100 text-green-600 rounded-md hover:bg-green-200" title="Cetak Surat"><i class="fas fa-print"></i></button>
+                ` + aksiButtons;
+            }
+           
+            rowHtml += `<td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">${aksiButtons}</td>`;
+            rowHtml += '</tr>';
+            allRowsHtml += rowHtml;
+           
+            // --- Kartu Mobile ---
+            let cardHtml = '<div class="bg-white rounded-lg shadow p-4 space-y-3">';
+            originalHeaders.forEach(header => {
+                cardHtml += `
+                    <div>
+                        <p class="text-xs text-gray-500 uppercase">${columnsToShow[header]}</p>
+                        <div class="text-sm font-medium text-gray-800">${item[header] || '-'}</div>
+                    </div>
+                `;
+            });
+            cardHtml += `<div class="border-t pt-3 flex justify-end space-x-2">${aksiButtons}</div>`;
+            cardHtml += '</div>';
+            allCardsHtml += cardHtml;
+        });
+
+        bodyContainer.innerHTML = allRowsHtml;
+        cardsContainer.innerHTML = allCardsHtml;
+    }
+});
+</script>
+
