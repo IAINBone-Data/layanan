@@ -811,6 +811,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <option value="" disabled selected>-- Pilih --</option>
                     <option>Peminjaman Tempat</option>
                     <option>Peminjaman Kendaraan</option>
+                    <option>Peminjaman Barang</option>
                 </select>
             </div>
         `;
