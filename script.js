@@ -1295,14 +1295,17 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             const status = getValueCaseInsensitive(result, 'status') || 'N/A';
             const idPermohonan = getValueCaseInsensitive(result, 'idpermohonan') || getValueCaseInsensitive(result, 'idlayanan') || 'N/A';
-                        const statusClasses = { disetujui: 'bg-green-100 text-green-800', diajukan: 'bg-yellow-100 text-yellow-800', ditahan: 'bg-orange-100 text-orange-800', selesai: 'bg-blue-100 text-blue-800', ditolak: 'bg-red-100 text-red-700' };
+            const statusClasses = { disetujui: 'bg-green-100 text-green-800', diajukan: 'bg-yellow-100 text-yellow-800', ditahan: 'bg-orange-100 text-orange-800', selesai: 'bg-blue-100 text-blue-800', ditolak: 'bg-red-100 text-red-700' };
             const bgColorClass = statusClasses[status.toLowerCase()] || 'bg-gray-100 text-gray-800';
             let detailsHtml = Object.entries(result)
                 .filter(([key, value]) => !['idpermohonan', 'idlayanan', 'status'].includes(key.toLowerCase()) && value)
                 .map(([key, value]) => {
-                    if (key.toLowerCase().trim() === 'file' && value.startsWith('http')) {
-                        return `<div class="flex flex-col"><dt class="text-sm font-medium text-gray-500">${key}</dt><dd class="text-sm mt-1"><a href="${value}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-3 py-1 bg-brand-green text-white text-xs font-medium rounded-md hover:opacity-90 transition-opacity"><i class="fas fa-download mr-2"></i>Download File</a></dd></div>`;
+                    // Periksa apakah key adalah 'file' dan value adalah string URL yang valid
+                    if (key.toLowerCase().trim() === 'file' && typeof value === 'string' && value.startsWith('http')) {
+                        // Render sebagai tombol unduh yang lebih menonjol
+                        return `<div class="flex flex-col sm:col-span-2"><dt class="text-sm font-medium text-gray-500">${key}</dt><dd class="text-sm mt-1"><a href="${value}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-4 py-2 bg-brand-green text-white text-sm font-medium rounded-lg hover:opacity-90 transition-opacity shadow-sm"><i class="fas fa-download mr-2"></i>Download File</a></dd></div>`;
                     }
+                    // Render field lainnya seperti biasa
                     return `<div class="flex flex-col"><dt class="text-sm font-medium text-gray-500">${key}</dt><dd class="text-sm">${value}</dd></div>`;
                 })
                 .join('');
