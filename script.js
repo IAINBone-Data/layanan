@@ -73,11 +73,41 @@ document.addEventListener('DOMContentLoaded', function() {
             modal.classList.add('visible');
         }, 10);
         closeBtn.onclick = hideModal;
-        modal.onclick = (e) => {
-            if (e.target === modal) {
-                hideModal();
-            }
-        };
+        // DIHAPUS: Menonaktifkan fitur tutup modal saat klik di luar area notifikasi
+        // modal.onclick = (e) => {
+        //     if (e.target === modal) {
+        //         hideModal();
+        //     }
+        // };
+
+        // BARU: Logika untuk tombol "Copy ID"
+        const copyBtn = document.getElementById('copy-id-btn');
+        const copyTarget = document.getElementById('copy-target-id');
+
+        if (copyBtn && copyTarget) {
+            copyBtn.onclick = () => {
+                const textToCopy = copyTarget.innerText;
+                const textArea = document.createElement('textarea');
+                textArea.value = textToCopy;
+                textArea.style.position = 'absolute';
+                textArea.style.left = '-9999px';
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    copyBtn.textContent = 'Tersalin!';
+                    copyBtn.classList.add('bg-green-200');
+                    setTimeout(() => {
+                        copyBtn.textContent = 'Copy ID';
+                        copyBtn.classList.remove('bg-green-200');
+                    }, 2000);
+                } catch (err) {
+                    console.error('Gagal menyalin ID:', err);
+                    copyBtn.textContent = 'Gagal';
+                }
+                document.body.removeChild(textArea);
+            };
+        }
     }
 
     const skeletonLoader = document.getElementById('skeleton-loader');
@@ -133,10 +163,15 @@ document.addEventListener('DOMContentLoaded', function() {
         modalClosers.forEach(item => {
             if (item && item.btn) item.btn.addEventListener('click', () => item.modal.classList.add('hidden'));
         });
+
+        // DIHAPUS: Menonaktifkan fitur tutup modal saat klik di luar area form
+        /*
         const modals = [formModal, searchModal, helpdeskModal, quickServicesModal, calendarModal];
         modals.forEach(modal => {
             if (modal) modal.addEventListener('click', (e) => e.target === modal && modal.classList.add('hidden'));
         });
+        */
+
         if (permohonanForm) permohonanForm.addEventListener('submit', handlePermohonanSubmit);
         if (helpdeskForm) helpdeskForm.addEventListener('submit', handleHelpdeskSubmit);
         if (trackingResult) trackingResult.addEventListener('click', handleCloseTrackResult);
@@ -559,11 +594,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     let textColorClass = getTextColorForBg(warna);
                     let iconBgStyle = `style="background-color: rgba(0,0,0,0.2)"`;
                     cardHtml = `<a href="${link}" target="_blank" rel="noopener noreferrer" class="flex items-start p-3 rounded-xl shadow-sm hover:opacity-90 transition-opacity duration-300 h-full ${textColorClass}" ${bgColorStyle}>
-                    <div class="rounded-lg p-2.5 mr-3" ${iconBgStyle}>
-                      <i class="fas fa-bullhorn text-lg"></i>
-                    </div>
-                    <p class="font-medium text-xs">${infoText}</p>
-                  </a>`;
+                      <div class="rounded-lg p-2.5 mr-3" ${iconBgStyle}>
+                        <i class="fas fa-bullhorn text-lg"></i>
+                      </div>
+                      <p class="font-medium text-xs">${infoText}</p>
+                    </a>`;
                 }
                 slide.innerHTML = cardHtml;
                 infoWrapper.appendChild(slide);
@@ -796,10 +831,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     break;
             }
              fieldsHtml += `
-                <div class="${wrapperClass}" ${fieldLower.includes('orang tua') ? 'data-group="orang-tua" style="display:none;"' : ''}>
-                    <label for="${fieldId}" class="block text-sm font-medium text-gray-700 mb-1">${fieldLabel}</label>
-                    ${inputHtml}
-                </div>`;
+                 <div class="${wrapperClass}" ${fieldLower.includes('orang tua') ? 'data-group="orang-tua" style="display:none;"' : ''}>
+                     <label for="${fieldId}" class="block text-sm font-medium text-gray-700 mb-1">${fieldLabel}</label>
+                     ${inputHtml}
+                 </div>`;
         });
 
         formHtml += `<div class="grid grid-cols-1 md:grid-cols-2 gap-x-4">${fieldsHtml}</div>`;
@@ -1170,7 +1205,12 @@ document.addEventListener('DOMContentLoaded', function() {
         formModal.classList.add('hidden');
         if (response.success) {
             if (response.id) {
-                showNotificationModal('Berhasil!', `Permohonan Anda telah dikirim. Gunakan ID ini untuk melacak: <strong class="text-lg">${response.id}</strong>`, 'success');
+                const successMessage = `Permohonan Anda telah dikirim. Gunakan ID ini untuk melacak:
+                <div class='flex items-center justify-between bg-gray-100 p-2 rounded-lg mt-4'>
+                  <strong id='copy-target-id' class='text-lg font-mono tracking-wider'>${response.id}</strong>
+                  <button id='copy-id-btn' type='button' class='bg-gray-200 px-3 py-1 rounded-md text-sm font-semibold hover:bg-gray-300 transition-colors'>Copy ID</button>
+                </div>`;
+                showNotificationModal('Berhasil!', successMessage, 'success');
             } else {
                 showNotificationModal('Berhasil!', 'Permohonan Anda telah terkirim, namun ID pelacakan tidak dapat dibuat. Silakan hubungi admin.', 'success');
             }
@@ -1296,29 +1336,29 @@ document.addEventListener('DOMContentLoaded', function() {
             const status = getValueCaseInsensitive(result, 'status') || 'N/A';
             const idPermohonan = getValueCaseInsensitive(result, 'idpermohonan') || getValueCaseInsensitive(result, 'idlayanan') || 'N/A';
             const statusClasses = { disetujui: 'bg-green-100 text-green-800', diajukan: 'bg-yellow-100 text-yellow-800', ditahan: 'bg-orange-100 text-orange-800', selesai: 'bg-blue-100 text-blue-800', ditolak: 'bg-red-100 text-red-700' };
-            const bgColorClass = statusClasses[status.toLowerCase()] || 'bg-gray-100 text-gray-800';
-            let detailsHtml = Object.entries(result)
-                .filter(([key, value]) => !['idpermohonan', 'idlayanan', 'status'].includes(key.toLowerCase()) && value)
-                .map(([key, value]) => {
-                    // Logika spesifik untuk 'File'
-                    if (key.toLowerCase().trim() === 'file') {
-                        // Periksa apakah value adalah string dan link yang valid
-                        if (typeof value === 'string' && value.startsWith('http')) {
-                            // Jika ya, buat tombol
-                            return `<div class="flex flex-col sm:col-span-2"><dt class="text-sm font-medium text-gray-500">${key}</dt><dd class="text-sm mt-1"><a href="${value}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-4 py-2 bg-brand-green text-white text-sm font-medium rounded-lg hover:opacity-90 transition-opacity shadow-sm"><i class="fas fa-download mr-2"></i>Download File</a></dd></div>`;
-                        } else {
-                            // Jika 'File' ada tapi bukan link, jangan tampilkan apa-apa
-                            return ''; 
-                        }
-                    }
-                    
-                    // Render field lainnya seperti biasa
-                    return `<div class="flex flex-col"><dt class="text-sm font-medium text-gray-500">${key}</dt><dd class="text-sm">${value}</dd></div>`;
-                })
-                .join('');
-            content = `
-            <div class="p-4 ${bgColorClass} rounded-lg relative">
-              <p class="font-semibold">Status untuk ID: ${idPermohonan}</p>
+            const bgColorClass = statusClasses[status.toLowerCase()] || 'bg-gray-100 text-gray-800';
+            let detailsHtml = Object.entries(result)
+                .filter(([key, value]) => !['idpermohonan', 'idlayanan', 'status'].includes(key.toLowerCase()) && value)
+                .map(([key, value]) => {
+                    // Logika spesifik untuk 'File'
+                    if (key.toLowerCase().trim() === 'file') {
+                        // Periksa apakah value adalah string dan link yang valid
+                        if (typeof value === 'string' && value.startsWith('http')) {
+                            // Jika ya, buat tombol
+                            return `<div class="flex flex-col sm:col-span-2"><dt class="text-sm font-medium text-gray-500">${key}</dt><dd class="text-sm mt-1"><a href="${value}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-4 py-2 bg-brand-green text-white text-sm font-medium rounded-lg hover:opacity-90 transition-opacity shadow-sm"><i class="fas fa-download mr-2"></i>Download File</a></dd></div>`;
+                        } else {
+                            // Jika 'File' ada tapi bukan link, jangan tampilkan apa-apa
+                            return ''; 
+                        }
+                    }
+                    
+                    // Render field lainnya seperti biasa
+                    return `<div class="flex flex-col"><dt class="text-sm font-medium text-gray-500">${key}</dt><dd class="text-sm">${value}</dd></div>`;
+                })
+                .join('');
+            content = `
+            <div class="p-4 ${bgColorClass} rounded-lg relative">
+              <p class="font-semibold">Status untuk ID: ${idPermohonan}</p>
               <p class="text-2xl font-bold">${status}</p>
               <dl class="mt-4 border-t border-gray-200 pt-4 grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2">${detailsHtml}</dl>
             </div>`;
