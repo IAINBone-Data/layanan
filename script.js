@@ -1295,15 +1295,20 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             const status = getValueCaseInsensitive(result, 'status') || 'N/A';
             const idPermohonan = getValueCaseInsensitive(result, 'idpermohonan') || getValueCaseInsensitive(result, 'idlayanan') || 'N/A';
-            const statusClasses = { disetujui: 'bg-green-100 text-green-800', diajukan: 'bg-yellow-100 text-yellow-800', ditahan: 'bg-orange-100 text-orange-800', selesai: 'bg-blue-100 text-blue-800', ditolak: 'bg-red-100 text-red-700' };
-            const bgColorClass = statusClasses[status.toLowerCase()] || 'bg-gray-100 text-gray-800';
-            let detailsHtml = Object.entries(result)
-                .filter(([key, value]) => !['idpermohonan', 'idlayanan', 'status'].includes(key.toLowerCase()) && value)
-                .map(([key, value]) => `<div class="flex flex-col"><dt class="text-sm font-medium text-gray-500">${key}</dt><dd class="text-sm">${value}</dd></div>`)
-                .join('');
-            content = `
-            <div class="p-4 ${bgColorClass} rounded-lg relative">
-              <p class="font-semibold">Status untuk ID: ${idPermohonan}</p>
+                        const statusClasses = { disetujui: 'bg-green-100 text-green-800', diajukan: 'bg-yellow-100 text-yellow-800', ditahan: 'bg-orange-100 text-orange-800', selesai: 'bg-blue-100 text-blue-800', ditolak: 'bg-red-100 text-red-700' };
+            const bgColorClass = statusClasses[status.toLowerCase()] || 'bg-gray-100 text-gray-800';
+            let detailsHtml = Object.entries(result)
+                .filter(([key, value]) => !['idpermohonan', 'idlayanan', 'status'].includes(key.toLowerCase()) && value)
+                .map(([key, value]) => {
+                    if (key.toLowerCase().trim() === 'file' && value.startsWith('http')) {
+                        return `<div class="flex flex-col"><dt class="text-sm font-medium text-gray-500">${key}</dt><dd class="text-sm mt-1"><a href="${value}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-3 py-1 bg-brand-green text-white text-xs font-medium rounded-md hover:opacity-90 transition-opacity"><i class="fas fa-download mr-2"></i>Download File</a></dd></div>`;
+                    }
+                    return `<div class="flex flex-col"><dt class="text-sm font-medium text-gray-500">${key}</dt><dd class="text-sm">${value}</dd></div>`;
+                })
+                .join('');
+            content = `
+            <div class="p-4 ${bgColorClass} rounded-lg relative">
+              <p class="font-semibold">Status untuk ID: ${idPermohonan}</p>
               <p class="text-2xl font-bold">${status}</p>
               <dl class="mt-4 border-t border-gray-200 pt-4 grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2">${detailsHtml}</dl>
             </div>`;
