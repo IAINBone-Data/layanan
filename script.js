@@ -1,5 +1,5 @@
 // PENTING: Ganti URL di bawah ini dengan URL Web App BARU dari Google Apps Script Anda
-const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzDTu-BtFYAAeIDOeQa-gPUNY2iUOHJjhEj94h3vDfRlB1ETII6dO-Vi4_UFo81aY9Ueg/exec';
+const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzyH5H5J7uzK4lUot9A7URDRor9M_5ZkRxIda_oG4U8CiXCfUldm623H5Y7WjqqYTVM5A/exec';
 
 // --- BARU: Data store lokal untuk informasi akademik ---
 // Ini menggantikan panggilan fetch ke Google Sheet, membuat form lebih cepat.
