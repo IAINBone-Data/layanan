@@ -1,5 +1,5 @@
 // PENTING: Ganti URL di bawah ini dengan URL Web App BARU dari Google Apps Script Anda
-const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxP_lhf2hL1OM6l4bCsJ0jfxbCzoT37fX79iMwVQ0W8i4nVv4IkVZXlohiNmFh16gZstw/exec';
+const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzDTu-BtFYAAeIDOeQa-gPUNY2iUOHJjhEj94h3vDfRlB1ETII6dO-Vi4_UFo81aY9Ueg/exec';
 
 // --- BARU: Data store lokal untuk informasi akademik ---
 // Ini menggantikan panggilan fetch ke Google Sheet, membuat form lebih cepat.
@@ -1013,16 +1013,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 <label for="jenis-layanan-peminjaman" class="block text-sm font-medium text-gray-700 mb-1">Jenis Layanan</label>
                 <select id="jenis-layanan-peminjaman" name="Jenis Layanan" required class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm">
                     <option value="" disabled selected>-- Pilih --</option>
-                    <option>Peminjaman Tempat</option>
-                    <option>Peminjaman Kendaraan</option>
-                    <option>Peminjaman Barang</option>
+                    <option value="Peminjaman Tempat">Peminjaman Tempat</option>
+                    <option value="Peminjaman Kendaraan">Peminjaman Kendaraan</option>
+                    <option value="Peminjaman Barang">Peminjaman Barang</option>
                 </select>
             </div>
         `;
 
         allFields.forEach(field => {
-            if (field.toLowerCase().trim() === 'jenis layanan') {
-                return; // Lewati field ini karena sudah dibuat custom di atas
+            if (['jenis layanan', 'waktu', 'jenis'].includes(field.toLowerCase().trim())) {
+                return; 
             }
             const fieldId = `form-input-${field.replace(/\s+/g, '-')}`;
             const fieldLower = field.toLowerCase().trim();
@@ -1048,8 +1048,41 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
         });
         
+        // Menambahkan kolom Waktu dan Jenis secara manual
+        fieldsContainerHtml += `
+            <div class="mb-4">
+                <label for="form-input-waktu" class="block text-sm font-medium text-gray-700 mb-1">Waktu</label>
+                <input type="text" id="form-input-waktu" name="Waktu" class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" />
+                <p class="text-xs text-gray-500 mt-1">Waktu Peminjaman (Pilihan). Kolom ini tidak wajib diisi</p>
+            </div>
+
+            <div class="mb-4" id="jenis-barang-container" style="display: none;">
+                <label for="form-input-jenis" class="block text-sm font-medium text-gray-700 mb-1">Jenis <span class="text-red-500">*</span></label>
+                <input type="text" id="form-input-jenis" name="Jenis" class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" />
+                <p class="text-xs text-gray-500 mt-1">Tambahkan Jenis yang dipinjam</p>
+            </div>
+        `;
+
         formHtml += `<div class="grid grid-cols-1 md:grid-cols-2 gap-x-4">${fieldsContainerHtml}</div>`
         permohonanForm.innerHTML = formHtml;
+
+        // Menambahkan event listener untuk menampilkan/menyembunyikan kolom Jenis
+        const jenisLayananSelect = permohonanForm.querySelector('#jenis-layanan-peminjaman');
+        const jenisBarangContainer = permohonanForm.querySelector('#jenis-barang-container');
+        const jenisBarangInput = permohonanForm.querySelector('#form-input-jenis');
+
+        if (jenisLayananSelect && jenisBarangContainer && jenisBarangInput) {
+            jenisLayananSelect.addEventListener('change', function() {
+                if (this.value === 'Peminjaman Barang') {
+                    jenisBarangContainer.style.display = 'block';
+                    jenisBarangInput.required = true;
+                } else {
+                    jenisBarangContainer.style.display = 'none';
+                    jenisBarangInput.required = false;
+                    jenisBarangInput.value = ''; // Mengosongkan nilai saat disembunyikan
+                }
+            });
+        }
     }
     
     /**
