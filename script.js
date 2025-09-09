@@ -782,6 +782,19 @@ document.addEventListener('DOMContentLoaded', function() {
                                         <option value="Perempuan">Perempuan</option>
                                     </select>`;
                     break;
+                 case 'tempat lahir':
+                    inputHtml = `<input type="text" id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" />
+                                <p class="text-xs text-gray-500 mt-1">DIISI SESUAI TEMPAT LAHIR. CONTOH: Watampone, Bone, Kel. Macege, dll</p>`;
+                    break;
+                case 'tanggal lahir':
+                     inputHtml = `<input type="date" id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" />
+                                <p class="text-xs text-gray-500 mt-1">DIISI SESUAI TANGGAL LAHIR. CONTOH: 20 September 2000, 1 Oktober 1999, dll</p>`;
+                    break;
+                case 'alamat':
+                    inputHtml = `<textarea id="${fieldId}" name="${field}" required rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm"></textarea>
+                                <p class="text-xs text-gray-500 mt-1">DIISI SESUAI DENGAN ALAMAT PADA KTP</p>`;
+                    wrapperClass += ' md:col-span-2';
+                    break;
                 // Field lain bisa ditambahkan kustomisasi jika perlu
                 default:
                     inputHtml = `<input type="text" id="${fieldId}" name="${field}" ${isRequired ? 'required' : ''} class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" />`;
