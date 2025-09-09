@@ -1300,11 +1300,18 @@ document.addEventListener('DOMContentLoaded', function() {
             let detailsHtml = Object.entries(result)
                 .filter(([key, value]) => !['idpermohonan', 'idlayanan', 'status'].includes(key.toLowerCase()) && value)
                 .map(([key, value]) => {
-                    // Periksa apakah key adalah 'file' dan value adalah string URL yang valid
-                    if (key.toLowerCase().trim() === 'file' && typeof value === 'string' && value.startsWith('http')) {
-                        // Render sebagai tombol unduh yang lebih menonjol
-                        return `<div class="flex flex-col sm:col-span-2"><dt class="text-sm font-medium text-gray-500">${key}</dt><dd class="text-sm mt-1"><a href="${value}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-4 py-2 bg-brand-green text-white text-sm font-medium rounded-lg hover:opacity-90 transition-opacity shadow-sm"><i class="fas fa-download mr-2"></i>Download File</a></dd></div>`;
+                    // Logika spesifik untuk 'File'
+                    if (key.toLowerCase().trim() === 'file') {
+                        // Periksa apakah value adalah string dan link yang valid
+                        if (typeof value === 'string' && value.startsWith('http')) {
+                            // Jika ya, buat tombol
+                            return `<div class="flex flex-col sm:col-span-2"><dt class="text-sm font-medium text-gray-500">${key}</dt><dd class="text-sm mt-1"><a href="${value}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-4 py-2 bg-brand-green text-white text-sm font-medium rounded-lg hover:opacity-90 transition-opacity shadow-sm"><i class="fas fa-download mr-2"></i>Download File</a></dd></div>`;
+                        } else {
+                            // Jika 'File' ada tapi bukan link, jangan tampilkan apa-apa
+                            return ''; 
+                        }
                     }
+                    
                     // Render field lainnya seperti biasa
                     return `<div class="flex flex-col"><dt class="text-sm font-medium text-gray-500">${key}</dt><dd class="text-sm">${value}</dd></div>`;
                 })
