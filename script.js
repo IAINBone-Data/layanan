@@ -874,7 +874,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <p class="text-xs text-gray-500 mt-1">DIISI SESUAI TEMPAT LAHIR. CONTOH: Watampone, Bone, Kel. Macege, dll</p>`;
                     break;
                 case 'tanggal lahir':
-                     inputHtml = `<input type="text" id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" />
+                     inputHtml = `<input type="date" id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" />
                                 <p class="text-xs text-gray-500 mt-1">DIISI SESUAI TANGGAL LAHIR. CONTOH: 20 September 2000, 1 Oktober 1999, dll</p>`;
                     break;
                 case 'alamat':
@@ -1353,10 +1353,29 @@ document.addEventListener('DOMContentLoaded', function() {
                 height: '100%',
                 eventClick: (info) => {
                     const props = info.event.extendedProps;
-                    let detailsHtml = Object.entries(props)
-                        .filter(([key]) => key !== 'iconName')
-                        .map(([key, value]) => `<dt class="font-semibold">${key}</dt><dd class="mb-2">${value || '-'}</dd>`)
-                        .join('');
+                    const fieldsInOrder = [
+                        'Nama',
+                        'Jenis Layanan',
+                        'Perihal',
+                        'Kegiatan',
+                        'Pengolah',
+                        'Jenis',
+                        'Tanggal Mulai',
+                        'Tanggal Selesai'
+                    ];
+                    
+                    let detailsHtml = fieldsInOrder.map(field => {
+                        const value = getValueCaseInsensitive(props, field);
+                        if (value) { // Only display if the value exists in the data
+                            return `<dt class="font-semibold">${field}</dt><dd class="mb-2">${value}</dd>`;
+                        }
+                        return null;
+                    }).filter(Boolean).join(''); // filter(Boolean) removes nulls
+
+                    if (!detailsHtml) {
+                         detailsHtml = "<p>Tidak ada detail untuk ditampilkan.</p>";
+                    }
+
                     showNotificationModal('Detail Peminjaman', `<dl class="text-left">${detailsHtml}</dl>`, 'custom');
                 },
                 eventContent: (arg) => ({ html: `<i class="fas fa-${arg.event.extendedProps.iconName || 'calendar-alt'} mr-2"></i>${arg.event.title}` }),
