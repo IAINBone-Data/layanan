@@ -594,10 +594,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     let textColorClass = getTextColorForBg(warna);
                     let iconBgStyle = `style="background-color: rgba(0,0,0,0.2)"`;
                     cardHtml = `<a href="${link}" target="_blank" rel="noopener noreferrer" class="flex items-start p-3 rounded-xl shadow-sm hover:opacity-90 transition-opacity duration-300 h-full ${textColorClass}" ${bgColorStyle}>
-                      <div class="rounded-lg p-2.5 mr-3" ${iconBgStyle}>
-                        <i class="fas fa-bullhorn text-lg"></i>
-                      </div>
-                      <p class="font-medium text-xs">${infoText}</p>
+                        <div class="rounded-lg p-2.5 mr-3" ${iconBgStyle}>
+                            <i class="fas fa-bullhorn text-lg"></i>
+                        </div>
+                        <p class="font-medium text-xs">${infoText}</p>
                     </a>`;
                 }
                 slide.innerHTML = cardHtml;
@@ -643,10 +643,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 let textColorClass = getTextColorForBg(bgColor);
                 button.className = `flex items-center p-2 rounded-xl shadow-sm hover:opacity-90 transition-opacity duration-300 ${textColorClass}`;
                 button.innerHTML = `
-                  <div class="bg-black bg-opacity-20 rounded-lg p-2 mr-2">
-                    <i class="fas fa-${icon} text-lg"></i>
-                  </div>
-                  <p class="font-medium text-xs">${infoText}</p>
+                    <div class="bg-black bg-opacity-20 rounded-lg p-2 mr-2">
+                        <i class="fas fa-${icon} text-lg"></i>
+                    </div>
+                    <p class="font-medium text-xs">${infoText}</p>
                 `;
                 pinnedWrapper.appendChild(button);
             }
@@ -768,12 +768,19 @@ document.addEventListener('DOMContentLoaded', function() {
             switch (fieldLower) {
                 case 'prodi':
                     inputHtml = `<select id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm">
-                                     <option value="" disabled selected>-- Pilih Prodi --</option>
-                                     ${prodiOptions}
-                                   </select>`;
+                                        <option value="" disabled selected>-- Pilih Prodi --</option>
+                                        ${prodiOptions}
+                                    </select>`;
                     break;
                 case 'fakultas':
                     inputHtml = `<input type="text" id="${fieldId}" name="${field}" readonly class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm bg-gray-100" />`;
+                    break;
+                case 'jenis kelamin':
+                    inputHtml = `<select id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm">
+                                        <option value="" disabled selected>-- Pilih --</option>
+                                        <option value="Laki-laki">Laki-laki</option>
+                                        <option value="Perempuan">Perempuan</option>
+                                    </select>`;
                     break;
                 // Field lain bisa ditambahkan kustomisasi jika perlu
                 default:
@@ -781,11 +788,34 @@ document.addEventListener('DOMContentLoaded', function() {
                     break;
             }
              fieldsHtml += `
-                 <div class="${wrapperClass}">
-                     <label for="${fieldId}" class="block text-sm font-medium text-gray-700 mb-1">${fieldLabel}</label>
-                     ${inputHtml}
-                 </div>`;
+                <div class="${wrapperClass}">
+                    <label for="${fieldId}" class="block text-sm font-medium text-gray-700 mb-1">${fieldLabel}</label>
+                    ${inputHtml}
+                </div>`;
         });
+        
+        // Menambahkan field kustom sesuai permintaan
+        fieldsHtml += `
+            <div class="mb-4">
+                <label for="form-input-Tanggal-Yudisium-Lulus" class="block text-sm font-medium text-gray-700 mb-1">Tanggal Yudisium Lulus <span class="text-red-500">*</span></label>
+                <input type="text" id="form-input-Tanggal-Yudisium-Lulus" name="Tanggal Yudisium Lulus" required class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" />
+                <p class="text-xs text-gray-500 mt-1">Contoh : 12 Agustus 2025</p>
+            </div>
+            <div class="mb-4">
+                <label for="form-input-Predikat-Yudisium-Lulus" class="block text-sm font-medium text-gray-700 mb-1">Predikat Yudisium Lulus <span class="text-red-500">*</span></label>
+                <select id="form-input-Predikat-Yudisium-Lulus" name="Predikat Yudisium Lulus" required class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm">
+                    <option value="" disabled selected>-- Pilih Predikat --</option>
+                    <option value="SANGAT MEMUASKAN">SANGAT MEMUASKAN</option>
+                    <option value="MEMUASKAN">MEMUaskan</option>
+                    <option value="CUMLAUDE">CUMLAUDE</option>
+                    <option value="CUKUP">CUKUP</option>
+                </select>
+            </div>
+            <div class="mb-4 md:col-span-2">
+                <label for="form-input-PIN-Ijazah" class="block text-sm font-medium text-gray-700 mb-1">PIN Ijazah <span class="text-red-500">*</span></label>
+                <input type="number" id="form-input-PIN-Ijazah" name="PIN Ijazah" required class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" />
+            </div>
+        `;
         
         formHtml += `<div class="grid grid-cols-1 md:grid-cols-2 gap-x-4">${fieldsHtml}</div>`;
         permohonanForm.innerHTML = formHtml;
@@ -841,35 +871,35 @@ document.addEventListener('DOMContentLoaded', function() {
             switch (fieldLower) {
                 case 'tempat lahir':
                     inputHtml = `<input type="text" id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" />
-                                 <p class="text-xs text-gray-500 mt-1">DIISI SESUAI TEMPAT LAHIR. CONTOH: Watampone, Bone, Kel. Macege, dll</p>`;
+                                <p class="text-xs text-gray-500 mt-1">DIISI SESUAI TEMPAT LAHIR. CONTOH: Watampone, Bone, Kel. Macege, dll</p>`;
                     break;
                 case 'tanggal lahir':
                      inputHtml = `<input type="date" id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" />
-                                  <p class="text-xs text-gray-500 mt-1">DIISI SESUAI TANGGAL LAHIR. CONTOH: 20 September 2000, 1 Oktober 1999, dll</p>`;
+                                <p class="text-xs text-gray-500 mt-1">DIISI SESUAI TANGGAL LAHIR. CONTOH: 20 September 2000, 1 Oktober 1999, dll</p>`;
                     break;
                 case 'alamat':
                     inputHtml = `<textarea id="${fieldId}" name="${field}" required rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm"></textarea>
-                                 <p class="text-xs text-gray-500 mt-1">DIISI SESUAI DENGAN ALAMAT PADA KTP</p>`;
+                                <p class="text-xs text-gray-500 mt-1">DIISI SESUAI DENGAN ALAMAT PADA KTP</p>`;
                     wrapperClass += ' md:col-span-2';
                     break;
                 case 'semester':
                     const semesterOptions = ['I (Satu)', 'II (Dua)', 'III (Tiga)', 'IV (Empat)', 'V (Lima)', 'VI (Enam)', 'VII (Tujuh)', 'VIII (Delapan)', 'IX (Sembilan)', 'X (Sepuluh)', 'XI (Sebelas)', 'XII (Dua Belas)', 'XIII (Tiga Belas)', 'XIV (Empat Belas)'];
                     inputHtml = `<select id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm">
-                                     <option value="" disabled selected>-- Pilih --</option>
-                                     ${semesterOptions.map(o => `<option value="${o}">${o}</option>`).join('')}
-                                   </select>`;
+                                        <option value="" disabled selected>-- Pilih --</option>
+                                        ${semesterOptions.map(o => `<option value="${o}">${o}</option>`).join('')}
+                                    </select>`;
                     break;
                 case 'jenis kelamin':
                     inputHtml = `<select id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm">
-                                     <option value="" disabled selected>-- Pilih --</option>
-                                     <option>Laki-laki</option><option>Perempuan</option>
-                                   </select>`;
+                                        <option value="" disabled selected>-- Pilih --</option>
+                                        <option>Laki-laki</option><option>Perempuan</option>
+                                    </select>`;
                     break;
                 case 'prodi':
                     // Opsi prodi akan diisi oleh event listener, awalnya kosong
                     inputHtml = `<select id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm">
-                                     <option value="" disabled selected>-- Pilih Unit Kerja dulu --</option>
-                                   </select>`;
+                                        <option value="" disabled selected>-- Pilih Unit Kerja dulu --</option>
+                                    </select>`;
                     break;
                 case 'fakultas':
                     // Fakultas akan diisi otomatis dan dibuat readonly
@@ -880,18 +910,18 @@ document.addEventListener('DOMContentLoaded', function() {
                     const years = [`${currentYear - 2}/${currentYear - 1}`, `${currentYear - 1}/${currentYear}`, `${currentYear}/${currentYear + 1}`];
                     const yearOptions = years.map(y => `<option value="${y}" ${ (new Date().getMonth() > 6 ? years[2] : years[1]) === y ? 'selected' : ''}>${y}</option>`).join('');
                     inputHtml = `<select id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm">
-                                     ${yearOptions}
-                                   </select>`;
+                                        ${yearOptions}
+                                    </select>`;
                     break;
                 default:
                     inputHtml = `<input type="text" id="${fieldId}" name="${field}" ${isRequired ? 'required' : ''} class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" />`;
                     break;
             }
              fieldsHtml += `
-                 <div class="${wrapperClass}" ${fieldLower.includes('orang tua') ? 'data-group="orang-tua" style="display:none;"' : ''}>
-                     <label for="${fieldId}" class="block text-sm font-medium text-gray-700 mb-1">${fieldLabel}</label>
-                     ${inputHtml}
-                 </div>`;
+                <div class="${wrapperClass}" ${fieldLower.includes('orang tua') ? 'data-group="orang-tua" style="display:none;"' : ''}>
+                    <label for="${fieldId}" class="block text-sm font-medium text-gray-700 mb-1">${fieldLabel}</label>
+                    ${inputHtml}
+                </div>`;
         });
 
         formHtml += `<div class="grid grid-cols-1 md:grid-cols-2 gap-x-4">${fieldsHtml}</div>`;
@@ -1265,8 +1295,8 @@ document.addEventListener('DOMContentLoaded', function() {
             if (response.id) {
                 const successMessage = `Permohonan Anda telah dikirim. Gunakan ID ini untuk melacak:
                 <div class='flex items-center justify-between bg-gray-100 p-2 rounded-lg mt-4'>
-                  <strong id='copy-target-id' class='text-lg font-mono tracking-wider'>${response.id}</strong>
-                  <button id='copy-id-btn' type='button' class='bg-gray-200 px-3 py-1 rounded-md text-sm font-semibold hover:bg-gray-300 transition-colors'>Copy ID</button>
+                    <strong id='copy-target-id' class='text-lg font-mono tracking-wider'>${response.id}</strong>
+                    <button id='copy-id-btn' type='button' class='bg-gray-200 px-3 py-1 rounded-md text-sm font-semibold hover:bg-gray-300 transition-colors'>Copy ID</button>
                 </div>`;
                 showNotificationModal('Berhasil!', successMessage, 'success');
             } else {
@@ -1416,9 +1446,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 .join('');
             content = `
             <div class="p-4 ${bgColorClass} rounded-lg relative">
-              <p class="font-semibold">Status untuk ID: ${idPermohonan}</p>
-              <p class="text-2xl font-bold">${status}</p>
-              <dl class="mt-4 border-t border-gray-200 pt-4 grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2">${detailsHtml}</dl>
+                <p class="font-semibold">Status untuk ID: ${idPermohonan}</p>
+                <p class="text-2xl font-bold">${status}</p>
+                <dl class="mt-4 border-t border-gray-200 pt-4 grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2">${detailsHtml}</dl>
             </div>`;
         } else {
             content = `<div class="p-4 bg-yellow-100 text-yellow-800 rounded-lg relative">ID Permohonan tidak ditemukan.</div>`;
