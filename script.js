@@ -1032,6 +1032,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 'perihal': 'Contoh: Permohonan Peminjaman Aula Utama / Bus',
                 'kegiatan': 'Contoh: FESTASI III Biru 17 Kampus V UNM Parepare di Pare Pare',
                 'email': 'Silakan mengisi Email atau Telepon untuk memudahkan penyampaian informasi pelayanan.',
+                'jenis': 'Tambahkan Jenis yang dipinjam',
+                'waktu': 'Waktu Peminjaman (Pilihan)',
                 'telepon': 'Silakan mengisi Email atau Telepon untuk memudahkan penyampaian informasi pelayanan.'
             };
             if (descriptions[fieldLower]) {
@@ -1053,7 +1055,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="mb-4">
                 <label for="form-input-waktu" class="block text-sm font-medium text-gray-700 mb-1">Waktu</label>
                 <input type="text" id="form-input-waktu" name="Waktu" class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" />
-                <p class="text-xs text-gray-500 mt-1">Waktu Peminjaman (Pilihan). Kolom ini tidak wajib diisi</p>
+                <p class="text-xs text-gray-500 mt-1">Waktu Peminjaman (Pilihan)</p>
             </div>
 
             <div class="mb-4" id="jenis-barang-container" style="display: none;">
