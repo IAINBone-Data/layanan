@@ -787,7 +787,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <p class="text-xs text-gray-500 mt-1">DIISI SESUAI TEMPAT LAHIR. CONTOH: Watampone, Bone, Kel. Macege, dll</p>`;
                     break;
                 case 'tanggal lahir':
-                     inputHtml = `<input type="text" id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" />
+                     inputHtml = `<input type="date" id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" />
                                 <p class="text-xs text-gray-500 mt-1">DIISI SESUAI TANGGAL LAHIR. CONTOH: 20 September 2000, 1 Oktober 1999, dll</p>`;
                     break;
                 case 'alamat':
@@ -1376,17 +1376,22 @@ document.addEventListener('DOMContentLoaded', function() {
                         'Tanggal Mulai',
                         'Tanggal Selesai'
                     ];
-                    
+
                     let detailsHtml = fieldsInOrder.map(field => {
                         const value = getValueCaseInsensitive(props, field);
-                        if (value) { // Only display if the value exists in the data
-                            return `<dt class="font-semibold">${field}</dt><dd class="mb-2">${value}</dd>`;
+                        if (value) { // Hanya tampilkan jika ada nilainya
+                            // Cek apakah field saat ini adalah 'Pengolah' untuk menambahkan highlight
+                            if (field.toLowerCase().trim() === 'pengolah') {
+                                return `<dt class="font-semibold">${field}</dt><dd class="mb-2 bg-yellow-100 text-yellow-800 font-bold p-1 rounded">${value}</dd>`;
+                            } else {
+                                return `<dt class="font-semibold">${field}</dt><dd class="mb-2">${value}</dd>`;
+                            }
                         }
                         return null;
-                    }).filter(Boolean).join(''); // filter(Boolean) removes nulls
+                    }).filter(Boolean).join(''); // filter(Boolean) akan menghapus nilai null
 
                     if (!detailsHtml) {
-                         detailsHtml = "<p>Tidak ada detail untuk ditampilkan.</p>";
+                        detailsHtml = "<p>Tidak ada detail untuk ditampilkan.</p>";
                     }
 
                     showNotificationModal('Detail Peminjaman', `<dl class="text-left">${detailsHtml}</dl>`, 'custom');
