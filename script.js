@@ -728,26 +728,83 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // --- FORM RENDERING LOGIC ---
+    
+    // BARU: Fungsi render khusus untuk Formulir Suket Lulus
+    function renderSuketLulusForm(allFields, layananName) {
+        let formHtml = `
+            <div class="mb-4 text-sm bg-yellow-50 border-l-4 border-yellow-400 text-yellow-800 p-4" role="alert">
+                <p class="font-bold">PERSYARATAN PENERBITAN SKL:</p>
+                <ol class="list-decimal list-inside mt-2">
+                    <li>TRANSKRIP NILAI YG TELAH DI TANDATANGANI DAN DI STEMPEL</li>
+                    <li>DAFTAR YUDICIUM MAHASISWA YG BERSANGKUTAN</li>
+                    <li>IPK HARUS SAMA ANTARA TRANSKRIP DAN DAFTAR YUDICIUM</li>
+                </ol>
+                <p class="mt-2">PERSYARATAN TERSEBUT DIAJUKAN PADA RUANG LAYANAN AKADEMIK</p>
+                <p class="mt-2 font-semibold">APABILA PERSYARATAN TERSEBUT DI ATAS TIDAK TERPENUHI, MAKA PROSES PENERBITAN SKL TIDAK DAPAT DILANJUTKAN.</p>
+            </div>
+        `;
 
-    // DIHAPUS: Fungsi ini tidak lagi diperlukan karena data prodi/fakultas sekarang disimpan secara lokal di script.
-    /*
-    async function getProdiFakultasData() {
-        if (prodiFakultasDataCache) {
-            return prodiFakultasDataCache;
-        }
-        try {
-            const response = await fetch(GAS_WEB_APP_URL + '?action=getFakultasProdiData');
-            const data = await response.json();
-            if (data.error) throw new Error(data.error);
-            prodiFakultasDataCache = data;
-            return data;
-        } catch (error) {
-            console.error("Gagal mengambil data Fakultas/Prodi:", error);
-            return null; // Mengembalikan null jika ada error
+        formHtml += `<input type="hidden" name="Pengolah" value="LA" />`; // Pengolah di-hardcode
+        formHtml += `<input type="hidden" name="Jenis Layanan" value="${layananName}" />`;
+        let fieldsHtml = '';
+
+        const prodiOptions = DATA_AKADEMIK.map(item => `<option value="${item.prodi}">${item.prodi}</option>`).join('');
+
+        allFields.forEach(field => {
+            const fieldId = `form-input-${field.replace(/\s+/g, '-')}`;
+            const fieldLower = field.toLowerCase().trim();
+            
+            // Skip "Unit Kerja Layanan" karena tidak digunakan
+            if (fieldLower === 'unit kerja layanan') return;
+
+            let isRequired = !['email', 'telepon'].includes(fieldLower);
+            let inputHtml = '';
+            let wrapperClass = 'mb-4';
+            let fieldLabel = field;
+            if (isRequired) {
+                fieldLabel += ` <span class="text-red-500">*</span>`;
+            }
+
+            switch (fieldLower) {
+                case 'prodi':
+                    inputHtml = `<select id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm">
+                                     <option value="" disabled selected>-- Pilih Prodi --</option>
+                                     ${prodiOptions}
+                                   </select>`;
+                    break;
+                case 'fakultas':
+                    inputHtml = `<input type="text" id="${fieldId}" name="${field}" readonly class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm bg-gray-100" />`;
+                    break;
+                // Field lain bisa ditambahkan kustomisasi jika perlu
+                default:
+                    inputHtml = `<input type="text" id="${fieldId}" name="${field}" ${isRequired ? 'required' : ''} class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" />`;
+                    break;
+            }
+             fieldsHtml += `
+                 <div class="${wrapperClass}">
+                     <label for="${fieldId}" class="block text-sm font-medium text-gray-700 mb-1">${fieldLabel}</label>
+                     ${inputHtml}
+                 </div>`;
+        });
+        
+        formHtml += `<div class="grid grid-cols-1 md:grid-cols-2 gap-x-4">${fieldsHtml}</div>`;
+        permohonanForm.innerHTML = formHtml;
+        
+        const prodiSelect = permohonanForm.querySelector('[name="Prodi"]');
+        const fakultasInput = permohonanForm.querySelector('[name="Fakultas"]');
+        
+        if(prodiSelect && fakultasInput) {
+            prodiSelect.addEventListener('change', function() {
+                const selectedProdi = this.value;
+                const match = DATA_AKADEMIK.find(item => item.prodi === selectedProdi);
+                if (match) {
+                    fakultasInput.value = match.fakultas;
+                }
+            });
         }
     }
-    */
-    
+
+
     // DIUBAH: Fungsi ini dioptimalkan untuk menggunakan data lokal (DATA_AKADEMIK & UNIT_KERJA_LAYANAN).
     // Tidak lagi `async` karena tidak ada proses `await`.
     function renderSuketKuliahForm(allFields, pengolah, layananName) {
@@ -1098,8 +1155,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const lowerLayananName = layananName.toLowerCase();
 
         // Router untuk menentukan fungsi render mana yang akan dipanggil
-        if (lowerLayananName.includes('suket')) {
-            // Tampilan loading tidak diperlukan karena form sekarang render secara instan
+        if (lowerLayananName.includes('suket lulus')) {
+            renderSuketLulusForm(allFields, layananName);
+        } else if (lowerLayananName.includes('suket')) {
             renderSuketKuliahForm(allFields, pengolah, layananName);
         } else if (lowerLayananName.includes('peminjaman')) {
             renderPeminjamanForm(allFields, pengolah, layananName);
