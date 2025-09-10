@@ -1,8 +1,6 @@
 // URL Web App Google Apps Script Anda
 const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbw7KS0WBFScKsVVbayfaS1jPmeHq4bodzs2az_dmGmP_73Ouy2-bWK4lnG0g9ROgfZuJw/exec';
 
-// PERUBAHAN: Menghapus PRELOADED_LAYANAN_DATA. Semua data akan diambil dari server.
-
 const DATA_AKADEMIK = [
     { prodi: 'Hukum Keluarga Islam', fakultas: 'Fakultas Syariah dan Hukum Islam' },
     { prodi: 'Hukum Tatanegara', fakultas: 'Fakultas Syariah dan Hukum Islam' },
@@ -75,11 +73,9 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentUserType = 'Umum';
     let calendarDataCache = {}; 
     
-    // PERUBAHAN: Kembali ke metode pemuatan data asli
     loadAllPublicData();
     setupEventListeners();
 
-    // PERUBAHAN: Fungsi ini dikembalikan ke versi aslinya untuk mengambil semua data saat halaman dimuat.
     function loadAllPublicData() {
         const CACHE_KEY = 'allPublicDataCache';
         const CACHE_DURATION_MS = 5 * 60 * 1000; // 5 menit
@@ -131,6 +127,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     };
                     localStorage.setItem(CACHE_KEY, JSON.stringify(itemToCache));
                     console.log("Cache localStorage diperbarui.");
+
+                    // *** PERUBAHAN DIMULAI DI SINI ***
+                    // Memulai prefetch data kalender di latar belakang setelah 1 detik
+                    // Ini memastikan UI utama sudah lancar sebelum memuat data tambahan.
+                    setTimeout(() => prefetchCalendarData(freshLayananData), 1000);
+                    // *** PERUBAHAN SELESAI DI SINI ***
+
                 } else {
                     if (!isLoadedFromCache) {
                         if (!layananSuccess) onLayananFailure(results[0].reason);
@@ -140,10 +143,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         fetch(GAS_WEB_APP_URL + '?action=recordVisit');
     }
-
-    // ... (Salin sisa kode dari file script.js Anda sebelumnya ke sini)
-    // Semua fungsi lain seperti setupEventListeners, onLayananSuccess, render functions,
-    // dll. tetap sama seperti pada file asli yang Anda berikan.
 
     function setupEventListeners() {
         if (trackingForm) trackingForm.addEventListener('submit', handleTracking);
@@ -341,7 +340,10 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         renderQuickServicesModal();
-        prefetchCalendarData(semuaLayanan);
+        // *** PERUBAHAN DIMULAI DI SINI ***
+        // Panggilan prefetch dipindahkan ke `loadAllPublicData` agar berjalan setelah semua selesai.
+        // prefetchCalendarData(semuaLayanan); 
+        // *** PERUBAHAN SELESAI DI SINI ***
     }
 
     function onLayananFailure(error) {
