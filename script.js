@@ -1,8 +1,21 @@
-// PENTING: Ganti URL di bawah ini dengan URL Web App BARU dari Google Apps Script Anda
+// URL Web App Google Apps Script Anda
 const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxP_lhf2hL1OM6l4bCsJ0jfxbCzoT37fX79iMwVQ0W8i4nVv4IkVZXlohiNmFh16gZstw/exec';
 
-// --- BARU: Data store lokal untuk informasi akademik ---
-// Ini menggantikan panggilan fetch ke Google Sheet, membuat form lebih cepat.
+// --- OPTIMASI 1: "BAKE" DATA LAYANAN LANGSUNG DI SINI ---
+// Data ini jarang berubah. Dengan meletakkannya di sini, halaman akan render instan
+// tanpa perlu menunggu fetch() ke Google Apps Script pada kunjungan pertama.
+// CARA MEMPERBARUI: Jika ada perubahan di Sheet "Layanan", salin datanya dalam format JSON ke sini.
+const PRELOADED_LAYANAN_DATA = [
+  // CONTOH DATA: Ganti dengan data asli dari Sheet "Layanan" Anda
+  { "Jenis Layanan": "Surat Keterangan Lulus", "Kategori": "Akademik", "Jenis": "Form", "Sebagai": "Umum", "Pengolah": "LA", "Sheet": "Suket Lulus", "Sheet ID": "", "Form": "Nama, NIM, Tempat Lahir, Tanggal Lahir, Jenis Kelamin, Fakultas, Prodi, Alamat, Email, Telepon", "Icon": "graduation-cap" },
+  { "Jenis Layanan": "Surat Keterangan Kuliah", "Kategori": "Akademik", "Jenis": "Form", "Sebagai": "Umum", "Pengolah": "LA", "Sheet": "Suket Kuliah", "Sheet ID": "", "Form": "Nama, NIM, Tempat Lahir, Tanggal Lahir, Jenis Kelamin, Fakultas, Prodi, Alamat, Email, Telepon, Semester, Tahun Akademik, Nama Orang Tua, NIP/NRP/Pangkat Orang Tua, Instansi Orang Tua", "Icon": "file-alt" },
+  { "Jenis Layanan": "Peminjaman", "Kategori": "Umum", "Jenis": "Kalender", "Sebagai": "Semua", "Pengolah": "RT", "Sheet": "Peminjaman", "Sheet ID": "", "Form": "Nama, Perihal, Kegiatan, Tanggal Mulai, Tanggal Selesai, Email, Telepon", "Icon": "calendar-check" },
+  { "Jenis Layanan": "Pengaduan", "Kategori": "Lainnya", "Jenis": "Form", "Sebagai": "Semua", "Pengolah": "SPI", "Sheet": "Pengaduan", "Sheet ID": "", "Form": "Nama Pelapor, Jenis Kelamin Pelapor, Email Identitas Pelapor, Telepon Identitas Pelapor, Jenis Identitas Pelapor, No Identitas Pelapor, Anonim, Rahasia, Nama Terlapor, Satuan Kerja Terlapor, Waktu Kejadian Terlapor, Tempat Kejadian Terlapor, Topik Pengaduan, Isi Laporan Pengaduan, Harapan, File, Jenis", "Icon": "bullhorn" },
+  { "Jenis Layanan": "Website IAIN Bone", "Kategori": "Lainnya", "Jenis": "Link", "Sebagai": "Semua", "Link": "https://iain-bone.ac.id", "Icon": "globe" }
+  // ... tambahkan semua layanan lainnya di sini
+];
+// --- AKHIR DARI DATA PRELOADED ---
+
 const DATA_AKADEMIK = [
     { prodi: 'Hukum Keluarga Islam', fakultas: 'Fakultas Syariah dan Hukum Islam' },
     { prodi: 'Hukum Tatanegara', fakultas: 'Fakultas Syariah dan Hukum Islam' },
@@ -36,10 +49,140 @@ const UNIT_KERJA_LAYANAN = [
     'Fakultas Ushuluddin dan Dakwah',
     'Pascasarjana'
 ];
-// --- AKHIR DARI DATA BARU ---
-
 
 document.addEventListener('DOMContentLoaded', function() {
+
+    const skeletonLoader = document.getElementById('skeleton-loader');
+    const realContent = document.getElementById('real-content');
+    const layananTabsContainer = document.getElementById('layanan-tabs-container');
+    const layananContentContainer = document.getElementById('layanan-content-container');
+    const trackingForm = document.getElementById('trackingForm');
+    const trackingResult = document.getElementById('trackingResult');
+    const trackingLayananSelect = document.getElementById('trackingLayananSelect');
+    const infoContainer = document.getElementById('infoContainer');
+    const pinnedContainer = document.getElementById('pinnedContainer');
+    const quicklinkContainer = document.getElementById('quicklinkContainer');
+    const footerLinkContainer = document.getElementById('footerLinkContainer');
+    const userTypeToggleContainer = document.getElementById('userTypeToggleContainer');
+    const formModal = document.getElementById('formModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const permohonanForm = document.getElementById('permohonanForm');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const cancelModalBtn = document.getElementById('cancelModalBtn');
+    const calendarModal = document.getElementById('calendarModal');
+    const closeCalendarModalBtn = document.getElementById('closeCalendarModalBtn');
+    const calendarEl = document.getElementById('calendar');
+    const calendarLoader = document.getElementById('calendarLoader');
+    let calendar;
+    const searchModal = document.getElementById('searchModal');
+    const closeSearchModalBtn = document.getElementById('closeSearchModalBtn');
+    const helpdeskModal = document.getElementById('helpdeskModal');
+    const closeHelpdeskModalBtn = document.getElementById('closeHelpdeskModalBtn');
+    const quickServicesModal = document.getElementById('quickServicesModal');
+    const closeQuickServicesModalBtn = document.getElementById('closeQuickServicesModalBtn');
+    const helpdeskForm = document.getElementById('helpdeskForm');
+    const mobileTrackingForm = document.getElementById('mobileTrackingForm');
+    const fabHelpdeskBtn = document.getElementById('fabHelpdeskBtn');
+
+    let semuaLayanan = [];
+    let currentUserType = 'Umum';
+    let calendarDataCache = {}; 
+    
+    initializePage();
+    setupEventListeners();
+
+    function initializePage() {
+        console.log("Memuat data layanan dari PRELOADED_LAYANAN_DATA secara instan.");
+        skeletonLoader.classList.add('hidden');
+        realContent.classList.remove('hidden');
+        onLayananSuccess(PRELOADED_LAYANAN_DATA);
+
+        loadInfoData();
+        
+        fetch(GAS_WEB_APP_URL + '?action=getPublicLayanan')
+            .then(res => res.json())
+            .then(freshLayananData => {
+                console.log("Data layanan segar telah diambil di latar belakang.");
+                semuaLayanan = freshLayananData || [];
+            })
+            .catch(err => console.error("Gagal menyegarkan data layanan di latar belakang:", err));
+
+        fetch(GAS_WEB_APP_URL + '?action=recordVisit');
+    }
+
+    function loadInfoData() {
+        const CACHE_KEY = 'infoDataCache';
+        const CACHE_DURATION_MS = 5 * 60 * 1000; // 5 menit
+
+        const cachedItemStr = localStorage.getItem(CACHE_KEY);
+        if (cachedItemStr) {
+            try {
+                const cachedItem = JSON.parse(cachedItemStr);
+                const isExpired = Date.now() - cachedItem.timestamp > CACHE_DURATION_MS;
+                if (!isExpired) {
+                    console.log("Memuat data 'Info' dari cache localStorage.");
+                    onInfoSuccess(cachedItem.data);
+                    return;
+                }
+            } catch (e) {
+                localStorage.removeItem(CACHE_KEY);
+            }
+        }
+        
+        console.log("Mengambil data 'Info' dari jaringan...");
+        fetch(GAS_WEB_APP_URL + '?action=getPublicInfo')
+            .then(res => res.json())
+            .then(infoData => {
+                onInfoSuccess(infoData);
+                const itemToCache = {
+                    data: infoData,
+                    timestamp: Date.now()
+                };
+                localStorage.setItem(CACHE_KEY, JSON.stringify(itemToCache));
+            })
+            .catch(onInfoFailure);
+    }
+
+    function setupEventListeners() {
+        if (trackingForm) trackingForm.addEventListener('submit', handleTracking);
+        if (mobileTrackingForm) mobileTrackingForm.addEventListener('submit', handleMobileTracking);
+        const modalClosers = [
+            { btn: closeModalBtn, modal: formModal }, { btn: cancelModalBtn, modal: formModal },
+            { btn: closeSearchModalBtn, modal: searchModal }, { btn: closeHelpdeskModalBtn, modal: helpdeskModal },
+            { btn: closeQuickServicesModalBtn, modal: quickServicesModal }, { btn: closeCalendarModalBtn, modal: calendarModal }
+        ];
+        modalClosers.forEach(item => {
+            if (item && item.btn) item.btn.addEventListener('click', () => item.modal.classList.add('hidden'));
+        });
+
+        if (permohonanForm) permohonanForm.addEventListener('submit', handlePermohonanSubmit);
+        if (helpdeskForm) helpdeskForm.addEventListener('submit', handleHelpdeskSubmit);
+        if (trackingResult) trackingResult.addEventListener('click', handleCloseTrackResult);
+        if (userTypeToggleContainer) userTypeToggleContainer.addEventListener('click', toggleUserType);
+        if (fabHelpdeskBtn) fabHelpdeskBtn.addEventListener('click', () => helpdeskModal.classList.remove('hidden'));
+        
+        function handleLinkClick(event) {
+            const link = event.target.closest('a');
+            if (link && link.href) {
+                const textElement = link.querySelector('p');
+                const itemName = `Klik: ${ (textElement) ? textElement.textContent.trim() : link.dataset.itemName}`;
+                if (itemName) {
+                    fetch(GAS_WEB_APP_URL + '?action=recordClick&itemName=' + encodeURIComponent(itemName));
+                }
+            }
+        }
+        [infoContainer, pinnedContainer, quicklinkContainer, footerLinkContainer].forEach(container => {
+            if (container) container.addEventListener('click', handleLinkClick);
+        });
+        const navHome = document.getElementById('navHome');
+        const navSearch = document.getElementById('navSearch');
+        const navServices = document.getElementById('navServices');
+        const navHelp = document.getElementById('navHelp');
+        if (navHome) navHome.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+        if (navSearch) navSearch.addEventListener('click', () => searchModal.classList.remove('hidden'));
+        if (navServices) navServices.addEventListener('click', () => quickServicesModal.classList.remove('hidden'));
+        if (navHelp) navHelp.addEventListener('click', () => helpdeskModal.classList.remove('hidden'));
+    }
 
     function showNotificationModal(title, message, type = 'info') {
         const modal = document.getElementById('notificationModal');
@@ -103,86 +246,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    const skeletonLoader = document.getElementById('skeleton-loader');
-    const realContent = document.getElementById('real-content');
-    const layananTabsContainer = document.getElementById('layanan-tabs-container');
-    const layananContentContainer = document.getElementById('layanan-content-container');
-    const trackingForm = document.getElementById('trackingForm');
-    const trackingResult = document.getElementById('trackingResult');
-    const trackingLayananSelect = document.getElementById('trackingLayananSelect');
-    const infoContainer = document.getElementById('infoContainer');
-    const pinnedContainer = document.getElementById('pinnedContainer');
-    const quicklinkContainer = document.getElementById('quicklinkContainer');
-    const footerLinkContainer = document.getElementById('footerLinkContainer');
-    const userTypeToggleContainer = document.getElementById('userTypeToggleContainer');
-    const formModal = document.getElementById('formModal');
-    const modalTitle = document.getElementById('modalTitle');
-    const permohonanForm = document.getElementById('permohonanForm');
-    const closeModalBtn = document.getElementById('closeModalBtn');
-    const cancelModalBtn = document.getElementById('cancelModalBtn');
-    const calendarModal = document.getElementById('calendarModal');
-    const closeCalendarModalBtn = document.getElementById('closeCalendarModalBtn');
-    const calendarEl = document.getElementById('calendar');
-    const calendarLoader = document.getElementById('calendarLoader');
-    let calendar;
-    const searchModal = document.getElementById('searchModal');
-    const closeSearchModalBtn = document.getElementById('closeSearchModalBtn');
-    const helpdeskModal = document.getElementById('helpdeskModal');
-    const closeHelpdeskModalBtn = document.getElementById('closeHelpdeskModalBtn');
-    const quickServicesModal = document.getElementById('quickServicesModal');
-    const closeQuickServicesModalBtn = document.getElementById('closeQuickServicesModalBtn');
-    const helpdeskForm = document.getElementById('helpdeskForm');
-    const mobileTrackingForm = document.getElementById('mobileTrackingForm');
-    const fabHelpdeskBtn = document.getElementById('fabHelpdeskBtn');
-
-    let semuaLayanan = [];
-    let currentUserType = 'Umum';
-    let calendarDataCache = {}; // Cache global untuk data kalender
-    
-    loadAllPublicData();
-    setupEventListeners();
-
-    function setupEventListeners() {
-        if (trackingForm) trackingForm.addEventListener('submit', handleTracking);
-        if (mobileTrackingForm) mobileTrackingForm.addEventListener('submit', handleMobileTracking);
-        const modalClosers = [
-            { btn: closeModalBtn, modal: formModal }, { btn: cancelModalBtn, modal: formModal },
-            { btn: closeSearchModalBtn, modal: searchModal }, { btn: closeHelpdeskModalBtn, modal: helpdeskModal },
-            { btn: closeQuickServicesModalBtn, modal: quickServicesModal }, { btn: closeCalendarModalBtn, modal: calendarModal }
-        ];
-        modalClosers.forEach(item => {
-            if (item && item.btn) item.btn.addEventListener('click', () => item.modal.classList.add('hidden'));
-        });
-
-        if (permohonanForm) permohonanForm.addEventListener('submit', handlePermohonanSubmit);
-        if (helpdeskForm) helpdeskForm.addEventListener('submit', handleHelpdeskSubmit);
-        if (trackingResult) trackingResult.addEventListener('click', handleCloseTrackResult);
-        if (userTypeToggleContainer) userTypeToggleContainer.addEventListener('click', toggleUserType);
-        if (fabHelpdeskBtn) fabHelpdeskBtn.addEventListener('click', () => helpdeskModal.classList.remove('hidden'));
-        
-        function handleLinkClick(event) {
-            const link = event.target.closest('a');
-            if (link && link.href) {
-                const textElement = link.querySelector('p');
-                const itemName = `Klik: ${ (textElement) ? textElement.textContent.trim() : link.dataset.itemName}`;
-                if (itemName) {
-                    fetch(GAS_WEB_APP_URL + '?action=recordClick&itemName=' + encodeURIComponent(itemName));
-                }
-            }
-        }
-        [infoContainer, pinnedContainer, quicklinkContainer, footerLinkContainer].forEach(container => {
-            if (container) container.addEventListener('click', handleLinkClick);
-        });
-        const navHome = document.getElementById('navHome');
-        const navSearch = document.getElementById('navSearch');
-        const navServices = document.getElementById('navServices');
-        const navHelp = document.getElementById('navHelp');
-        if (navHome) navHome.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-        if (navSearch) navSearch.addEventListener('click', () => searchModal.classList.remove('hidden'));
-        if (navServices) navServices.addEventListener('click', () => quickServicesModal.classList.remove('hidden'));
-        if (navHelp) navHelp.addEventListener('click', () => helpdeskModal.classList.remove('hidden'));
-    }
-
     function handleCloseTrackResult(e) {
         if (e.target.closest('.js-close-track-result')) {
             trackingResult.innerHTML = '';
@@ -211,67 +274,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         });
-    }
-
-    function loadAllPublicData() {
-        const CACHE_KEY = 'allPublicDataCache';
-        const CACHE_DURATION_MS = 5 * 60 * 1000; // 5 menit
-
-        const cachedItemStr = localStorage.getItem(CACHE_KEY);
-        let isLoadedFromCache = false;
-        if (cachedItemStr) {
-            try {
-                const cachedItem = JSON.parse(cachedItemStr);
-                const isExpired = Date.now() - cachedItem.timestamp > CACHE_DURATION_MS;
-                if (!isExpired) {
-                    console.log("Memuat data dari cache...");
-                    skeletonLoader.classList.add('hidden');
-                    realContent.classList.remove('hidden');
-                    onLayananSuccess(cachedItem.data.layanan || []);
-                    onInfoSuccess(cachedItem.data.info || []);
-                    isLoadedFromCache = true;
-                }
-            } catch (e) {
-                localStorage.removeItem(CACHE_KEY);
-            }
-        }
-
-        console.log("Mengambil data baru dari jaringan...");
-        const layananPromise = fetch(GAS_WEB_APP_URL + '?action=getPublicLayanan').then(res => res.json());
-        const infoPromise = fetch(GAS_WEB_APP_URL + '?action=getPublicInfo').then(res => res.json());
-
-        Promise.allSettled([layananPromise, infoPromise])
-            .then((results) => {
-                const layananSuccess = results[0].status === 'fulfilled';
-                const infoSuccess = results[1].status === 'fulfilled';
-
-                if (layananSuccess && infoSuccess) {
-                    const freshLayananData = results[0].value || [];
-                    const freshInfoData = results[1].value || [];
-
-                    if (!isLoadedFromCache) {
-                        skeletonLoader.classList.add('hidden');
-                        realContent.classList.remove('hidden');
-                    }
-                    onLayananSuccess(freshLayananData);
-                    onInfoSuccess(freshInfoData);
-                    const itemToCache = {
-                        data: {
-                            layanan: freshLayananData,
-                            info: freshInfoData
-                        },
-                        timestamp: Date.now()
-                    };
-                    localStorage.setItem(CACHE_KEY, JSON.stringify(itemToCache));
-                    console.log("Cache diperbarui.");
-                } else {
-                    if (!isLoadedFromCache) {
-                        if (!layananSuccess) onLayananFailure(results[0].reason);
-                        if (!infoSuccess) onInfoFailure(results[1].reason);
-                    }
-                }
-            });
-        fetch(GAS_WEB_APP_URL + '?action=recordVisit');
     }
 
     function getValueCaseInsensitive(object, key) {
@@ -709,9 +711,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // --- FORM RENDERING LOGIC ---
-    
-    // BARU: Fungsi render khusus untuk Formulir Suket Lulus
     function renderSuketLulusForm(allFields, layananName) {
         let formHtml = `
             <div class="mb-4 text-sm bg-yellow-50 border-l-4 border-yellow-400 text-yellow-800 p-4" role="alert">
@@ -726,7 +725,7 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         `;
 
-        formHtml += `<input type="hidden" name="Pengolah" value="LA" />`; // Pengolah di-hardcode
+        formHtml += `<input type="hidden" name="Pengolah" value="LA" />`;
         formHtml += `<input type="hidden" name="Jenis Layanan" value="${layananName}" />`;
         let fieldsHtml = '';
 
@@ -736,7 +735,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const fieldId = `form-input-${field.replace(/\s+/g, '-')}`;
             const fieldLower = field.toLowerCase().trim();
             
-            // Skip "Unit Kerja Layanan" karena tidak digunakan
             if (fieldLower === 'unit kerja layanan') return;
 
             let isRequired = !['email', 'telepon'].includes(fieldLower);
@@ -777,19 +775,17 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <p class="text-xs text-gray-500 mt-1">DIISI SESUAI DENGAN ALAMAT PADA KTP</p>`;
                     wrapperClass += ' md:col-span-2';
                     break;
-                // Field lain bisa ditambahkan kustomisasi jika perlu
                 default:
                     inputHtml = `<input type="text" id="${fieldId}" name="${field}" ${isRequired ? 'required' : ''} class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" />`;
                     break;
             }
-             fieldsHtml += `
+                fieldsHtml += `
                 <div class="${wrapperClass}">
                     <label for="${fieldId}" class="block text-sm font-medium text-gray-700 mb-1">${fieldLabel}</label>
                     ${inputHtml}
                 </div>`;
         });
         
-        // Menambahkan field kustom sesuai permintaan
         fieldsHtml += `
             <div class="mb-4">
                 <label for="form-input-Tanggal-Yudisium-Lulus" class="block text-sm font-medium text-gray-700 mb-1">Tanggal Yudisium Lulus <span class="text-red-500">*</span></label>
@@ -829,16 +825,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-
-    // DIUBAH: Fungsi ini dioptimalkan untuk menggunakan data lokal (DATA_AKADEMIK & UNIT_KERJA_LAYANAN).
-    // Tidak lagi `async` karena tidak ada proses `await`.
     function renderSuketKuliahForm(allFields, pengolah, layananName) {
         
         let formHtml = `<input type="hidden" name="Pengolah" value="${pengolah}" />`;
         formHtml += `<input type="hidden" name="Jenis Layanan" value="${layananName}" />`;
         let fieldsHtml = '';
 
-        // Opsi untuk dropdown "Unit Kerja Layanan" diambil dari konstanta
         const unitKerjaOptions = UNIT_KERJA_LAYANAN.map(unit => `<option value="${unit}">${unit}</option>`).join('');
 
         fieldsHtml += `
@@ -891,13 +883,11 @@ document.addEventListener('DOMContentLoaded', function() {
                                 </select>`;
                     break;
                 case 'prodi':
-                    // Opsi prodi akan diisi oleh event listener, awalnya kosong
                     inputHtml = `<select id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm">
                                     <option value="" disabled selected>-- Pilih Unit Kerja dulu --</option>
                                 </select>`;
                     break;
                 case 'fakultas':
-                    // Fakultas akan diisi otomatis dan dibuat readonly
                     inputHtml = `<input type="text" id="${fieldId}" name="${field}" readonly class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm bg-gray-100" />`;
                     break;
                 case 'tahun akademik':
@@ -912,7 +902,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     inputHtml = `<input type="text" id="${fieldId}" name="${field}" ${isRequired ? 'required' : ''} class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" />`;
                     break;
             }
-              fieldsHtml += `
+                fieldsHtml += `
                 <div class="${wrapperClass}" ${fieldLower.includes('orang tua') ? 'data-group="orang-tua" style="display:none;"' : ''}>
                     <label for="${fieldId}" class="block text-sm font-medium text-gray-700 mb-1">${fieldLabel}</label>
                     ${inputHtml}
@@ -922,7 +912,6 @@ document.addEventListener('DOMContentLoaded', function() {
         formHtml += `<div class="grid grid-cols-1 md:grid-cols-2 gap-x-4">${fieldsHtml}</div>`;
         permohonanForm.innerHTML = formHtml;
         
-        // --- Event Listeners untuk form Suket Kuliah (LOGIKA BARU) ---
         const unitKerjaSelect = permohonanForm.querySelector('#unit-kerja-layanan');
         const prodiSelect = permohonanForm.querySelector('[name="Prodi"]');
         const fakultasInput = permohonanForm.querySelector('[name="Fakultas"]');
@@ -931,7 +920,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const selectedUnit = this.value;
             const isRektorat = selectedUnit === 'Rektorat';
 
-            // 1. Logika untuk menampilkan field Orang Tua
             const orangTuaFields = permohonanForm.querySelectorAll('[data-group="orang-tua"]');
             orangTuaFields.forEach(field => {
                 field.style.display = isRektorat ? 'block' : 'none';
@@ -941,9 +929,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
 
-            // 2. Logika untuk memfilter prodi berdasarkan unit kerja
-            prodiSelect.innerHTML = '<option value="" disabled selected>-- Pilih Prodi --</option>'; // Reset prodi
-            fakultasInput.value = ''; // Reset fakultas
+            prodiSelect.innerHTML = '<option value="" disabled selected>-- Pilih Prodi --</option>';
+            fakultasInput.value = '';
 
             if (selectedUnit && !isRektorat) {
                 const filteredProdis = DATA_AKADEMIK.filter(item => item.fakultas === selectedUnit);
@@ -952,8 +939,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
                 prodiSelect.disabled = false;
             } else {
-                 prodiSelect.innerHTML = '<option value="" disabled selected>-- Tidak ada prodi --</option>';
-                 prodiSelect.disabled = true;
+                    prodiSelect.innerHTML = '<option value="" disabled selected>-- Tidak ada prodi --</option>';
+                    prodiSelect.disabled = true;
             }
         });
 
@@ -965,18 +952,13 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         
-        // Trigger sekali untuk set state awal
         unitKerjaSelect.dispatchEvent(new Event('change'));
     }
 
-    /**
-     * BARU: Fungsi terpisah untuk merender form Peminjaman
-     */
     function renderPeminjamanForm(allFields, pengolah, layananName) {
         let formHtml = `<input type="hidden" name="Pengolah" value="${pengolah}" />`;
         let fieldsContainerHtml = '';
 
-        // Mengembalikan dropdown Unit Kerja Layanan
         const unitKerjaOptions = ['Rektorat', 'Fakultas Syariah dan Hukum Islam', 'Fakultas Tarbiyah', 'Fakultas Ekonomi dan Bisnis Islam', 'Fakultas Ushuluddin dan Dakwah', 'Pascasarjana'];
         let unitKerjaOptHtml = unitKerjaOptions.map(opt => `<option value="${opt}">${opt}</option>`).join('');
         fieldsContainerHtml += `
@@ -989,7 +971,6 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         `;
 
-        // Mengembalikan dropdown Jenis Layanan
         fieldsContainerHtml += `
             <div class="mb-4 md:col-span-2">
                 <label for="jenis-layanan-peminjaman" class="block text-sm font-medium text-gray-700 mb-1">Jenis Layanan</label>
@@ -1030,7 +1011,6 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
         });
         
-        // Menambahkan kolom Waktu dan Jenis secara manual
         fieldsContainerHtml += `
             <div class="mb-4">
                 <label for="form-input-waktu" class="block text-sm font-medium text-gray-700 mb-1">Waktu</label>
@@ -1048,7 +1028,6 @@ document.addEventListener('DOMContentLoaded', function() {
         formHtml += `<div class="grid grid-cols-1 md:grid-cols-2 gap-x-4">${fieldsContainerHtml}</div>`
         permohonanForm.innerHTML = formHtml;
 
-        // Menambahkan event listener untuk menampilkan/menyembunyikan kolom Jenis
         const jenisLayananSelect = permohonanForm.querySelector('#jenis-layanan-peminjaman');
         const jenisBarangContainer = permohonanForm.querySelector('#jenis-barang-container');
         const jenisBarangInput = permohonanForm.querySelector('#form-input-jenis');
@@ -1061,15 +1040,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else {
                     jenisBarangContainer.style.display = 'none';
                     jenisBarangInput.required = false;
-                    jenisBarangInput.value = ''; // Mengosongkan nilai saat disembunyikan
+                    jenisBarangInput.value = '';
                 }
             });
         }
     }
     
-    /**
-     * BARU: Fungsi terpisah untuk merender form Pengaduan
-     */
     function renderPengaduanForm(allFields, pengolah, layananName) {
         let formHtml = `<input type="hidden" name="Pengolah" value="${pengolah}" />`;
         formHtml += `<input type="hidden" name="Jenis Layanan" value="${layananName}" />`;
@@ -1174,10 +1150,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-
-    /**
-     * Fungsi untuk form generik/umum
-     */
     function renderGenericForm(allFields, pengolah, layananName) {
         let formHtml = `<input type="hidden" name="Pengolah" value="${pengolah}" />`;
         formHtml += `<input type="hidden" name="Jenis Layanan" value="${layananName}" />`;
@@ -1197,10 +1169,6 @@ document.addEventListener('DOMContentLoaded', function() {
         permohonanForm.innerHTML = formHtml;
     }
 
-
-    /**
-     * DIPERBARUI: Fungsi ini sekarang menjadi router untuk memanggil render function yang sesuai
-     */
     function openFormModal(event) {
         const card = event.currentTarget;
         const { formFields, layananName, pengolah, sheet, sheetId } = card.dataset;
@@ -1212,7 +1180,6 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const lowerLayananName = layananName.toLowerCase();
 
-        // Router untuk menentukan fungsi render mana yang akan dipanggil
         if (lowerLayananName.includes('suket lulus')) {
             renderSuketLulusForm(allFields, layananName);
         } else if (lowerLayananName.includes('suket')) {
@@ -1222,7 +1189,6 @@ document.addEventListener('DOMContentLoaded', function() {
         } else if (lowerLayananName.includes('pengaduan')) {
             renderPengaduanForm(allFields, pengolah, layananName);
         } else {
-            // Fallback untuk form lain yang tidak memiliki perlakuan khusus
             renderGenericForm(allFields, pengolah, layananName);
         }
     
@@ -1344,7 +1310,6 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('submitPermohonanBtn').disabled = false;
     }
 
-    // UPDATED: Function to handle calendar logic
     function openCalendarModal(event) {
         const { sheet, sheetId } = event.currentTarget.dataset;
         if (!sheet) {
@@ -1360,7 +1325,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const processEvents = (events) => {
                 const validEvents = Array.isArray(events) ? events : [];
                 
-                // Populate filter dropdown if not already populated
                 if (calendarFilter.options.length <= 1) {
                     const pengolahSet = new Set(validEvents.map(e => getValueCaseInsensitive(e.extendedProps, 'pengolah')).filter(Boolean));
                     pengolahSet.forEach(pengolah => {
@@ -1369,7 +1333,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                 }
                 
-                // Filter events based on dropdown
                 const selectedPengolah = calendarFilter.value;
                 const filteredEvents = (selectedPengolah === 'all') 
                     ? validEvents 
@@ -1425,11 +1388,9 @@ document.addEventListener('DOMContentLoaded', function() {
                                 value = getValueCaseInsensitive(props, field); // Fallback
                             }
                         } else if (fieldLower === 'tanggal selesai') {
-                            // FullCalendar's `end` date for all-day events is exclusive.
-                            // We need to subtract one day to get the actual inclusive end date.
                             const endDate = info.event.end;
                             if (endDate) {
-                                const correctedEndDate = new Date(endDate.getTime()); // Create a copy
+                                const correctedEndDate = new Date(endDate.getTime());
                                 correctedEndDate.setDate(correctedEndDate.getDate() - 1);
 
                                 const day = String(correctedEndDate.getDate()).padStart(2, '0');
@@ -1464,7 +1425,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             calendar.render();
 
-            // Add event listener for the filter
             calendarFilter.addEventListener('change', () => {
                 calendar.refetchEvents();
             });
@@ -1532,19 +1492,14 @@ document.addEventListener('DOMContentLoaded', function() {
             let detailsHtml = Object.entries(result)
                 .filter(([key, value]) => !['idpermohonan', 'idlayanan', 'status'].includes(key.toLowerCase()) && value)
                 .map(([key, value]) => {
-                    // Logika spesifik untuk 'File'
                     if (key.toLowerCase().trim() === 'file') {
-                        // Periksa apakah value adalah string dan link yang valid
                         if (typeof value === 'string' && value.startsWith('http')) {
-                            // Jika ya, buat tombol
                             return `<div class="flex flex-col sm:col-span-2"><dt class="text-sm font-medium text-gray-500">${key}</dt><dd class="text-sm mt-1"><a href="${value}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-4 py-2 bg-brand-green text-white text-sm font-medium rounded-lg hover:opacity-90 transition-opacity shadow-sm"><i class="fas fa-download mr-2"></i>Download File</a></dd></div>`;
                         } else {
-                            // Jika 'File' ada tapi bukan link, jangan tampilkan apa-apa
                             return ''; 
                         }
                     }
                     
-                    // Render field lainnya seperti biasa
                     return `<div class="flex flex-col"><dt class="text-sm font-medium text-gray-500">${key}</dt><dd class="text-sm">${value}</dd></div>`;
                 })
                 .join('');
@@ -1583,3 +1538,4 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
+
