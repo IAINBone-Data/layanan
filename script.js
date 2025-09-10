@@ -1,5 +1,5 @@
 // PENTING: Ganti URL di bawah ini dengan URL Web App BARU dari Google Apps Script Anda
-const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzDTu-BtFYAAeIDOeQa-gPUNY2iUOHJjhEj94h3vDfRlB1ETII6dO-Vi4_UFo81aY9Ueg/exec';
+const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxKyU54SJf4wZqQkS3tt-oA8FWG82GN-rPADOe_-7P2d3JAfugKMqpXdKIJLa4-yaSD/exec';
 
 // --- BARU: Data store lokal untuk informasi akademik ---
 // Ini menggantikan panggilan fetch ke Google Sheet, membuat form lebih cepat.
@@ -768,26 +768,26 @@ document.addEventListener('DOMContentLoaded', function() {
             switch (fieldLower) {
                 case 'prodi':
                     inputHtml = `<select id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm">
-                                        <option value="" disabled selected>-- Pilih Prodi --</option>
-                                        ${prodiOptions}
-                                    </select>`;
+                                    <option value="" disabled selected>-- Pilih Prodi --</option>
+                                    ${prodiOptions}
+                                </select>`;
                     break;
                 case 'fakultas':
                     inputHtml = `<input type="text" id="${fieldId}" name="${field}" readonly class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm bg-gray-100" />`;
                     break;
                 case 'jenis kelamin':
                     inputHtml = `<select id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm">
-                                        <option value="" disabled selected>-- Pilih --</option>
-                                        <option value="Laki-laki">Laki-laki</option>
-                                        <option value="Perempuan">Perempuan</option>
-                                    </select>`;
+                                    <option value="" disabled selected>-- Pilih --</option>
+                                    <option value="Laki-laki">Laki-laki</option>
+                                    <option value="Perempuan">Perempuan</option>
+                                </select>`;
                     break;
-                 case 'tempat lahir':
+                case 'tempat lahir':
                     inputHtml = `<input type="text" id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" />
                                 <p class="text-xs text-gray-500 mt-1">DIISI SESUAI TEMPAT LAHIR. CONTOH: Watampone, Bone, Kel. Macege, dll</p>`;
                     break;
                 case 'tanggal lahir':
-                     inputHtml = `<input type="text" id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" placeholder="Contoh: 20 September 2000" />
+                    inputHtml = `<input type="text" id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" placeholder="Contoh: 20 September 2000" />
                                 <p class="text-xs text-gray-500 mt-1">DIISI SESUAI TANGGAL LAHIR. CONTOH: 20 September 2000, 1 Oktober 1999, dll</p>`;
                     break;
                 case 'alamat':
@@ -887,7 +887,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <p class="text-xs text-gray-500 mt-1">DIISI SESUAI TEMPAT LAHIR. CONTOH: Watampone, Bone, Kel. Macege, dll</p>`;
                     break;
                 case 'tanggal lahir':
-                     inputHtml = `<input type="text" id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" placeholder="Contoh: 20 September 2000" />
+                    inputHtml = `<input type="text" id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" placeholder="Contoh: 20 September 2000" />
                                 <p class="text-xs text-gray-500 mt-1">DIISI SESUAI TANGGAL LAHIR. CONTOH: 20 September 2000, 1 Oktober 1999, dll</p>`;
                     break;
                 case 'alamat':
@@ -898,21 +898,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 case 'semester':
                     const semesterOptions = ['I (Satu)', 'II (Dua)', 'III (Tiga)', 'IV (Empat)', 'V (Lima)', 'VI (Enam)', 'VII (Tujuh)', 'VIII (Delapan)', 'IX (Sembilan)', 'X (Sepuluh)', 'XI (Sebelas)', 'XII (Dua Belas)', 'XIII (Tiga Belas)', 'XIV (Empat Belas)'];
                     inputHtml = `<select id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm">
-                                        <option value="" disabled selected>-- Pilih --</option>
-                                        ${semesterOptions.map(o => `<option value="${o}">${o}</option>`).join('')}
-                                    </select>`;
+                                    <option value="" disabled selected>-- Pilih --</option>
+                                    ${semesterOptions.map(o => `<option value="${o}">${o}</option>`).join('')}
+                                </select>`;
                     break;
                 case 'jenis kelamin':
                     inputHtml = `<select id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm">
-                                        <option value="" disabled selected>-- Pilih --</option>
-                                        <option>Laki-laki</option><option>Perempuan</option>
-                                    </select>`;
+                                    <option value="" disabled selected>-- Pilih --</option>
+                                    <option>Laki-laki</option><option>Perempuan</option>
+                                </select>`;
                     break;
                 case 'prodi':
                     // Opsi prodi akan diisi oleh event listener, awalnya kosong
                     inputHtml = `<select id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm">
-                                        <option value="" disabled selected>-- Pilih Unit Kerja dulu --</option>
-                                    </select>`;
+                                    <option value="" disabled selected>-- Pilih Unit Kerja dulu --</option>
+                                </select>`;
                     break;
                 case 'fakultas':
                     // Fakultas akan diisi otomatis dan dibuat readonly
@@ -923,14 +923,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     const years = [`${currentYear - 2}/${currentYear - 1}`, `${currentYear - 1}/${currentYear}`, `${currentYear}/${currentYear + 1}`];
                     const yearOptions = years.map(y => `<option value="${y}" ${ (new Date().getMonth() > 6 ? years[2] : years[1]) === y ? 'selected' : ''}>${y}</option>`).join('');
                     inputHtml = `<select id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm">
-                                        ${yearOptions}
-                                    </select>`;
+                                    ${yearOptions}
+                                </select>`;
                     break;
                 default:
                     inputHtml = `<input type="text" id="${fieldId}" name="${field}" ${isRequired ? 'required' : ''} class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" />`;
                     break;
             }
-             fieldsHtml += `
+              fieldsHtml += `
                 <div class="${wrapperClass}" ${fieldLower.includes('orang tua') ? 'data-group="orang-tua" style="display:none;"' : ''}>
                     <label for="${fieldId}" class="block text-sm font-medium text-gray-700 mb-1">${fieldLabel}</label>
                     ${inputHtml}
@@ -1362,6 +1362,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('submitPermohonanBtn').disabled = false;
     }
 
+    // UPDATED: Function to handle calendar logic
     function openCalendarModal(event) {
         const { sheet, sheetId } = event.currentTarget.dataset;
         if (!sheet) {
@@ -1371,20 +1372,42 @@ document.addEventListener('DOMContentLoaded', function() {
         calendarModal.classList.remove('hidden');
         const isMobile = window.innerWidth < 768;
         const cacheKey = `${sheet}-${sheetId}`;
+        const calendarFilter = document.getElementById('calendarFilter');
 
         const eventSource = (fetchInfo, successCallback, failureCallback) => {
+            const processEvents = (events) => {
+                const validEvents = Array.isArray(events) ? events : [];
+                
+                // Populate filter dropdown if not already populated
+                if (calendarFilter.options.length <= 1) {
+                    const pengolahSet = new Set(validEvents.map(e => getValueCaseInsensitive(e.extendedProps, 'pengolah')).filter(Boolean));
+                    pengolahSet.forEach(pengolah => {
+                        const option = new Option(pengolah, pengolah);
+                        calendarFilter.add(option);
+                    });
+                }
+                
+                // Filter events based on dropdown
+                const selectedPengolah = calendarFilter.value;
+                const filteredEvents = (selectedPengolah === 'all') 
+                    ? validEvents 
+                    : validEvents.filter(e => getValueCaseInsensitive(e.extendedProps, 'pengolah') === selectedPengolah);
+                
+                successCallback(filteredEvents);
+            };
+
             if (calendarDataCache[cacheKey]) {
                 console.log(`Memuat event kalender dari cache untuk: ${sheet}`);
-                successCallback(calendarDataCache[cacheKey]);
+                processEvents(calendarDataCache[cacheKey]);
                 return;
             }
+            
             console.log(`Mengambil event kalender dari jaringan untuk: ${sheet}`);
             fetch(`${GAS_WEB_APP_URL}?action=getCalendarEvents&sheetName=${encodeURIComponent(sheet)}&sheetId=${encodeURIComponent(sheetId)}`)
                 .then(res => res.json())
                 .then(events => {
-                    const validEvents = Array.isArray(events) ? events : [];
-                    calendarDataCache[cacheKey] = validEvents;
-                    successCallback(validEvents);
+                    calendarDataCache[cacheKey] = events;
+                    processEvents(events);
                 })
                 .catch(failureCallback);
         };
@@ -1394,26 +1417,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 locale: 'id',
                 initialView: isMobile ? 'listWeek' : 'dayGridMonth',
                 headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,listWeek' },
+                titleFormat: { month: 'short', year: 'numeric' }, // UPDATED: Abbreviated month
                 noEventsContent: 'Tidak ada jadwal peminjaman pada periode ini.',
                 events: eventSource,
                 height: '100%',
                 eventClick: (info) => {
                     const props = info.event.extendedProps;
                     const fieldsInOrder = [
-                        'Nama',
-                        'Jenis Layanan',
-                        'Perihal',
-                        'Kegiatan',
-                        'Pengolah',
-                        'Jenis',
-                        'Tanggal Mulai',
-                        'Tanggal Selesai'
+                        'Nama', 'Jenis Layanan', 'Perihal', 'Kegiatan', 
+                        'Pengolah', 'Jenis', 'Tanggal Mulai', 'Tanggal Selesai'
                     ];
 
                     let detailsHtml = fieldsInOrder.map(field => {
                         const value = getValueCaseInsensitive(props, field);
-                        if (value) { // Hanya tampilkan jika ada nilainya
-                            // Cek apakah field saat ini adalah 'Pengolah' untuk menambahkan highlight
+                        if (value) {
                             if (field.toLowerCase().trim() === 'pengolah') {
                                 return `<dt class="font-semibold">${field}</dt><dd class="mb-2 bg-yellow-100 text-yellow-800 font-bold p-1 rounded">${value}</dd>`;
                             } else {
@@ -1421,7 +1438,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             }
                         }
                         return null;
-                    }).filter(Boolean).join(''); // filter(Boolean) akan menghapus nilai null
+                    }).filter(Boolean).join('');
 
                     if (!detailsHtml) {
                         detailsHtml = "<p>Tidak ada detail untuk ditampilkan.</p>";
@@ -1433,9 +1450,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 loading: (isLoading) => calendarLoader.style.display = isLoading ? 'flex' : 'none',
             });
             calendar.render();
+
+            // Add event listener for the filter
+            calendarFilter.addEventListener('change', () => {
+                calendar.refetchEvents();
+            });
+
         } else {
-            calendar.getEventSources().forEach(source => source.remove());
-            calendar.addEventSource(eventSource);
             calendar.refetchEvents();
         }
     }
@@ -1549,4 +1570,3 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
-
