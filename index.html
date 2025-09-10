@@ -148,6 +148,13 @@
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl h-[90vh] flex flex-col">
             <header class="p-4 border-b flex justify-between items-center flex-shrink-0">
                 <h2 class="text-xl font-bold text-brand-green">Kalender Peminjaman</h2>
+                <!-- UPDATED: Added dropdown filter for calendar -->
+                <div class="flex items-center gap-2 ml-auto mr-4">
+                    <label for="calendarFilter" class="text-sm font-medium text-gray-600 hidden sm:block">Unit:</label>
+                    <select id="calendarFilter" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-800 focus:border-green-800 block w-full p-1.5">
+                        <option selected value="all">Semua</option>
+                    </select>
+                </div>
                 <button class="text-gray-500 hover:text-gray-800 text-2xl" id="closeCalendarModalBtn">&#215;</button>
             </header>
             <main class="p-4 overflow-hidden flex-grow relative">
@@ -223,3 +230,4 @@
 <script src="script.js"></script>
 </body>
 </html>
+
