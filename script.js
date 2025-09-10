@@ -40,6 +40,8 @@ const UNIT_KERJA_LAYANAN = [
 
 
 document.addEventListener('DOMContentLoaded', function() {
+    
+    const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
 
     function showNotificationModal(title, message, type = 'info') {
         const modal = document.getElementById('notificationModal');
@@ -1344,7 +1346,6 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('submitPermohonanBtn').disabled = false;
     }
 
-    // UPDATED: Function to handle calendar logic
     function openCalendarModal(event) {
         const { sheet, sheetId } = event.currentTarget.dataset;
         if (!sheet) {
@@ -1360,7 +1361,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const processEvents = (events) => {
                 const validEvents = Array.isArray(events) ? events : [];
                 
-                // Populate filter dropdown if not already populated
                 if (calendarFilter.options.length <= 1) {
                     const pengolahSet = new Set(validEvents.map(e => getValueCaseInsensitive(e.extendedProps, 'pengolah')).filter(Boolean));
                     pengolahSet.forEach(pengolah => {
@@ -1369,7 +1369,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                 }
                 
-                // Filter events based on dropdown
                 const selectedPengolah = calendarFilter.value;
                 const filteredEvents = (selectedPengolah === 'all') 
                     ? validEvents 
@@ -1406,7 +1405,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 eventClick: (info) => {
                     const props = info.event.extendedProps;
                     const fieldsInOrder = [
-                        'Nama', 'Jenis Layanan', 'Perihal', 'Kegiatan',
+                        'Nama', 'Jenis Layanan', 'Perihal', 'Kegiatan', 
                         'Pengolah', 'Jenis', 'Tanggal Mulai', 'Tanggal Selesai'
                     ];
 
@@ -1414,35 +1413,21 @@ document.addEventListener('DOMContentLoaded', function() {
                         let value;
                         const fieldLower = field.toLowerCase().trim();
 
-                        if (fieldLower === 'tanggal mulai') {
-                            const startDate = info.event.start;
-                            if (startDate) {
-                                const day = String(startDate.getDate()).padStart(2, '0');
-                                const month = String(startDate.getMonth() + 1).padStart(2, '0');
-                                const year = startDate.getFullYear();
-                                value = `${day}/${month}/${year}`;
-                            } else {
-                                value = getValueCaseInsensitive(props, field); // Fallback
-                            }
-                        } else if (fieldLower === 'tanggal selesai') {
-                            // FullCalendar's `end` date for all-day events is exclusive.
-                            // We need to subtract one day to get the actual inclusive end date.
-                            const endDate = info.event.end;
-                            if (endDate) {
-                                const correctedEndDate = new Date(endDate.getTime()); // Create a copy
-                                correctedEndDate.setDate(correctedEndDate.getDate() - 1);
+                        // Always try to get the original value from the sheet data first
+                        value = getValueCaseInsensitive(props, field);
 
-                                const day = String(correctedEndDate.getDate()).padStart(2, '0');
-                                const month = String(correctedEndDate.getMonth() + 1).padStart(2, '0');
-                                const year = correctedEndDate.getFullYear();
-                                value = `${day}/${month}/${year}`;
-                            } else {
-                                value = getValueCaseInsensitive(props, field); // Fallback
-                            }
-                        } else {
-                            value = getValueCaseInsensitive(props, field);
+                        // Special handling and fallbacks for dates if original data is not found
+                        if (fieldLower === 'tanggal mulai' && !value && info.event.start) {
+                            const startDate = info.event.start;
+                            value = `${startDate.getDate()} ${monthNames[startDate.getMonth()]} ${startDate.getFullYear()}`;
+                        } else if (fieldLower === 'tanggal selesai' && !value && info.event.end) {
+                            const endDate = info.event.end;
+                            const correctedEndDate = new Date(endDate.getTime());
+                            correctedEndDate.setDate(correctedEndDate.getDate() - 1);
+                            value = `${correctedEndDate.getDate()} ${monthNames[correctedEndDate.getMonth()]} ${correctedEndDate.getFullYear()}`;
                         }
 
+                        // HTML generation
                         if (value) {
                             if (field.toLowerCase().trim() === 'pengolah') {
                                 return `<dt class="font-semibold">${field}</dt><dd class="mb-2 bg-yellow-100 text-yellow-800 font-bold p-1 rounded">${value}</dd>`;
@@ -1464,7 +1449,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             calendar.render();
 
-            // Add event listener for the filter
             calendarFilter.addEventListener('change', () => {
                 calendar.refetchEvents();
             });
@@ -1532,19 +1516,14 @@ document.addEventListener('DOMContentLoaded', function() {
             let detailsHtml = Object.entries(result)
                 .filter(([key, value]) => !['idpermohonan', 'idlayanan', 'status'].includes(key.toLowerCase()) && value)
                 .map(([key, value]) => {
-                    // Logika spesifik untuk 'File'
                     if (key.toLowerCase().trim() === 'file') {
-                        // Periksa apakah value adalah string dan link yang valid
                         if (typeof value === 'string' && value.startsWith('http')) {
-                            // Jika ya, buat tombol
                             return `<div class="flex flex-col sm:col-span-2"><dt class="text-sm font-medium text-gray-500">${key}</dt><dd class="text-sm mt-1"><a href="${value}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-4 py-2 bg-brand-green text-white text-sm font-medium rounded-lg hover:opacity-90 transition-opacity shadow-sm"><i class="fas fa-download mr-2"></i>Download File</a></dd></div>`;
                         } else {
-                            // Jika 'File' ada tapi bukan link, jangan tampilkan apa-apa
                             return ''; 
                         }
                     }
                     
-                    // Render field lainnya seperti biasa
                     return `<div class="flex flex-col"><dt class="text-sm font-medium text-gray-500">${key}</dt><dd class="text-sm">${value}</dd></div>`;
                 })
                 .join('');
