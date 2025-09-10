@@ -1361,6 +1361,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const processEvents = (events) => {
                 const validEvents = Array.isArray(events) ? events : [];
                 
+                // DEBUGGING: Log the first event to check its structure
+                if (validEvents.length > 0) {
+                    console.log("First event props:", validEvents[0].extendedProps);
+                }
+
                 if (calendarFilter.options.length <= 1) {
                     const pengolahSet = new Set(validEvents.map(e => getValueCaseInsensitive(e.extendedProps, 'pengolah')).filter(Boolean));
                     pengolahSet.forEach(pengolah => {
@@ -1405,7 +1410,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 eventClick: (info) => {
                     const props = info.event.extendedProps;
                     const fieldsInOrder = [
-                        'Nama', 'Jenis Layanan', 'Perihal', 'Kegiatan', 
+                        'Nama', 'Jenis Layanan', 'Perihal', 'Kegiatan',
                         'Pengolah', 'Jenis', 'Tanggal Mulai', 'Tanggal Selesai'
                     ];
 
@@ -1421,15 +1426,33 @@ document.addEventListener('DOMContentLoaded', function() {
                             const startDate = info.event.start;
                             value = `${startDate.getDate()} ${monthNames[startDate.getMonth()]} ${startDate.getFullYear()}`;
                         } else if (fieldLower === 'tanggal selesai' && !value && info.event.end) {
+                            // This fallback logic handles cases where the original date string might be missing
                             const endDate = info.event.end;
                             const correctedEndDate = new Date(endDate.getTime());
                             correctedEndDate.setDate(correctedEndDate.getDate() - 1);
                             value = `${correctedEndDate.getDate()} ${monthNames[correctedEndDate.getMonth()]} ${correctedEndDate.getFullYear()}`;
+                        } else if (fieldLower === 'tanggal selesai' && value) {
+                            // If the original date string exists but is off by one day, correct it.
+                            // This is a robust way to handle the backend issue.
+                             const parts = value.split('/');
+                             if (parts.length === 3) {
+                                 // JS Date month is 0-indexed, so parts[1] - 1
+                                 const dateObj = new Date(parts[2], parts[1] - 1, parts[0]);
+                                 // We assume the date from backend is for the calendar's exclusive 'end', so we subtract a day for display
+                                 dateObj.setDate(dateObj.getDate() - 1); 
+                                 value = `${dateObj.getDate()} ${monthNames[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
+                             }
+                        } else if (fieldLower === 'tanggal mulai' && value){
+                             const parts = value.split('/');
+                             if (parts.length === 3) {
+                                const dateObj = new Date(parts[2], parts[1] - 1, parts[0]);
+                                value = `${dateObj.getDate()} ${monthNames[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
+                             }
                         }
 
                         // HTML generation
                         if (value) {
-                            if (field.toLowerCase().trim() === 'pengolah') {
+                            if (fieldLower === 'pengolah') {
                                 return `<dt class="font-semibold">${field}</dt><dd class="mb-2 bg-yellow-100 text-yellow-800 font-bold p-1 rounded">${value}</dd>`;
                             } else {
                                 return `<dt class="font-semibold">${field}</dt><dd class="mb-2">${value}</dd>`;
@@ -1562,3 +1585,4 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
+
