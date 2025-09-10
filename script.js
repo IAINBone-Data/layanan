@@ -1,5 +1,5 @@
 // URL Web App Google Apps Script Anda
-const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxP_lhf2hL1OM6l4bCsJ0jfxbCzoT37fX79iMwVQ0W8i4nVv4IkVZXlohiNmFh16gZstw/exec';
+const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbw7JqqX87o9-x0NCVHggrIjqo79Ko_KneGG55TglH0H5ms1AfZwCggzTxRVNM1N3svALg/exec';
 
 // --- OPTIMASI 1: "BAKE" DATA LAYANAN LANGSUNG DI SINI ---
 // Data ini jarang berubah. Dengan meletakkannya di sini, halaman akan render instan
