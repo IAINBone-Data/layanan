@@ -1,5 +1,5 @@
 // URL Web App Google Apps Script Anda
-const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxP_lhf2hL1OM6l4bCsJ0jfxbCzoT37fX79iMwVQ0W8i4nVv4IkVZXlohiNmFh16gZstw/exec';
+const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbw7KS0WBFScKsVVbayfaS1jPmeHq4bodzs2az_dmGmP_73Ouy2-bWK4lnG0g9ROgfZuJw/exec';
 
 // PERUBAHAN: Menghapus PRELOADED_LAYANAN_DATA. Semua data akan diambil dari server.
 
