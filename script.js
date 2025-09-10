@@ -1404,7 +1404,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 height: '100%',
                 eventClick: (info) => {
                     const props = info.event.extendedProps;
-                    // FIX: Ensure all fields are iterated over
                     const fieldsInOrder = [
                         'Nama', 'Jenis Layanan', 'Perihal', 'Kegiatan', 
                         'Pengolah', 'Jenis', 'Tanggal Mulai', 'Tanggal Selesai'
@@ -1414,29 +1413,18 @@ document.addEventListener('DOMContentLoaded', function() {
                         let value;
                         const fieldLower = field.toLowerCase().trim();
 
-                        // Specific logic for dates
-                        if (fieldLower === 'tanggal mulai') {
+                        // Always try to get the original value from the sheet data first
+                        value = getValueCaseInsensitive(props, field);
+
+                        // Special handling and fallbacks for dates if original data is not found
+                        if (fieldLower === 'tanggal mulai' && !value && info.event.start) {
                             const startDate = info.event.start;
-                             if (startDate) {
-                                // Use original data from sheet if available, otherwise format from calendar
-                                value = props['Tanggal Mulai'] || `${startDate.getDate()} ${monthNames[startDate.getMonth()]} ${startDate.getFullYear()}`;
-                            }
-                        } else if (fieldLower === 'tanggal selesai') {
-                             if (props['Tanggal Selesai']) {
-                                // Always prefer the original data from the sheet for display
-                                value = props['Tanggal Selesai'];
-                            } else {
-                                // Fallback logic if sheet data is missing
-                                const endDate = info.event.end;
-                                if (endDate) {
-                                    const correctedEndDate = new Date(endDate.getTime());
-                                    correctedEndDate.setDate(correctedEndDate.getDate() - 1);
-                                    value = `${correctedEndDate.getDate()} ${monthNames[correctedEndDate.getMonth()]} ${correctedEndDate.getFullYear()}`;
-                                }
-                            }
-                        } else {
-                            // General logic for all other fields
-                            value = getValueCaseInsensitive(props, field);
+                            value = `${startDate.getDate()} ${monthNames[startDate.getMonth()]} ${startDate.getFullYear()}`;
+                        } else if (fieldLower === 'tanggal selesai' && !value && info.event.end) {
+                            const endDate = info.event.end;
+                            const correctedEndDate = new Date(endDate.getTime());
+                            correctedEndDate.setDate(correctedEndDate.getDate() - 1);
+                            value = `${correctedEndDate.getDate()} ${monthNames[correctedEndDate.getMonth()]} ${correctedEndDate.getFullYear()}`;
                         }
 
                         // HTML generation
@@ -1574,4 +1562,3 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
-
