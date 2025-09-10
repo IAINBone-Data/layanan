@@ -40,6 +40,8 @@ const UNIT_KERJA_LAYANAN = [
 
 
 document.addEventListener('DOMContentLoaded', function() {
+    
+    const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
 
     function showNotificationModal(title, message, type = 'info') {
         const modal = document.getElementById('notificationModal');
@@ -1417,25 +1419,23 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (fieldLower === 'tanggal mulai') {
                             const startDate = info.event.start;
                             if (startDate) {
-                                const day = String(startDate.getDate()).padStart(2, '0');
-                                const month = String(startDate.getMonth() + 1).padStart(2, '0');
+                                const day = startDate.getDate();
+                                const month = monthNames[startDate.getMonth()];
                                 const year = startDate.getFullYear();
-                                value = `${day}/${month}/${year}`;
+                                value = `${day} ${month} ${year}`;
                             } else {
                                 value = getValueCaseInsensitive(props, field); // Fallback
                             }
                         } else if (fieldLower === 'tanggal selesai') {
-                            // FullCalendar's `end` date for all-day events is exclusive.
-                            // We need to subtract one day to get the actual inclusive end date.
                             const endDate = info.event.end;
                             if (endDate) {
-                                const correctedEndDate = new Date(endDate.getTime()); // Create a copy
+                                const correctedEndDate = new Date(endDate.getTime());
                                 correctedEndDate.setDate(correctedEndDate.getDate() - 1);
 
-                                const day = String(correctedEndDate.getDate()).padStart(2, '0');
-                                const month = String(correctedEndDate.getMonth() + 1).padStart(2, '0');
+                                const day = correctedEndDate.getDate();
+                                const month = monthNames[correctedEndDate.getMonth()];
                                 const year = correctedEndDate.getFullYear();
-                                value = `${day}/${month}/${year}`;
+                                value = `${day} ${month} ${year}`;
                             } else {
                                 value = getValueCaseInsensitive(props, field); // Fallback
                             }
