@@ -1,20 +1,20 @@
 /* General Body and Font Styles */
-body { 
-    font-family: 'Inter', sans-serif; 
-    background-color: #f9fafb; 
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f9fafb;
 }
-@media (max-width: 767px) { 
-    body { 
-        padding-bottom: 100px; 
-    } 
+@media (max-width: 767px) {
+    body {
+        padding-bottom: 100px;
+    }
 }
 
 /* Brand Colors */
-.bg-brand-green { 
-    background-color: #1a3a3a; 
+.bg-brand-green {
+    background-color: #1a3a3a;
 }
-.text-brand-green { 
-    color: #1a3a3a; 
+.text-brand-green {
+    color: #1a3a3a;
 }
 
 /* FullCalendar Customization */
@@ -26,58 +26,67 @@ body {
     --fc-button-active-bg-color: #2a6464;
     --fc-button-hover-bg-color: #2a6464;
 }
-.fc .fc-toolbar-title { 
-    font-size: 1.25em; 
+.fc .fc-toolbar-title {
+    font-size: 1.25em;
 }
-.fc .fc-daygrid-day.fc-day-today { 
-    background-color: var(--fc-today-bg-color); 
+.fc .fc-daygrid-day.fc-day-today {
+    background-color: var(--fc-today-bg-color);
 }
 
+/* UPDATED: Smaller calendar arrows */
+.fc .fc-prev-button, .fc .fc-next-button {
+    padding: 0.2em 0.4em !important;
+}
+.fc .fc-button .fc-icon {
+    font-size: 1.2em; /* Adjust icon size inside the smaller button */
+}
+
+
 /* Swiper Slider Customization */
-.info-swiper.info-grid .swiper-wrapper { 
-    display: grid; 
-    grid-template-columns: repeat(1, 1fr); 
-    gap: 1.5rem; 
+.info-swiper.info-grid .swiper-wrapper {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 1.5rem;
 }
-@media (min-width: 768px) { 
-    .info-swiper.info-grid .swiper-wrapper { 
-        grid-template-columns: repeat(2, 1fr); 
-    } 
+@media (min-width: 768px) {
+    .info-swiper.info-grid .swiper-wrapper {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
-.info-swiper { 
-    position: relative; 
-    padding-bottom: 30px; 
+.info-swiper {
+    position: relative;
+    padding-bottom: 30px;
 }
-.swiper-pagination { 
-    bottom: 0 !important; 
+.swiper-pagination {
+    bottom: 0 !important;
 }
-.swiper-pagination-bullet { 
-    background-color: #d1d5db; 
-    opacity: 1; 
+.swiper-pagination-bullet {
+    background-color: #d1d5db;
+    opacity: 1;
 }
-.swiper-pagination-bullet-active { 
-    background-color: #1a3a3a !important; 
+.swiper-pagination-bullet-active {
+    background-color: #1a3a3a !important;
 }
-.layanan-tabs-swiper .swiper-slide { 
-    width: auto !important; 
+.layanan-tabs-swiper .swiper-slide {
+    width: auto !important;
 }
 
 /* Tab and Toggle Button Styles */
-.layanan-tab { 
-    transition: all 0.3s ease; 
-    padding: 6px 16px; 
-    border-radius: 99px; 
-    white-space: nowrap; 
-    font-size: 12px; 
-    color: #6b7280; 
+.layanan-tab {
+    transition: all 0.3s ease;
+    padding: 6px 16px;
+    border-radius: 99px;
+    white-space: nowrap;
+    font-size: 12px;
+    color: #6b7280;
 }
-.layanan-tab.active { 
-    color: #1a3a3a; 
-    font-weight: 700; 
-    background-color: #f3f4f6; 
+.layanan-tab.active {
+    color: #1a3a3a;
+    font-weight: 700;
+    background-color: #f3f4f6;
 }
-.toggle-btn { 
-    transition: all 0.3s ease-in-out; 
+.toggle-btn {
+    transition: all 0.3s ease-in-out;
 }
 .toggle-btn.active {
     background-color: white;
@@ -87,18 +96,18 @@ body {
 }
 
 /* Modal and Disabled Section Styles */
-#notificationModal.visible #notificationModalContent { 
-    transform: scale(1); 
-    opacity: 1; 
+#notificationModal.visible #notificationModalContent {
+    transform: scale(1);
+    opacity: 1;
 }
-.section-disabled { 
-    opacity: 0.5; 
-    pointer-events: none; 
-    transition: opacity 0.3s ease-in-out; 
+.section-disabled {
+    opacity: 0.5;
+    pointer-events: none;
+    transition: opacity 0.3s ease-in-out;
 }
-input:disabled, select:disabled, textarea:disabled { 
-    background-color: #f3f4f6; 
-    cursor: not-allowed; 
+input:disabled, select:disabled, textarea:disabled {
+    background-color: #f3f4f6;
+    cursor: not-allowed;
 }
 
 /* Responsive Adjustments for Mobile */
