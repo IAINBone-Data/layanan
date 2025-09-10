@@ -1,5 +1,5 @@
 // URL Web App Google Apps Script Anda
-const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzxbqqDQu33EbBdCkAJxdNgousiZNhmGGHGE7rKLAJQ6tCFFlU7vmzMOoz-Ll0tMipX7g/exec';
+const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbx_eIxISCPiSlgoX098i2URQHxzP5dyoitNXOFXU-G2jL2kLaCpcjZ-eWiwqiCHxn5-og/exec';
 
 const DATA_AKADEMIK = [
     { prodi: 'Hukum Keluarga Islam', fakultas: 'Fakultas Syariah dan Hukum Islam' },
