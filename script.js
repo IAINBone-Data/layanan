@@ -1,5 +1,5 @@
 // PENTING: Ganti URL di bawah ini dengan URL Web App BARU dari Google Apps Script Anda
-const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxP_lhf2hL1OM6l4bCsJ0jfxbCzoT37fX79iMwVQ0W8i4nVv4IkVZXlohiNmFh16gZstw/exec';
+const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzDTu-BtFYAAeIDOeQa-gPUNY2iUOHJjhEj94h3vDfRlB1ETII6dO-Vi4_UFo81aY9Ueg/exec';
 
 // --- BARU: Data store lokal untuk informasi akademik ---
 // Ini menggantikan panggilan fetch ke Google Sheet, membuat form lebih cepat.
@@ -73,14 +73,7 @@ document.addEventListener('DOMContentLoaded', function() {
             modal.classList.add('visible');
         }, 10);
         closeBtn.onclick = hideModal;
-        // DIHAPUS: Menonaktifkan fitur tutup modal saat klik di luar area notifikasi
-        // modal.onclick = (e) => {
-        //     if (e.target === modal) {
-        //         hideModal();
-        //     }
-        // };
-
-        // BARU: Logika untuk tombol "Copy ID"
+        
         const copyBtn = document.getElementById('copy-id-btn');
         const copyTarget = document.getElementById('copy-target-id');
 
@@ -145,10 +138,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let semuaLayanan = [];
     let currentUserType = 'Umum';
     let calendarDataCache = {}; // Cache global untuk data kalender
-    // DIHAPUS: Cache untuk prodi/fakultas tidak lagi diperlukan karena data sekarang lokal.
-    // let prodiFakultasDataCache = null; 
-
-
+    
     loadAllPublicData();
     setupEventListeners();
 
@@ -163,14 +153,6 @@ document.addEventListener('DOMContentLoaded', function() {
         modalClosers.forEach(item => {
             if (item && item.btn) item.btn.addEventListener('click', () => item.modal.classList.add('hidden'));
         });
-
-        // DIHAPUS: Menonaktifkan fitur tutup modal saat klik di luar area form
-        /*
-        const modals = [formModal, searchModal, helpdeskModal, quickServicesModal, calendarModal];
-        modals.forEach(modal => {
-            if (modal) modal.addEventListener('click', (e) => e.target === modal && modal.classList.add('hidden'));
-        });
-        */
 
         if (permohonanForm) permohonanForm.addEventListener('submit', handlePermohonanSubmit);
         if (helpdeskForm) helpdeskForm.addEventListener('submit', handleHelpdeskSubmit);
@@ -1417,19 +1399,50 @@ document.addEventListener('DOMContentLoaded', function() {
                 locale: 'id',
                 initialView: isMobile ? 'listWeek' : 'dayGridMonth',
                 headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,listWeek' },
-                titleFormat: { month: 'short', year: 'numeric' }, // UPDATED: Abbreviated month
+                titleFormat: { month: 'short', year: 'numeric' },
                 noEventsContent: 'Tidak ada jadwal peminjaman pada periode ini.',
                 events: eventSource,
                 height: '100%',
                 eventClick: (info) => {
                     const props = info.event.extendedProps;
                     const fieldsInOrder = [
-                        'Nama', 'Jenis Layanan', 'Perihal', 'Kegiatan', 
+                        'Nama', 'Jenis Layanan', 'Perihal', 'Kegiatan',
                         'Pengolah', 'Jenis', 'Tanggal Mulai', 'Tanggal Selesai'
                     ];
 
                     let detailsHtml = fieldsInOrder.map(field => {
-                        const value = getValueCaseInsensitive(props, field);
+                        let value;
+                        const fieldLower = field.toLowerCase().trim();
+
+                        if (fieldLower === 'tanggal mulai') {
+                            const startDate = info.event.start;
+                            if (startDate) {
+                                const day = String(startDate.getDate()).padStart(2, '0');
+                                const month = String(startDate.getMonth() + 1).padStart(2, '0');
+                                const year = startDate.getFullYear();
+                                value = `${day}/${month}/${year}`;
+                            } else {
+                                value = getValueCaseInsensitive(props, field); // Fallback
+                            }
+                        } else if (fieldLower === 'tanggal selesai') {
+                            // FullCalendar's `end` date for all-day events is exclusive.
+                            // We need to subtract one day to get the actual inclusive end date.
+                            const endDate = info.event.end;
+                            if (endDate) {
+                                const correctedEndDate = new Date(endDate.getTime()); // Create a copy
+                                correctedEndDate.setDate(correctedEndDate.getDate() - 1);
+
+                                const day = String(correctedEndDate.getDate()).padStart(2, '0');
+                                const month = String(correctedEndDate.getMonth() + 1).padStart(2, '0');
+                                const year = correctedEndDate.getFullYear();
+                                value = `${day}/${month}/${year}`;
+                            } else {
+                                value = getValueCaseInsensitive(props, field); // Fallback
+                            }
+                        } else {
+                            value = getValueCaseInsensitive(props, field);
+                        }
+
                         if (value) {
                             if (field.toLowerCase().trim() === 'pengolah') {
                                 return `<dt class="font-semibold">${field}</dt><dd class="mb-2 bg-yellow-100 text-yellow-800 font-bold p-1 rounded">${value}</dd>`;
@@ -1570,3 +1583,4 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
+
