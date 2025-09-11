@@ -1,6 +1,7 @@
 // URL Web App Google Apps Script Anda
 const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzpQ2l74MktP7kXr23SOArH5R0aQSe5R0Il7SHpsaeCCQeGuc02qK44derDEFQrbJ7E_Q/exec';
 
+// --- DATA KONSTAN ---
 const DATA_AKADEMIK = [
     { prodi: 'Hukum Keluarga Islam', fakultas: 'Fakultas Syariah dan Hukum Islam' },
     { prodi: 'Hukum Tatanegara', fakultas: 'Fakultas Syariah dan Hukum Islam' },
@@ -35,8 +36,10 @@ const UNIT_KERJA_LAYANAN = [
     'Pascasarjana'
 ];
 
+// --- EVENT LISTENER UTAMA ---
 document.addEventListener('DOMContentLoaded', function() {
 
+    // --- Selektor DOM ---
     const skeletonLoader = document.getElementById('skeleton-loader');
     const realContent = document.getElementById('real-content');
     const layananTabsContainer = document.getElementById('layanan-tabs-container');
@@ -58,7 +61,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const closeCalendarModalBtn = document.getElementById('closeCalendarModalBtn');
     const calendarEl = document.getElementById('calendar');
     const calendarLoader = document.getElementById('calendarLoader');
-    let calendar;
     const searchModal = document.getElementById('searchModal');
     const closeSearchModalBtn = document.getElementById('closeSearchModalBtn');
     const helpdeskModal = document.getElementById('helpdeskModal');
@@ -68,80 +70,102 @@ document.addEventListener('DOMContentLoaded', function() {
     const helpdeskForm = document.getElementById('helpdeskForm');
     const mobileTrackingForm = document.getElementById('mobileTrackingForm');
     const fabHelpdeskBtn = document.getElementById('fabHelpdeskBtn');
+    let calendar;
 
+    // --- State Aplikasi ---
     let semuaLayanan = [];
     let currentUserType = 'Umum';
-    let calendarDataCache = {}; 
-    
-    loadAllPublicData();
+    let calendarDataCache = {};
+
+    // --- Inisialisasi ---
+    initializePageData();
     setupEventListeners();
 
-    function loadAllPublicData() {
+    /**
+     * @dev PERUBAHAN UTAMA: Menerapkan strategi Stale-While-Revalidate (SWR).
+     * 1. Mencoba memuat data dari cache dan menampilkannya SEGERA.
+     * 2. SELALU memicu pengambilan data baru dari jaringan di latar belakang.
+     * 3. Memperbarui UI dan cache ketika data baru diterima.
+     */
+    function initializePageData() {
         const CACHE_KEY = 'allPublicDataCache';
-        const CACHE_DURATION_MS = 5 * 60 * 1000; // 5 menit
-
         const cachedItemStr = localStorage.getItem(CACHE_KEY);
-        let isLoadedFromCache = false;
+        let isCacheAvailable = false;
+
         if (cachedItemStr) {
             try {
                 const cachedItem = JSON.parse(cachedItemStr);
-                const isExpired = Date.now() - cachedItem.timestamp > CACHE_DURATION_MS;
-                if (!isExpired) {
-                    console.log("Memuat data dari cache localStorage...");
-                    skeletonLoader.classList.add('hidden');
-                    realContent.classList.remove('hidden');
-                    onLayananSuccess(cachedItem.data.layanan || []);
-                    onInfoSuccess(cachedItem.data.info || []);
-                    isLoadedFromCache = true;
-                }
+                console.log("Memuat data dari cache localStorage...");
+                
+                // Tampilkan konten dari cache segera
+                skeletonLoader.classList.add('hidden');
+                realContent.classList.remove('hidden');
+                
+                // Render UI dengan data cache
+                onLayananSuccess(cachedItem.data.layanan || []);
+                onInfoSuccess(cachedItem.data.info || []);
+                isCacheAvailable = true;
             } catch (e) {
+                console.error("Gagal mem-parsing cache, akan mengambil data baru.", e);
                 localStorage.removeItem(CACHE_KEY);
             }
         }
 
-        console.log("Mengambil data baru dari jaringan...");
+        // Selalu ambil data terbaru dari jaringan
+        console.log("Memulai pengambilan data baru dari jaringan...");
+        fetchFreshDataAndUpdate(isCacheAvailable);
+
+        // Kirim event visit
+        fetch(GAS_WEB_APP_URL + '?action=recordVisit');
+    }
+    
+    function fetchFreshDataAndUpdate(isContentLoaded) {
+        const CACHE_KEY = 'allPublicDataCache';
         const layananPromise = fetch(GAS_WEB_APP_URL + '?action=getPublicLayanan').then(res => res.json());
         const infoPromise = fetch(GAS_WEB_APP_URL + '?action=getPublicInfo').then(res => res.json());
 
-        Promise.allSettled([layananPromise, infoPromise])
-            .then((results) => {
-                const layananSuccess = results[0].status === 'fulfilled';
-                const infoSuccess = results[1].status === 'fulfilled';
+        Promise.all([layananPromise, infoPromise])
+            .then(([freshLayananData, freshInfoData]) => {
+                console.log("Data baru berhasil diambil.");
+                
+                if (!isContentLoaded) {
+                    // Jika belum ada konten sama sekali (cache kosong/gagal)
+                    skeletonLoader.classList.add('hidden');
+                    realContent.classList.remove('hidden');
+                }
+                
+                // Render ulang UI dengan data baru dan perbarui state
+                onLayananSuccess(freshLayananData || []);
+                onInfoSuccess(freshInfoData || []);
 
-                if (layananSuccess && infoSuccess) {
-                    const freshLayananData = results[0].value || [];
-                    const freshInfoData = results[1].value || [];
+                // Perbarui cache
+                const itemToCache = {
+                    data: {
+                        layanan: freshLayananData,
+                        info: freshInfoData
+                    },
+                    timestamp: Date.now()
+                };
+                localStorage.setItem(CACHE_KEY, JSON.stringify(itemToCache));
+                console.log("Cache localStorage diperbarui dengan data baru.");
 
-                    if (!isLoadedFromCache) {
-                        skeletonLoader.classList.add('hidden');
-                        realContent.classList.remove('hidden');
-                    }
-                    onLayananSuccess(freshLayananData);
-                    onInfoSuccess(freshInfoData);
-                    const itemToCache = {
-                        data: {
-                            layanan: freshLayananData,
-                            info: freshInfoData
-                        },
-                        timestamp: Date.now()
-                    };
-                    localStorage.setItem(CACHE_KEY, JSON.stringify(itemToCache));
-                    console.log("Cache localStorage diperbarui.");
-
-                    // *** PERUBAHAN DIMULAI DI SINI ***
-                    // Memulai prefetch data kalender di latar belakang setelah 1 detik
-                    // Ini memastikan UI utama sudah lancar sebelum memuat data tambahan.
-                    setTimeout(() => prefetchCalendarData(freshLayananData), 1000);
-                    // *** PERUBAHAN SELESAI DI SINI ***
-
+                // OPTIMISASI: Prefetch data kalender saat browser idle.
+                // Ini memastikan tidak mengganggu rendering utama.
+                if ('requestIdleCallback' in window) {
+                    requestIdleCallback(() => prefetchCalendarData(freshLayananData));
                 } else {
-                    if (!isLoadedFromCache) {
-                        if (!layananSuccess) onLayananFailure(results[0].reason);
-                        if (!infoSuccess) onInfoFailure(results[1].reason);
-                    }
+                    setTimeout(() => prefetchCalendarData(freshLayananData), 1500); // Fallback
+                }
+            })
+            .catch(error => {
+                console.error("Gagal mengambil data baru dari jaringan:", error);
+                if (!isContentLoaded) {
+                    // Tampilkan pesan error hanya jika halaman masih kosong
+                    realContent.innerHTML = `<p class="text-red-500 text-center p-8">Gagal memuat data. Periksa koneksi internet Anda dan coba muat ulang halaman.</p>`;
+                    skeletonLoader.classList.add('hidden');
+                    realContent.classList.remove('hidden');
                 }
             });
-        fetch(GAS_WEB_APP_URL + '?action=recordVisit');
     }
 
     function setupEventListeners() {
@@ -168,7 +192,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 const textElement = link.querySelector('p');
                 const itemName = `Klik: ${ (textElement) ? textElement.textContent.trim() : link.dataset.itemName}`;
                 if (itemName) {
-                    fetch(GAS_WEB_APP_URL + '?action=recordClick&itemName=' + encodeURIComponent(itemName));
+                    // Menggunakan navigator.sendBeacon untuk pengiriman data yang tidak memblokir
+                    const data = new URLSearchParams({ action: 'recordClick', itemName: itemName });
+                    navigator.sendBeacon(GAS_WEB_APP_URL, data);
                 }
             }
         }
@@ -224,25 +250,41 @@ document.addEventListener('DOMContentLoaded', function() {
         if (copyBtn && copyTarget) {
             copyBtn.onclick = () => {
                 const textToCopy = copyTarget.innerText;
-                const textArea = document.createElement('textarea');
-                textArea.value = textToCopy;
-                textArea.style.position = 'absolute';
-                textArea.style.left = '-9999px';
-                document.body.appendChild(textArea);
-                textArea.select();
-                try {
-                    document.execCommand('copy');
-                    copyBtn.textContent = 'Tersalin!';
-                    copyBtn.classList.add('bg-green-200');
-                    setTimeout(() => {
-                        copyBtn.textContent = 'Copy ID';
-                        copyBtn.classList.remove('bg-green-200');
-                    }, 2000);
-                } catch (err) {
-                    console.error('Gagal menyalin ID:', err);
-                    copyBtn.textContent = 'Gagal';
+                // Menggunakan API Clipboard modern jika tersedia, dengan fallback
+                if (navigator.clipboard && window.isSecureContext) {
+                    navigator.clipboard.writeText(textToCopy).then(() => {
+                        copyBtn.textContent = 'Tersalin!';
+                        copyBtn.classList.add('bg-green-200');
+                        setTimeout(() => {
+                            copyBtn.textContent = 'Copy ID';
+                            copyBtn.classList.remove('bg-green-200');
+                        }, 2000);
+                    }).catch(err => {
+                        console.error('Gagal menyalin:', err);
+                        copyBtn.textContent = 'Gagal';
+                    });
+                } else {
+                    // Fallback untuk environment tidak aman (seperti iframe)
+                    const textArea = document.createElement('textarea');
+                    textArea.value = textToCopy;
+                    textArea.style.position = 'absolute';
+                    textArea.style.left = '-9999px';
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    try {
+                        document.execCommand('copy');
+                        copyBtn.textContent = 'Tersalin!';
+                        copyBtn.classList.add('bg-green-200');
+                        setTimeout(() => {
+                            copyBtn.textContent = 'Copy ID';
+                            copyBtn.classList.remove('bg-green-200');
+                        }, 2000);
+                    } catch (err) {
+                        console.error('Gagal menyalin ID:', err);
+                        copyBtn.textContent = 'Gagal';
+                    }
+                    document.body.removeChild(textArea);
                 }
-                document.body.removeChild(textArea);
             };
         }
     }
@@ -255,7 +297,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function prefetchCalendarData(layananList) {
+    /**
+     * @dev Prefetches calendar data for services marked as 'kalender'.
+     * This runs in the background to make opening the calendar modal faster.
+     */
+    function prefetchCalendarData(layananList = []) {
         const calendarServices = layananList.filter(l => (getValueCaseInsensitive(l, 'jenis') || '').toLowerCase() === 'kalender');
 
         calendarServices.forEach(service => {
@@ -269,7 +315,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         .then(res => res.json())
                         .then(events => {
                             calendarDataCache[cacheKey] = Array.isArray(events) ? events : [];
-                            console.log(`Cache updated for: ${sheet}`);
+                            console.log(`Cache updated for calendar: ${sheet}`);
                         })
                         .catch(err => console.error(`Failed to prefetch calendar data for ${sheet}:`, err));
                 }
@@ -277,13 +323,14 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // --- FUNGSI UTILITAS (Tidak diubah) ---
     function getValueCaseInsensitive(object, key) {
         if (!object || !key) return undefined;
         const asLowercase = key.toLowerCase();
         const keyFound = Object.keys(object).find(k => k.toLowerCase().trim() === asLowercase);
         return object[keyFound];
     }
-
+    
     function getTextColorForBg(hexColor) {
         if (!hexColor || hexColor.length < 4) return 'text-white';
         let shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
@@ -315,6 +362,8 @@ document.addEventListener('DOMContentLoaded', function() {
         return 'fas fa-link';
     }
 
+    // --- FUNGSI RENDER (Tidak ada perubahan signifikan, hanya memastikan berjalan dengan data baru) ---
+
     function onLayananSuccess(data) {
         semuaLayanan = data || [];
         if (!semuaLayanan || semuaLayanan.length === 0) {
@@ -323,10 +372,12 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         renderLayananByFilter(currentUserType);
+        
         const mobileTrackingSelect = document.getElementById('mobileTrackingLayananSelect');
-        trackingLayananSelect.innerHTML = '<option value="">Pilih Jenis Layanan</option>';
+        // Kosongkan select sebelum mengisi ulang
+        if (trackingLayananSelect) trackingLayananSelect.innerHTML = '<option value="">Pilih Jenis Layanan</option>';
         if (mobileTrackingSelect) mobileTrackingSelect.innerHTML = '<option value="">Pilih Jenis Layanan</option>';
-
+    
         const trackableLayanan = semuaLayanan.filter(layanan => (getValueCaseInsensitive(layanan, 'jenis') || '').toLowerCase() !== 'setting');
         trackableLayanan.forEach(layanan => {
             const layananName = getValueCaseInsensitive(layanan, 'jenis layanan');
@@ -335,17 +386,13 @@ document.addEventListener('DOMContentLoaded', function() {
             if (layananName && targetSheet) {
                 const optionValue = JSON.stringify({ name: targetSheet, id: targetSheetId });
                 const option = `<option value='${optionValue}'>${layananName}</option>`;
-                trackingLayananSelect.innerHTML += option;
+                if (trackingLayananSelect) trackingLayananSelect.innerHTML += option;
                 if (mobileTrackingSelect) mobileTrackingSelect.innerHTML += option;
             }
         });
         renderQuickServicesModal();
-        // *** PERUBAHAN DIMULAI DI SINI ***
-        // Panggilan prefetch dipindahkan ke `loadAllPublicData` agar berjalan setelah semua selesai.
-        // prefetchCalendarData(semuaLayanan); 
-        // *** PERUBAHAN SELESAI DI SINI ***
     }
-
+    
     function onLayananFailure(error) {
         console.error('Gagal memuat layanan:', error);
         layananContentContainer.innerHTML = '<p class="text-red-500 col-span-full p-4 text-center">Gagal memuat daftar layanan. Silakan muat ulang.</p>';
@@ -1542,3 +1589,4 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
+
