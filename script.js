@@ -1,5 +1,6 @@
 // Membungkus seluruh skrip untuk mencegah deklarasi ganda
-if (typeof window.myAppInitialized === 'undefined') {
+if (typeof window.myAppInitialized === 'true') {
+    
     
     // URL Web App Google Apps Script Anda
     const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzpQ2l74MktP7kXr23SOArH5R0aQSe5R0Il7SHpsaeCCQeGuc02qK44derDEFQrbJ7E_Q/exec';
@@ -3195,6 +3196,5 @@ document.addEventListener('DOMContentLoaded', function() {
             button.disabled = false;
         }
     }
-    window.myAppInitialized = true;
 });
 
