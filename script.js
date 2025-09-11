@@ -1,518 +1,521 @@
-// URL Web App Google Apps Script Anda
-const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzNnfxnucQ2LzP6c27dkqXZEwFcFkgfoFlZU1sqvCG0QNPBB5d3_XPbMAJHYpMU9Si4bQ/exec';
+// Membungkus seluruh skrip untuk mencegah deklarasi ganda
+if (typeof window.myAppInitialized === 'undefined') {
+    
+    // URL Web App Google Apps Script Anda
+    const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzpQ2l74MktP7kXr23SOArH5R0aQSe5R0Il7SHpsaeCCQeGuc02qK44derDEFQrbJ7E_Q/exec';
 
-const DATA_AKADEMIK = [
-    { prodi: 'Hukum Keluarga Islam', fakultas: 'Fakultas Syariah dan Hukum Islam' },
-    { prodi: 'Hukum Tatanegara', fakultas: 'Fakultas Syariah dan Hukum Islam' },
-    { prodi: 'Hukum Ekonomi Syariah', fakultas: 'Fakultas Syariah dan Hukum Islam' },
-    { prodi: 'Pendidikan Agama Islam', fakultas: 'Fakultas Tarbiyah' },
-    { prodi: 'Pendidikan Bahasa Arab', fakultas: 'Fakultas Tarbiyah' },
-    { prodi: 'Tadris Bahasa Inggris', fakultas: 'Fakultas Tarbiyah' },
-    { prodi: 'Manajemen Pendidikan Islam', fakultas: 'Fakultas Tarbiyah' },
-    { prodi: 'Pendidikan Guru Madrasah Ibtidaiyah', fakultas: 'Fakultas Tarbiyah' },
-    { prodi: 'Pendidikan Islam Anak Usia Dini', fakultas: 'Fakultas Tarbiyah' },
-    { prodi: 'S3 Pendidikan Agama Islam', fakultas: 'Pascasarjana' },
-    { prodi: 'S2 Pendidikan Agama Islam', fakultas: 'Pascasarjana' },
-    { prodi: 'S2 Pendidikan Bahasa Arab', fakultas: 'Pascasarjana' },
-    { prodi: 'S2 Ekonomi Syariah', fakultas: 'Pascasarjana' },
-    { prodi: 'S2 Hukum Keluarga Islam', fakultas: 'Pascasarjana' },
-    { prodi: 'S2 Hukum Tatanegara', fakultas: 'Pascasarjana' },
-    { prodi: 'Ilmu Al-Qur\'an Dan Tafsir', fakultas: 'Fakultas Ushuluddin dan Dakwah' },
-    { prodi: 'Komunikasi Dan Penyiaran Islam', fakultas: 'Fakultas Ushuluddin dan Dakwah' },
-    { prodi: 'Bimbingan Penyuluhan Islam', fakultas: 'Fakultas Ushuluddin dan Dakwah' },
-    { prodi: 'Ekonomi Syariah', fakultas: 'Fakultas Ekonomi dan Bisnis Islam' },
-    { prodi: 'Perbankan Syariah', fakultas: 'Fakultas Ekonomi dan Bisnis Islam' },
-    { prodi: 'Akuntansi Syariah', fakultas: 'Fakultas Ekonomi dan Bisnis Islam' },
-    { prodi: 'Manajemen Bisnis Syariah', fakultas: 'Fakultas Ekonomi dan Bisnis Islam' }
-];
+    const DATA_AKADEMIK = [
+        { prodi: 'Hukum Keluarga Islam', fakultas: 'Fakultas Syariah dan Hukum Islam' },
+        { prodi: 'Hukum Tatanegara', fakultas: 'Fakultas Syariah dan Hukum Islam' },
+        { prodi: 'Hukum Ekonomi Syariah', fakultas: 'Fakultas Syariah dan Hukum Islam' },
+        { prodi: 'Pendidikan Agama Islam', fakultas: 'Fakultas Tarbiyah' },
+        { prodi: 'Pendidikan Bahasa Arab', fakultas: 'Fakultas Tarbiyah' },
+        { prodi: 'Tadris Bahasa Inggris', fakultas: 'Fakultas Tarbiyah' },
+        { prodi: 'Manajemen Pendidikan Islam', fakultas: 'Fakultas Tarbiyah' },
+        { prodi: 'Pendidikan Guru Madrasah Ibtidaiyah', fakultas: 'Fakultas Tarbiyah' },
+        { prodi: 'Pendidikan Islam Anak Usia Dini', fakultas: 'Fakultas Tarbiyah' },
+        { prodi: 'S3 Pendidikan Agama Islam', fakultas: 'Pascasarjana' },
+        { prodi: 'S2 Pendidikan Agama Islam', fakultas: 'Pascasarjana' },
+        { prodi: 'S2 Pendidikan Bahasa Arab', fakultas: 'Pascasarjana' },
+        { prodi: 'S2 Ekonomi Syariah', fakultas: 'Pascasarjana' },
+        { prodi: 'S2 Hukum Keluarga Islam', fakultas: 'Pascasarjana' },
+        { prodi: 'S2 Hukum Tatanegara', fakultas: 'Pascasarjana' },
+        { prodi: 'Ilmu Al-Qur\'an Dan Tafsir', fakultas: 'Fakultas Ushuluddin dan Dakwah' },
+        { prodi: 'Komunikasi Dan Penyiaran Islam', fakultas: 'Fakultas Ushuluddin dan Dakwah' },
+        { prodi: 'Bimbingan Penyuluhan Islam', fakultas: 'Fakultas Ushuluddin dan Dakwah' },
+        { prodi: 'Ekonomi Syariah', fakultas: 'Fakultas Ekonomi dan Bisnis Islam' },
+        { prodi: 'Perbankan Syariah', fakultas: 'Fakultas Ekonomi dan Bisnis Islam' },
+        { prodi: 'Akuntansi Syariah', fakultas: 'Fakultas Ekonomi dan Bisnis Islam' },
+        { prodi: 'Manajemen Bisnis Syariah', fakultas: 'Fakultas Ekonomi dan Bisnis Islam' }
+    ];
 
-const UNIT_KERJA_LAYANAN = [
-    'Rektorat',
-    'Fakultas Syariah dan Hukum Islam',
-    'Fakultas Tarbiyah',
-    'Fakultas Ekonomi dan Bisnis Islam',
-    'Fakultas Ushuluddin dan Dakwah',
-    'Pascasarjana'
-];
+    const UNIT_KERJA_LAYANAN = [
+        'Rektorat',
+        'Fakultas Syariah dan Hukum Islam',
+        'Fakultas Tarbiyah',
+        'Fakultas Ekonomi dan Bisnis Islam',
+        'Fakultas Ushuluddin dan Dakwah',
+        'Pascasarjana'
+    ];
 
-document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function() {
 
-    const skeletonLoader = document.getElementById('skeleton-loader');
-    const realContent = document.getElementById('real-content');
-    const layananTabsContainer = document.getElementById('layanan-tabs-container');
-    const layananContentContainer = document.getElementById('layanan-content-container');
-    const trackingForm = document.getElementById('trackingForm');
-    const trackingResult = document.getElementById('trackingResult');
-    const trackingLayananSelect = document.getElementById('trackingLayananSelect');
-    const infoContainer = document.getElementById('infoContainer');
-    const pinnedContainer = document.getElementById('pinnedContainer');
-    const quicklinkContainer = document.getElementById('quicklinkContainer');
-    const footerLinkContainer = document.getElementById('footerLinkContainer');
-    const userTypeToggleContainer = document.getElementById('userTypeToggleContainer');
-    const formModal = document.getElementById('formModal');
-    const modalTitle = document.getElementById('modalTitle');
-    const permohonanForm = document.getElementById('permohonanForm');
-    const closeModalBtn = document.getElementById('closeModalBtn');
-    const cancelModalBtn = document.getElementById('cancelModalBtn');
-    const calendarModal = document.getElementById('calendarModal');
-    const closeCalendarModalBtn = document.getElementById('closeCalendarModalBtn');
-    const calendarEl = document.getElementById('calendar');
-    const calendarLoader = document.getElementById('calendarLoader');
-    let calendar;
-    const searchModal = document.getElementById('searchModal');
-    const closeSearchModalBtn = document.getElementById('closeSearchModalBtn');
-    const helpdeskModal = document.getElementById('helpdeskModal');
-    const closeHelpdeskModalBtn = document.getElementById('closeHelpdeskModalBtn');
-    const quickServicesModal = document.getElementById('quickServicesModal');
-    const closeQuickServicesModalBtn = document.getElementById('closeQuickServicesModalBtn');
-    const helpdeskForm = document.getElementById('helpdeskForm');
-    const mobileTrackingForm = document.getElementById('mobileTrackingForm');
-    const fabHelpdeskBtn = document.getElementById('fabHelpdeskBtn');
+        const skeletonLoader = document.getElementById('skeleton-loader');
+        const realContent = document.getElementById('real-content');
+        const layananTabsContainer = document.getElementById('layanan-tabs-container');
+        const layananContentContainer = document.getElementById('layanan-content-container');
+        const trackingForm = document.getElementById('trackingForm');
+        const trackingResult = document.getElementById('trackingResult');
+        const trackingLayananSelect = document.getElementById('trackingLayananSelect');
+        const infoContainer = document.getElementById('infoContainer');
+        const pinnedContainer = document.getElementById('pinnedContainer');
+        const quicklinkContainer = document.getElementById('quicklinkContainer');
+        const footerLinkContainer = document.getElementById('footerLinkContainer');
+        const userTypeToggleContainer = document.getElementById('userTypeToggleContainer');
+        const formModal = document.getElementById('formModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const permohonanForm = document.getElementById('permohonanForm');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const cancelModalBtn = document.getElementById('cancelModalBtn');
+        const calendarModal = document.getElementById('calendarModal');
+        const closeCalendarModalBtn = document.getElementById('closeCalendarModalBtn');
+        const calendarEl = document.getElementById('calendar');
+        const calendarLoader = document.getElementById('calendarLoader');
+        let calendar;
+        const searchModal = document.getElementById('searchModal');
+        const closeSearchModalBtn = document.getElementById('closeSearchModalBtn');
+        const helpdeskModal = document.getElementById('helpdeskModal');
+        const closeHelpdeskModalBtn = document.getElementById('closeHelpdeskModalBtn');
+        const quickServicesModal = document.getElementById('quickServicesModal');
+        const closeQuickServicesModalBtn = document.getElementById('closeQuickServicesModalBtn');
+        const helpdeskForm = document.getElementById('helpdeskForm');
+        const mobileTrackingForm = document.getElementById('mobileTrackingForm');
+        const fabHelpdeskBtn = document.getElementById('fabHelpdeskBtn');
 
-    let semuaLayanan = [];
-    let currentUserType = 'Umum';
-    let calendarDataCache = {};
-    let isFullCalendarLoaded = false;
-    let isContentVisible = false;
+        let semuaLayanan = [];
+        let currentUserType = 'Umum';
+        let calendarDataCache = {};
+        let isFullCalendarLoaded = false;
+        let isContentVisible = false;
 
-    loadAllPublicData();
-    setupEventListeners();
+        loadAllPublicData();
+        setupEventListeners();
 
-    function loadAllPublicData() {
-        const CACHE_KEY = 'allPublicDataCache';
-        const CACHE_DURATION_MS = 5 * 60 * 1000;
+        function loadAllPublicData() {
+            const CACHE_KEY = 'allPublicDataCache';
+            const CACHE_DURATION_MS = 5 * 60 * 1000;
 
-        const cachedItemStr = localStorage.getItem(CACHE_KEY);
-        let isLoadedFromCache = false;
-        let cachedData = null;
+            const cachedItemStr = localStorage.getItem(CACHE_KEY);
+            let isLoadedFromCache = false;
+            let cachedData = null;
 
-        if (cachedItemStr) {
-            try {
-                const cachedItem = JSON.parse(cachedItemStr);
-                const isExpired = Date.now() - cachedItem.timestamp > CACHE_DURATION_MS;
-                if (!isExpired) {
-                    console.log("Memuat data dari cache localStorage (Stale-While-Revalidate)...");
-                    cachedData = cachedItem.data;
-                    onLayananSuccess(cachedData.layanan || []);
-                    onInfoSuccess(cachedData.info || []);
-                    isContentVisible = true;
-                    skeletonLoader.classList.add('hidden');
-                    realContent.classList.remove('hidden');
-                    isLoadedFromCache = true;
-                }
-            } catch (e) {
-                localStorage.removeItem(CACHE_KEY);
-            }
-        }
+            if (cachedItemStr) {
+                try {
+                    const cachedItem = JSON.parse(cachedItemStr);
+                    const isExpired = Date.now() - cachedItem.timestamp > CACHE_DURATION_MS;
+                    if (!isExpired) {
+                        console.log("Memuat data dari cache localStorage (Stale-While-Revalidate)...");
+                        cachedData = cachedItem.data;
+                        onLayananSuccess(cachedData.layanan || []);
+                        onInfoSuccess(cachedData.info || []);
+                        isContentVisible = true;
+                        skeletonLoader.classList.add('hidden');
+                        realContent.classList.remove('hidden');
+                        isLoadedFromCache = true;
+                    }
+                } catch (e) {
+                    localStorage.removeItem(CACHE_KEY);
+                }
+            }
 
-        console.log("Mengambil data baru dari jaringan...");
-        const layananPromise = fetch(GAS_WEB_APP_URL + '?action=getPublicLayanan').then(res => res.json());
-        const infoPromise = fetch(GAS_WEB_APP_URL + '?action=getPublicInfo').then(res => res.json());
+            console.log("Mengambil data baru dari jaringan...");
+            const layananPromise = fetch(GAS_WEB_APP_URL + '?action=getPublicLayanan').then(res => res.json());
+            const infoPromise = fetch(GAS_WEB_APP_URL + '?action=getPublicInfo').then(res => res.json());
 
-        let freshLayananData = null;
-        let freshInfoData = null;
-        let promisesFinished = 0;
+            let freshLayananData = null;
+            let freshInfoData = null;
+            let promisesFinished = 0;
 
-        const checkPromisesAndFinalize = () => {
-            promisesFinished++;
-            if (promisesFinished < 2) return;
+            const checkPromisesAndFinalize = () => {
+                promisesFinished++;
+                if (promisesFinished < 2) return;
 
-            if (!isContentVisible && !isLoadedFromCache) {
+                if (!isContentVisible && !isLoadedFromCache) {
+                    skeletonLoader.classList.add('hidden');
+                    realContent.classList.remove('hidden');
+                }
+
+                console.log("Kedua promise selesai. Memperbarui cache.");
+                const finalCacheData = {
+                    layanan: freshLayananData !== null ? freshLayananData : (cachedData ? cachedData.layanan : []),
+                    info: freshInfoData !== null ? freshInfoData : (cachedData ? cachedData.info : [])
+                };
+                const itemToCache = { data: finalCacheData, timestamp: Date.now() };
+                localStorage.setItem(CACHE_KEY, JSON.stringify(itemToCache));
+                console.log("Cache localStorage diperbarui dengan data baru.");
+            };
+            
+            layananPromise
+                .then(data => {
+                    console.log("Data layanan baru diterima.");
+                    freshLayananData = data || [];
+                    onLayananSuccess(freshLayananData);
+                    prefetchCalendarData(freshLayananData);
+                })
+                .catch(err => {
+                    console.error("Gagal mengambil data layanan baru:", err);
+                    if (!isLoadedFromCache) onLayananFailure(err);
+                })
+                .finally(checkPromisesAndFinalize);
+
+            infoPromise
+                .then(data => {
+                    console.log("Data info baru diterima.");
+                    freshInfoData = data || [];
+                    onInfoSuccess(freshInfoData);
+                })
+                .catch(err => {
+                    console.error("Gagal mengambil data info baru:", err);
+                    if (!isLoadedFromCache) onInfoFailure(err);
+                })
+                .finally(checkPromisesAndFinalize);
+
+            fetch(GAS_WEB_APP_URL + '?action=recordVisit');
+        }
+
+        function setupEventListeners() {
+            if (trackingForm) trackingForm.addEventListener('submit', handleTracking);
+            if (mobileTrackingForm) mobileTrackingForm.addEventListener('submit', handleMobileTracking);
+            const modalClosers = [
+                { btn: closeModalBtn, modal: formModal }, { btn: cancelModalBtn, modal: formModal },
+                { btn: closeSearchModalBtn, modal: searchModal }, { btn: closeHelpdeskModalBtn, modal: helpdeskModal },
+                { btn: closeQuickServicesModalBtn, modal: quickServicesModal }, { btn: closeCalendarModalBtn, modal: calendarModal }
+            ];
+            modalClosers.forEach(item => {
+                if (item && item.btn) item.btn.addEventListener('click', () => item.modal.classList.add('hidden'));
+            });
+
+            if (permohonanForm) permohonanForm.addEventListener('submit', handlePermohonanSubmit);
+            if (helpdeskForm) helpdeskForm.addEventListener('submit', handleHelpdeskSubmit);
+            if (trackingResult) trackingResult.addEventListener('click', handleCloseTrackResult);
+            if (userTypeToggleContainer) userTypeToggleContainer.addEventListener('click', toggleUserType);
+            if (fabHelpdeskBtn) fabHelpdeskBtn.addEventListener('click', () => helpdeskModal.classList.remove('hidden'));
+            
+            function handleLinkClick(event) {
+                const link = event.target.closest('a');
+                if (link && link.href) {
+                    const textElement = link.querySelector('p');
+                    const itemName = `Klik: ${ (textElement) ? textElement.textContent.trim() : link.dataset.itemName}`;
+                    if (itemName) {
+                        fetch(GAS_WEB_APP_URL + '?action=recordClick&itemName=' + encodeURIComponent(itemName));
+                    }
+                }
+            }
+            [infoContainer, pinnedContainer, quicklinkContainer, footerLinkContainer].forEach(container => {
+                if (container) container.addEventListener('click', handleLinkClick);
+            });
+            const navHome = document.getElementById('navHome');
+            const navSearch = document.getElementById('navSearch');
+            const navServices = document.getElementById('navServices');
+            const navHelp = document.getElementById('navHelp');
+            if (navHome) navHome.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+            if (navSearch) navSearch.addEventListener('click', () => searchModal.classList.remove('hidden'));
+            if (navServices) navServices.addEventListener('click', () => quickServicesModal.classList.remove('hidden'));
+            if (navHelp) navHelp.addEventListener('click', () => helpdeskModal.classList.remove('hidden'));
+        }
+
+        function showNotificationModal(title, message, type = 'info') {
+            const modal = document.getElementById('notificationModal');
+            const iconContainer = document.getElementById('notificationIcon');
+            const titleEl = document.getElementById('notificationTitle');
+            const messageEl = document.getElementById('notificationMessage');
+            const closeBtn = document.getElementById('closeNotificationBtn');
+            if (!modal) return;
+            const hideModal = () => {
+                modal.classList.remove('visible');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                }, 300);
+            };
+            titleEl.textContent = title;
+            messageEl.innerHTML = message;
+            iconContainer.className = 'mx-auto mb-4 w-16 h-16 flex items-center justify-center rounded-full text-4xl';
+            if (type === 'success') {
+                iconContainer.classList.add('bg-green-100', 'text-green-600');
+                iconContainer.innerHTML = `<i class="fas fa-check-circle"></i>`;
+            } else if (type === 'error') {
+                iconContainer.classList.add('bg-red-100', 'text-red-600');
+                iconContainer.innerHTML = `<i class="fas fa-times-circle"></i>`;
+            } else {
+                iconContainer.classList.add('bg-blue-100', 'text-blue-600');
+                iconContainer.innerHTML = `<i class="fas fa-info-circle"></i>`;
+            }
+            iconContainer.style.display = (type === 'custom') ? 'none' : 'flex';
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.add('visible');
+            }, 10);
+            closeBtn.onclick = hideModal;
+            
+            const copyBtn = document.getElementById('copy-id-btn');
+            const copyTarget = document.getElementById('copy-target-id');
+
+            if (copyBtn && copyTarget) {
+                copyBtn.onclick = () => {
+                    const textToCopy = copyTarget.innerText;
+                    const textArea = document.createElement('textarea');
+                    textArea.value = textToCopy;
+                    textArea.style.position = 'absolute';
+                    textArea.style.left = '-9999px';
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    try {
+                        document.execCommand('copy');
+                        copyBtn.textContent = 'Tersalin!';
+                        copyBtn.classList.add('bg-green-200');
+                        setTimeout(() => {
+                            copyBtn.textContent = 'Copy ID';
+                            copyBtn.classList.remove('bg-green-200');
+                        }, 2000);
+                    } catch (err) {
+                        console.error('Gagal menyalin ID:', err);
+                        copyBtn.textContent = 'Gagal';
+                    }
+                    document.body.removeChild(textArea);
+                };
+            }
+        }
+
+        function handleCloseTrackResult(e) {
+            if (e.target.closest('.js-close-track-result')) {
+                trackingResult.innerHTML = '';
+                document.getElementById('permohonanId').value = '';
+                trackingLayananSelect.selectedIndex = 0;
+            }
+        }
+
+        function prefetchCalendarData(layananList) {
+            const calendarServices = layananList.filter(l => (getValueCaseInsensitive(l, 'jenis') || '').toLowerCase() === 'kalender');
+
+            calendarServices.forEach(service => {
+                const sheet = getValueCaseInsensitive(service, 'sheet');
+                const sheetId = getValueCaseInsensitive(service, 'Sheet ID') || '';
+                if (sheet) {
+                    const cacheKey = `${sheet}-${sheetId}`;
+                    if (!calendarDataCache[cacheKey]) {
+                        console.log(`Prefetching calendar data for: ${sheet}`);
+                        fetch(`${GAS_WEB_APP_URL}?action=getCalendarEvents&sheetName=${encodeURIComponent(sheet)}&sheetId=${encodeURIComponent(sheetId)}`)
+                            .then(res => res.json())
+                            .then(events => {
+                                calendarDataCache[cacheKey] = Array.isArray(events) ? events : [];
+                                console.log(`Cache updated for: ${sheet}`);
+                            })
+                            .catch(err => console.error(`Failed to prefetch calendar data for ${sheet}:`, err));
+                    }
+                }
+            });
+        }
+
+        function getValueCaseInsensitive(object, key) {
+            if (!object || !key) return undefined;
+            const asLowercase = key.toLowerCase();
+            const keyFound = Object.keys(object).find(k => k.toLowerCase().trim() === asLowercase);
+            return object[keyFound];
+        }
+
+        function getTextColorForBg(hexColor) {
+            if (!hexColor || hexColor.length < 4) return 'text-white';
+            let shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+            hexColor = hexColor.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b);
+            let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hexColor);
+            if (!result) return 'text-white';
+            const r = parseInt(result[1], 16);
+            const g = parseInt(result[2], 16);
+            const b = parseInt(result[3], 16);
+            const luminance = (0.299 * r + 0.587 * g + 0.114 * b);
+            return luminance > 150 ? 'text-gray-800' : 'text-white';
+        }
+
+        function getIconForLayanan(layanan) {
+            const customIcon = getValueCaseInsensitive(layanan, 'icon');
+            if (customIcon && customIcon.toString().trim() !== '') {
+                return customIcon.toString().trim();
+            }
+            return 'concierge-bell';
+        }
+
+        function getFooterIcon(text) {
+            const lowerText = text.toLowerCase();
+            if (lowerText.includes('facebook')) return 'fab fa-facebook-f';
+            if (lowerText.includes('instagram')) return 'fab fa-instagram';
+            if (lowerText.includes('youtube')) return 'fab fa-youtube';
+            if (lowerText.includes('tiktok')) return 'fab fa-tiktok';
+            if (lowerText.includes('website')) return 'fas fa-globe';
+            return 'fas fa-link';
+        }
+
+        function onLayananSuccess(data) {
+            if (!isContentVisible) {
                 skeletonLoader.classList.add('hidden');
                 realContent.classList.remove('hidden');
+                isContentVisible = true;
             }
+            semuaLayanan = data || [];
+            if (!semuaLayanan || semuaLayanan.length === 0) {
+                layananTabsContainer.innerHTML = '';
+                layananContentContainer.innerHTML = '<p class="text-gray-500 text-center p-4">Tidak ada layanan yang tersedia.</p>';
+                return;
+            }
+            renderLayananByFilter(currentUserType);
+            const mobileTrackingSelect = document.getElementById('mobileTrackingLayananSelect');
+            trackingLayananSelect.innerHTML = '<option value="">Pilih Jenis Layanan</option>';
+            if (mobileTrackingSelect) mobileTrackingSelect.innerHTML = '<option value="">Pilih Jenis Layanan</option>';
+            const trackableLayanan = semuaLayanan.filter(layanan => (getValueCaseInsensitive(layanan, 'jenis') || '').toLowerCase() !== 'setting');
+            trackableLayanan.forEach(layanan => {
+                const layananName = getValueCaseInsensitive(layanan, 'jenis layanan');
+                const targetSheet = getValueCaseInsensitive(layanan, 'sheet');
+                const targetSheetId = getValueCaseInsensitive(layanan, 'Sheet ID') || '';
+                if (layananName && targetSheet) {
+                    const optionValue = JSON.stringify({ name: targetSheet, id: targetSheetId });
+                    const option = `<option value='${optionValue}'>${layananName}</option>`;
+                    trackingLayananSelect.innerHTML += option;
+                    if (mobileTrackingSelect) mobileTrackingSelect.innerHTML += option;
+                }
+            });
+            renderQuickServicesModal();
+        }
 
-            console.log("Kedua promise selesai. Memperbarui cache.");
-            const finalCacheData = {
-                layanan: freshLayananData !== null ? freshLayananData : (cachedData ? cachedData.layanan : []),
-                info: freshInfoData !== null ? freshInfoData : (cachedData ? cachedData.info : [])
-            };
-            const itemToCache = { data: finalCacheData, timestamp: Date.now() };
-            localStorage.setItem(CACHE_KEY, JSON.stringify(itemToCache));
-            console.log("Cache localStorage diperbarui dengan data baru.");
-        };
-        
-        layananPromise
-            .then(data => {
-                console.log("Data layanan baru diterima.");
-                freshLayananData = data || [];
-                onLayananSuccess(freshLayananData);
-                prefetchCalendarData(freshLayananData);
-            })
-            .catch(err => {
-                console.error("Gagal mengambil data layanan baru:", err);
-                if (!isLoadedFromCache) onLayananFailure(err);
-            })
-            .finally(checkPromisesAndFinalize);
+        function onLayananFailure(error) {
+            console.error('Gagal memuat layanan:', error);
+            layananContentContainer.innerHTML = '<p class="text-red-500 col-span-full p-4 text-center">Gagal memuat daftar layanan. Silakan muat ulang.</p>';
+        }
 
-        infoPromise
-            .then(data => {
-                console.log("Data info baru diterima.");
-                freshInfoData = data || [];
-                onInfoSuccess(freshInfoData);
-            })
-            .catch(err => {
-                console.error("Gagal mengambil data info baru:", err);
-                if (!isLoadedFromCache) onInfoFailure(err);
-            })
-            .finally(checkPromisesAndFinalize);
-
-        fetch(GAS_WEB_APP_URL + '?action=recordVisit');
-    }
-
-    function setupEventListeners() {
-        if (trackingForm) trackingForm.addEventListener('submit', handleTracking);
-        if (mobileTrackingForm) mobileTrackingForm.addEventListener('submit', handleMobileTracking);
-        const modalClosers = [
-            { btn: closeModalBtn, modal: formModal }, { btn: cancelModalBtn, modal: formModal },
-            { btn: closeSearchModalBtn, modal: searchModal }, { btn: closeHelpdeskModalBtn, modal: helpdeskModal },
-            { btn: closeQuickServicesModalBtn, modal: quickServicesModal }, { btn: closeCalendarModalBtn, modal: calendarModal }
-        ];
-        modalClosers.forEach(item => {
-            if (item && item.btn) item.btn.addEventListener('click', () => item.modal.classList.add('hidden'));
-        });
-
-        if (permohonanForm) permohonanForm.addEventListener('submit', handlePermohonanSubmit);
-        if (helpdeskForm) helpdeskForm.addEventListener('submit', handleHelpdeskSubmit);
-        if (trackingResult) trackingResult.addEventListener('click', handleCloseTrackResult);
-        if (userTypeToggleContainer) userTypeToggleContainer.addEventListener('click', toggleUserType);
-        if (fabHelpdeskBtn) fabHelpdeskBtn.addEventListener('click', () => helpdeskModal.classList.remove('hidden'));
-        
-        function handleLinkClick(event) {
-            const link = event.target.closest('a');
-            if (link && link.href) {
-                const textElement = link.querySelector('p');
-                const itemName = `Klik: ${ (textElement) ? textElement.textContent.trim() : link.dataset.itemName}`;
-                if (itemName) {
-                    fetch(GAS_WEB_APP_URL + '?action=recordClick&itemName=' + encodeURIComponent(itemName));
-                }
-            }
-        }
-        [infoContainer, pinnedContainer, quicklinkContainer, footerLinkContainer].forEach(container => {
-            if (container) container.addEventListener('click', handleLinkClick);
-        });
-        const navHome = document.getElementById('navHome');
-        const navSearch = document.getElementById('navSearch');
-        const navServices = document.getElementById('navServices');
-        const navHelp = document.getElementById('navHelp');
-        if (navHome) navHome.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-        if (navSearch) navSearch.addEventListener('click', () => searchModal.classList.remove('hidden'));
-        if (navServices) navServices.addEventListener('click', () => quickServicesModal.classList.remove('hidden'));
-        if (navHelp) navHelp.addEventListener('click', () => helpdeskModal.classList.remove('hidden'));
-    }
-
-    function showNotificationModal(title, message, type = 'info') {
-        const modal = document.getElementById('notificationModal');
-        const iconContainer = document.getElementById('notificationIcon');
-        const titleEl = document.getElementById('notificationTitle');
-        const messageEl = document.getElementById('notificationMessage');
-        const closeBtn = document.getElementById('closeNotificationBtn');
-        if (!modal) return;
-        const hideModal = () => {
-            modal.classList.remove('visible');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-            }, 300);
-        };
-        titleEl.textContent = title;
-        messageEl.innerHTML = message;
-        iconContainer.className = 'mx-auto mb-4 w-16 h-16 flex items-center justify-center rounded-full text-4xl';
-        if (type === 'success') {
-            iconContainer.classList.add('bg-green-100', 'text-green-600');
-            iconContainer.innerHTML = `<i class="fas fa-check-circle"></i>`;
-        } else if (type === 'error') {
-            iconContainer.classList.add('bg-red-100', 'text-red-600');
-            iconContainer.innerHTML = `<i class="fas fa-times-circle"></i>`;
-        } else {
-            iconContainer.classList.add('bg-blue-100', 'text-blue-600');
-            iconContainer.innerHTML = `<i class="fas fa-info-circle"></i>`;
-        }
-        iconContainer.style.display = (type === 'custom') ? 'none' : 'flex';
-        modal.classList.remove('hidden');
-        setTimeout(() => {
-            modal.classList.add('visible');
-        }, 10);
-        closeBtn.onclick = hideModal;
-        
-        const copyBtn = document.getElementById('copy-id-btn');
-        const copyTarget = document.getElementById('copy-target-id');
-
-        if (copyBtn && copyTarget) {
-            copyBtn.onclick = () => {
-                const textToCopy = copyTarget.innerText;
-                const textArea = document.createElement('textarea');
-                textArea.value = textToCopy;
-                textArea.style.position = 'absolute';
-                textArea.style.left = '-9999px';
-                document.body.appendChild(textArea);
-                textArea.select();
-                try {
-                    document.execCommand('copy');
-                    copyBtn.textContent = 'Tersalin!';
-                    copyBtn.classList.add('bg-green-200');
-                    setTimeout(() => {
-                        copyBtn.textContent = 'Copy ID';
-                        copyBtn.classList.remove('bg-green-200');
-                    }, 2000);
-                } catch (err) {
-                    console.error('Gagal menyalin ID:', err);
-                    copyBtn.textContent = 'Gagal';
-                }
-                document.body.removeChild(textArea);
-            };
-        }
-    }
-
-    function handleCloseTrackResult(e) {
-        if (e.target.closest('.js-close-track-result')) {
-            trackingResult.innerHTML = '';
-            document.getElementById('permohonanId').value = '';
-            trackingLayananSelect.selectedIndex = 0;
-        }
-    }
-
-    function prefetchCalendarData(layananList) {
-        const calendarServices = layananList.filter(l => (getValueCaseInsensitive(l, 'jenis') || '').toLowerCase() === 'kalender');
-
-        calendarServices.forEach(service => {
-            const sheet = getValueCaseInsensitive(service, 'sheet');
-            const sheetId = getValueCaseInsensitive(service, 'Sheet ID') || '';
-            if (sheet) {
-                const cacheKey = `${sheet}-${sheetId}`;
-                if (!calendarDataCache[cacheKey]) {
-                    console.log(`Prefetching calendar data for: ${sheet}`);
-                    fetch(`${GAS_WEB_APP_URL}?action=getCalendarEvents&sheetName=${encodeURIComponent(sheet)}&sheetId=${encodeURIComponent(sheetId)}`)
-                        .then(res => res.json())
-                        .then(events => {
-                            calendarDataCache[cacheKey] = Array.isArray(events) ? events : [];
-                            console.log(`Cache updated for: ${sheet}`);
-                        })
-                        .catch(err => console.error(`Failed to prefetch calendar data for ${sheet}:`, err));
-                }
-            }
-        });
-    }
-
-    function getValueCaseInsensitive(object, key) {
-        if (!object || !key) return undefined;
-        const asLowercase = key.toLowerCase();
-        const keyFound = Object.keys(object).find(k => k.toLowerCase().trim() === asLowercase);
-        return object[keyFound];
-    }
-
-    function getTextColorForBg(hexColor) {
-        if (!hexColor || hexColor.length < 4) return 'text-white';
-        let shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-        hexColor = hexColor.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b);
-        let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hexColor);
-        if (!result) return 'text-white';
-        const r = parseInt(result[1], 16);
-        const g = parseInt(result[2], 16);
-        const b = parseInt(result[3], 16);
-        const luminance = (0.299 * r + 0.587 * g + 0.114 * b);
-        return luminance > 150 ? 'text-gray-800' : 'text-white';
-    }
-
-    function getIconForLayanan(layanan) {
-        const customIcon = getValueCaseInsensitive(layanan, 'icon');
-        if (customIcon && customIcon.toString().trim() !== '') {
-            return customIcon.toString().trim();
-        }
-        return 'concierge-bell';
-    }
-
-    function getFooterIcon(text) {
-        const lowerText = text.toLowerCase();
-        if (lowerText.includes('facebook')) return 'fab fa-facebook-f';
-        if (lowerText.includes('instagram')) return 'fab fa-instagram';
-        if (lowerText.includes('youtube')) return 'fab fa-youtube';
-        if (lowerText.includes('tiktok')) return 'fab fa-tiktok';
-        if (lowerText.includes('website')) return 'fas fa-globe';
-        return 'fas fa-link';
-    }
-
-    function onLayananSuccess(data) {
-        if (!isContentVisible) {
-            skeletonLoader.classList.add('hidden');
-            realContent.classList.remove('hidden');
-            isContentVisible = true;
-        }
-        semuaLayanan = data || [];
-        if (!semuaLayanan || semuaLayanan.length === 0) {
-            layananTabsContainer.innerHTML = '';
-            layananContentContainer.innerHTML = '<p class="text-gray-500 text-center p-4">Tidak ada layanan yang tersedia.</p>';
-            return;
-        }
-        renderLayananByFilter(currentUserType);
-        const mobileTrackingSelect = document.getElementById('mobileTrackingLayananSelect');
-        trackingLayananSelect.innerHTML = '<option value="">Pilih Jenis Layanan</option>';
-        if (mobileTrackingSelect) mobileTrackingSelect.innerHTML = '<option value="">Pilih Jenis Layanan</option>';
-        const trackableLayanan = semuaLayanan.filter(layanan => (getValueCaseInsensitive(layanan, 'jenis') || '').toLowerCase() !== 'setting');
-        trackableLayanan.forEach(layanan => {
-            const layananName = getValueCaseInsensitive(layanan, 'jenis layanan');
-            const targetSheet = getValueCaseInsensitive(layanan, 'sheet');
-            const targetSheetId = getValueCaseInsensitive(layanan, 'Sheet ID') || '';
-            if (layananName && targetSheet) {
-                const optionValue = JSON.stringify({ name: targetSheet, id: targetSheetId });
-                const option = `<option value='${optionValue}'>${layananName}</option>`;
-                trackingLayananSelect.innerHTML += option;
-                if (mobileTrackingSelect) mobileTrackingSelect.innerHTML += option;
-            }
-        });
-        renderQuickServicesModal();
-    }
-
-    function onLayananFailure(error) {
-        console.error('Gagal memuat layanan:', error);
-        layananContentContainer.innerHTML = '<p class="text-red-500 col-span-full p-4 text-center">Gagal memuat daftar layanan. Silakan muat ulang.</p>';
-    }
-
-    function onInfoSuccess(allData) {
-        if (!isContentVisible) {
-            skeletonLoader.classList.add('hidden');
-            realContent.classList.remove('hidden');
-            isContentVisible = true;
-        }
-        const infoItems = [], pinItems = [], linkItems = [], footerLinkItems = [];
-        (allData || []).forEach(item => {
-            const jenis = (getValueCaseInsensitive(item, 'jenis') || '').toLowerCase();
-            if (jenis === 'info') infoItems.push(item);
-            else if (jenis === 'pin') pinItems.push(item);
-            else if (jenis === 'link') linkItems.push(item);
-            else if (jenis === 'footer link') footerLinkItems.push(item);
-        });
-        const topWrapper = document.getElementById('top-content-wrapper');
-        const topSectionTitle = document.getElementById('top-section-title');
-        if (infoItems.length >= 1 && pinItems.length >= 1) {
-            topWrapper.className = 'grid grid-cols-1 md:grid-cols-2 md:gap-8 items-start';
-            topSectionTitle.classList.add('hidden');
-        } else {
-            topWrapper.className = '';
-            topSectionTitle.classList.remove('hidden');
-        }
-        renderInfoSlider(infoItems);
-        renderPinnedButtons(pinItems);
-        renderQuickLinks(linkItems);
-        renderFooterLinks(footerLinkItems);
-    }
-    
-    function onInfoFailure(error) {
-        console.error('Gagal memuat informasi:', error);
-        document.getElementById('infoContainer').innerHTML = '';
-        document.getElementById('pinnedContainer').innerHTML = '';
-        document.getElementById('quicklinkContainer').innerHTML = '';
-    }
-
-    function toggleUserType(e) {
-        e.preventDefault();
-        const target = e.target.closest('.toggle-btn');
-        if (!target || target.classList.contains('active')) return;
-        currentUserType = (target.id === 'toggleToInternal') ? 'Internal' : 'Umum';
-        document.querySelectorAll('#userTypeToggleContainer .toggle-btn').forEach(btn => {
-            btn.classList.remove('active', 'text-gray-500');
-            if (btn === target) {
-                btn.classList.add('active');
-            } else {
-                btn.classList.add('text-gray-500');
-            }
-        });
-        renderLayananByFilter(currentUserType);
-    }
-
-    function renderLayananByFilter(filterType) {
-        layananTabsContainer.innerHTML = '';
-        layananContentContainer.innerHTML = '';
-        const filteredData = semuaLayanan.filter(layanan => {
-            const sebagai = (getValueCaseInsensitive(layanan, 'sebagai') || '').toLowerCase();
-            const jenis = (getValueCaseInsensitive(layanan, 'jenis') || '').toLowerCase();
-            if (jenis === 'setting') return false;
-            return filterType === 'Internal' ? sebagai === 'internal' : sebagai !== 'internal';
-        });
-
-        if (filteredData.length === 0) {
-            layananContentContainer.innerHTML = `<div class="text-center py-10"><p class="text-gray-500">Tidak ada layanan yang tersedia untuk kategori ini.</p></div>`;
-            return;
-        }
-
-        const groupedLayananData = filteredData.reduce((acc, layanan) => {
-            const kategoriString = getValueCaseInsensitive(layanan, 'Kategori') || 'Lainnya';
-            kategoriString.split(',').map(k => k.trim()).forEach(kategori => {
-                if (!acc[kategori]) acc[kategori] = [];
-                acc[kategori].push(layanan);
-            });
-            return acc;
-        }, {});
-
-        const categories = Object.keys(groupedLayananData);
-        const colorPalette = [{ bg: 'bg-blue-100', text: 'text-blue-800' }, { bg: 'bg-orange-100', text: 'text-orange-800' }, { bg: 'bg-purple-100', text: 'text-purple-800' }, { bg: 'bg-green-100', text: 'text-green-800' }, { bg: 'bg-red-100', text: 'text-red-800' }, { bg: 'bg-indigo-100', text: 'text-indigo-800' }];
-
-        categories.forEach((kategori, index) => {
-            const tabSlide = document.createElement('div');
-            tabSlide.className = 'swiper-slide';
-            tabSlide.innerHTML = `<button class="layanan-tab" data-category="${kategori}">${kategori}</button>`;
-            layananTabsContainer.appendChild(tabSlide);
-
-            const contentPanel = document.createElement('div');
-            contentPanel.id = `panel-${kategori}`;
-            contentPanel.className = 'layanan-content-panel';
-            contentPanel.innerHTML = `
-                <div class="bg-white/50 backdrop-blur-lg p-6 rounded-xl shadow-lg border border-white/30">
-                    <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4 text-center">
-                        ${groupedLayananData[kategori].map((layanan, i) => {
-                            const jenisLayanan = (getValueCaseInsensitive(layanan, 'jenis') || '').toLowerCase();
-                            const linkUrl = getValueCaseInsensitive(layanan, 'link');
-                            const colors = colorPalette[i % colorPalette.length];
-                            const tag = (jenisLayanan === 'link' && linkUrl) ? 'a' : 'div';
-                            const attrs = (tag === 'a') ? `href="${linkUrl}" target="_blank" rel="noopener noreferrer"` : `
-                                data-form-fields="${getValueCaseInsensitive(layanan, 'form') || ''}"
-                                data-layanan-name="${getValueCaseInsensitive(layanan, 'jenis layanan') || ''}"
-                                data-pengolah="${getValueCaseInsensitive(layanan, 'pengolah') || ''}"
-                                data-jenis="${getValueCaseInsensitive(layanan, 'jenis') || ''}"
-                                data-sheet="${getValueCaseInsensitive(layanan, 'sheet') || ''}"
-                                data-sheet-id="${getValueCaseInsensitive(layanan, 'Sheet ID') || ''}"
-                            `;
-                            return `
-                                <${tag} class="flex flex-col items-center space-y-2 cursor-pointer group" ${attrs}>
-                                    <div class="${colors.bg} ${colors.text} w-16 h-16 rounded-xl flex items-center justify-center text-2xl transition-transform group-hover:scale-110">
-                                        <i class="fas fa-${getIconForLayanan(layanan)}"></i>
-                                    </div>
-                                    <h3 class="font-medium text-xs text-gray-700">${getValueCaseInsensitive(layanan, 'jenis layanan')}</h3>
-                                </${tag}>
-                            `;
-                        }).join('')}
-                    </div>
-                </div>
-            `;
-            layananContentContainer.appendChild(contentPanel);
-
-            if (index === 0) {
-                tabSlide.querySelector('button').classList.add('active');
-            } else {
-                contentPanel.classList.add('hidden');
-            }
-        });
+        function onInfoSuccess(allData) {
+            if (!isContentVisible) {
+                skeletonLoader.classList.add('hidden');
+                realContent.classList.remove('hidden');
+                isContentVisible = true;
+            }
+            const infoItems = [], pinItems = [], linkItems = [], footerLinkItems = [];
+            (allData || []).forEach(item => {
+                const jenis = (getValueCaseInsensitive(item, 'jenis') || '').toLowerCase();
+                if (jenis === 'info') infoItems.push(item);
+                else if (jenis === 'pin') pinItems.push(item);
+                else if (jenis === 'link') linkItems.push(item);
+                else if (jenis === 'footer link') footerLinkItems.push(item);
+            });
+            const topWrapper = document.getElementById('top-content-wrapper');
+            const topSectionTitle = document.getElementById('top-section-title');
+            if (infoItems.length >= 1 && pinItems.length >= 1) {
+                topWrapper.className = 'grid grid-cols-1 md:grid-cols-2 md:gap-8 items-start';
+                topSectionTitle.classList.add('hidden');
+            } else {
+                topWrapper.className = '';
+                topSectionTitle.classList.remove('hidden');
+            }
+            renderInfoSlider(infoItems);
+            renderPinnedButtons(pinItems);
+            renderQuickLinks(linkItems);
+            renderFooterLinks(footerLinkItems);
+        }
         
-        layananContentContainer.querySelectorAll('div[data-jenis]').forEach(el => {
-            if (el.dataset.jenis.toLowerCase() === 'kalender') {
-                el.addEventListener('click', openCalendarModal);
-            } else {
-                el.addEventListener('click', openFormModal);
-            }
-        });
+        function onInfoFailure(error) {
+            console.error('Gagal memuat informasi:', error);
+            document.getElementById('infoContainer').innerHTML = '';
+            document.getElementById('pinnedContainer').innerHTML = '';
+            document.getElementById('quicklinkContainer').innerHTML = '';
+        }
 
-        new Swiper('.layanan-tabs-swiper', { slidesPerView: 'auto', spaceBetween: 16, freeMode: true });
+        function toggleUserType(e) {
+            e.preventDefault();
+            const target = e.target.closest('.toggle-btn');
+            if (!target || target.classList.contains('active')) return;
+            currentUserType = (target.id === 'toggleToInternal') ? 'Internal' : 'Umum';
+            document.querySelectorAll('#userTypeToggleContainer .toggle-btn').forEach(btn => {
+                btn.classList.remove('active', 'text-gray-500');
+                if (btn === target) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.add('text-gray-500');
+                }
+            });
+            renderLayananByFilter(currentUserType);
+        }
 
-        layananTabsContainer.addEventListener('click', function(e) {
-            if (e.target && e.target.classList.contains('layanan-tab')) {
-                const category = e.target.dataset.category;
-                layananTabsContainer.querySelectorAll('.layanan-tab').forEach(tab => tab.classList.remove('active'));
-                e.target.classList.add('active');
-                layananContentContainer.querySelectorAll('.layanan-content-panel').forEach(panel => {
-                    panel.classList.toggle('hidden', panel.id !== `panel-${category}`);
-                });
-            }
-        });
-    }
+        function renderLayananByFilter(filterType) {
+            layananTabsContainer.innerHTML = '';
+            layananContentContainer.innerHTML = '';
+            const filteredData = semuaLayanan.filter(layanan => {
+                const sebagai = (getValueCaseInsensitive(layanan, 'sebagai') || '').toLowerCase();
+                const jenis = (getValueCaseInsensitive(layanan, 'jenis') || '').toLowerCase();
+                if (jenis === 'setting') return false;
+                return filterType === 'Internal' ? sebagai === 'internal' : sebagai !== 'internal';
+            });
+
+            if (filteredData.length === 0) {
+                layananContentContainer.innerHTML = `<div class="text-center py-10"><p class="text-gray-500">Tidak ada layanan yang tersedia untuk kategori ini.</p></div>`;
+                return;
+            }
+
+            const groupedLayananData = filteredData.reduce((acc, layanan) => {
+                const kategoriString = getValueCaseInsensitive(layanan, 'Kategori') || 'Lainnya';
+                kategoriString.split(',').map(k => k.trim()).forEach(kategori => {
+                    if (!acc[kategori]) acc[kategori] = [];
+                    acc[kategori].push(layanan);
+                });
+                return acc;
+            }, {});
+
+            const categories = Object.keys(groupedLayananData);
+            const colorPalette = [{ bg: 'bg-blue-100', text: 'text-blue-800' }, { bg: 'bg-orange-100', text: 'text-orange-800' }, { bg: 'bg-purple-100', text: 'text-purple-800' }, { bg: 'bg-green-100', text: 'text-green-800' }, { bg: 'bg-red-100', text: 'text-red-800' }, { bg: 'bg-indigo-100', text: 'text-indigo-800' }];
+
+            categories.forEach((kategori, index) => {
+                const tabSlide = document.createElement('div');
+                tabSlide.className = 'swiper-slide';
+                tabSlide.innerHTML = `<button class="layanan-tab" data-category="${kategori}">${kategori}</button>`;
+                layananTabsContainer.appendChild(tabSlide);
+
+                const contentPanel = document.createElement('div');
+                contentPanel.id = `panel-${kategori}`;
+                contentPanel.className = 'layanan-content-panel';
+                contentPanel.innerHTML = `
+                    <div class="bg-white/50 backdrop-blur-lg p-6 rounded-xl shadow-lg border border-white/30">
+                        <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4 text-center">
+                            ${groupedLayananData[kategori].map((layanan, i) => {
+                                const jenisLayanan = (getValueCaseInsensitive(layanan, 'jenis') || '').toLowerCase();
+                                const linkUrl = getValueCaseInsensitive(layanan, 'link');
+                                const colors = colorPalette[i % colorPalette.length];
+                                const tag = (jenisLayanan === 'link' && linkUrl) ? 'a' : 'div';
+                                const attrs = (tag === 'a') ? `href="${linkUrl}" target="_blank" rel="noopener noreferrer"` : `
+                                    data-form-fields="${getValueCaseInsensitive(layanan, 'form') || ''}"
+                                    data-layanan-name="${getValueCaseInsensitive(layanan, 'jenis layanan') || ''}"
+                                    data-pengolah="${getValueCaseInsensitive(layanan, 'pengolah') || ''}"
+                                    data-jenis="${getValueCaseInsensitive(layanan, 'jenis') || ''}"
+                                    data-sheet="${getValueCaseInsensitive(layanan, 'sheet') || ''}"
+                                    data-sheet-id="${getValueCaseInsensitive(layanan, 'Sheet ID') || ''}"
+                                `;
+                                return `
+                                    <${tag} class="flex flex-col items-center space-y-2 cursor-pointer group" ${attrs}>
+                                        <div class="${colors.bg} ${colors.text} w-16 h-16 rounded-xl flex items-center justify-center text-2xl transition-transform group-hover:scale-110">
+                                            <i class="fas fa-${getIconForLayanan(layanan)}"></i>
+                                        </div>
+                                        <h3 class="font-medium text-xs text-gray-700">${getValueCaseInsensitive(layanan, 'jenis layanan')}</h3>
+                                    </${tag}>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+                layananContentContainer.appendChild(contentPanel);
+
+                if (index === 0) {
+                    tabSlide.querySelector('button').classList.add('active');
+                } else {
+                    contentPanel.classList.add('hidden');
+                }
+            });
+            
+            layananContentContainer.querySelectorAll('div[data-jenis]').forEach(el => {
+                if (el.dataset.jenis.toLowerCase() === 'kalender') {
+                    el.addEventListener('click', openCalendarModal);
+                } else {
+                    el.addEventListener('click', openFormModal);
+                }
+            });
+
+            new Swiper('.layanan-tabs-swiper', { slidesPerView: 'auto', spaceBetween: 16, freeMode: true });
+
+            layananTabsContainer.addEventListener('click', function(e) {
+                if (e.target && e.target.classList.contains('layanan-tab')) {
+                    const category = e.target.dataset.category;
+                    layananTabsContainer.querySelectorAll('.layanan-tab').forEach(tab => tab.classList.remove('active'));
+                    e.target.classList.add('active');
+                    layananContentContainer.querySelectorAll('.layanan-content-panel').forEach(panel => {
+                        panel.classList.toggle('hidden', panel.id !== `panel-${category}`);
+                    });
+                }
+            });
+        }
     
     function renderQuickServicesModal() {
         const container = document.getElementById('quickServicesContainer');
@@ -3192,5 +3195,6 @@ document.addEventListener('DOMContentLoaded', function() {
             button.disabled = false;
         }
     }
+    window.myAppInitialized = true;
 });
 
