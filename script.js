@@ -1568,5 +1568,4 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
-"
 
