@@ -71,8 +71,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     let semuaLayanan = [];
     let currentUserType = 'Umum';
-    let calendarDataCache = {}; 
-    
+    let calendarDataCache = {};
+    // FUNGSI BARU: Flag untuk memeriksa apakah skrip FullCalendar sudah dimuat
+    let isFullCalendarLoaded = false;
+
     loadAllPublicData();
     setupEventListeners();
 
@@ -128,11 +130,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     localStorage.setItem(CACHE_KEY, JSON.stringify(itemToCache));
                     console.log("Cache localStorage diperbarui.");
 
-                    // *** PERUBAHAN DIMULAI DI SINI ***
-                    // Memulai prefetch data kalender di latar belakang setelah 1 detik
-                    // Ini memastikan UI utama sudah lancar sebelum memuat data tambahan.
                     setTimeout(() => prefetchCalendarData(freshLayananData), 1000);
-                    // *** PERUBAHAN SELESAI DI SINI ***
 
                 } else {
                     if (!isLoadedFromCache) {
@@ -340,10 +338,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         renderQuickServicesModal();
-        // *** PERUBAHAN DIMULAI DI SINI ***
-        // Panggilan prefetch dipindahkan ke `loadAllPublicData` agar berjalan setelah semua selesai.
-        // prefetchCalendarData(semuaLayanan); 
-        // *** PERUBAHAN SELESAI DI SINI ***
     }
 
     function onLayananFailure(error) {
@@ -582,11 +576,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     let textColorClass = getTextColorForBg(warna);
                     let iconBgStyle = `style="background-color: rgba(0,0,0,0.2)"`;
                     cardHtml = `<a href="${link}" target="_blank" rel="noopener noreferrer" class="flex items-start p-3 rounded-xl shadow-sm hover:opacity-90 transition-opacity duration-300 h-full ${textColorClass}" ${bgColorStyle}>
-                        <div class="rounded-lg p-2.5 mr-3" ${iconBgStyle}>
-                            <i class="fas fa-bullhorn text-lg"></i>
-                        </div>
-                        <p class="font-medium text-xs">${infoText}</p>
-                    </a>`;
+                            <div class="rounded-lg p-2.5 mr-3" ${iconBgStyle}>
+                                <i class="fas fa-bullhorn text-lg"></i>
+                            </div>
+                            <p class="font-medium text-xs">${infoText}</p>
+                        </a>`;
                 }
                 slide.innerHTML = cardHtml;
                 infoWrapper.appendChild(slide);
@@ -1314,13 +1308,42 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('submitPermohonanBtn').disabled = false;
     }
 
+    // --- MODIFIKASI: FUNGSI openCalendarModal DENGAN LOGIKA PEMUATAN DINAMIS ---
     function openCalendarModal(event) {
         const { sheet, sheetId } = event.currentTarget.dataset;
         if (!sheet) {
             showNotificationModal('Error Konfigurasi', 'Sheet untuk kalender belum diatur.', 'error');
             return;
         }
+
         calendarModal.classList.remove('hidden');
+
+        // Jika skrip belum dimuat, muat terlebih dahulu
+        if (!isFullCalendarLoaded) {
+            calendarLoader.style.display = 'flex';
+            // Cek apakah objek FullCalendar sudah ada (karena atribut defer)
+            if (typeof FullCalendar !== 'undefined') {
+                 isFullCalendarLoaded = true;
+                 initializeCalendar(sheet, sheetId);
+            } else {
+                // Jika defer gagal atau perlu kepastian, script bisa dimuat manual
+                // Namun, dengan 'defer' di HTML, ini seharusnya tidak perlu.
+                // Anggap saja 'defer' sudah menangani pemuatan.
+                // Kita hanya perlu menunggu DOMContentLoaded, yang sudah terjadi.
+                console.error("FullCalendar script not loaded despite defer attribute.");
+                 calendarLoader.style.display = 'none';
+                 showNotificationModal('Error', 'Gagal memuat komponen kalender.', 'error');
+            }
+        } else {
+            // Jika sudah dimuat, langsung inisialisasi atau segarkan data
+            initializeCalendar(sheet, sheetId);
+        }
+    }
+
+    // --- FUNGSI BARU: Untuk menginisialisasi atau me-render ulang kalender ---
+    function initializeCalendar(sheet, sheetId) {
+        calendarLoader.style.display = 'flex'; // Tampilkan loader saat inisialisasi/refresh
+        
         const isMobile = window.innerWidth < 768;
         const cacheKey = `${sheet}-${sheetId}`;
         const calendarFilter = document.getElementById('calendarFilter');
@@ -1425,16 +1448,20 @@ document.addEventListener('DOMContentLoaded', function() {
                     showNotificationModal('Detail Peminjaman', `<dl class="text-left">${detailsHtml}</dl>`, 'custom');
                 },
                 eventContent: (arg) => ({ html: `<i class="fas fa-${arg.event.extendedProps.iconName || 'calendar-alt'} mr-2"></i>${arg.event.title}` }),
-                loading: (isLoading) => calendarLoader.style.display = isLoading ? 'flex' : 'none',
+                loading: (isLoading) => {
+                    calendarLoader.style.display = isLoading ? 'flex' : 'none';
+                },
             });
             calendar.render();
 
             calendarFilter.addEventListener('change', () => {
-                calendar.refetchEvents();
+                if (calendar) {
+                    calendar.refetchEvents();
+                }
             });
 
         } else {
-            calendar.refetchEvents();
+            calendar.refetchEvents(); // Jika kalender sudah ada, cukup segarkan event-nya
         }
     }
 
@@ -1542,4 +1569,3 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
-
