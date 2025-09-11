@@ -1,5 +1,5 @@
 // URL Web App Google Apps Script Anda
-const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbz4ByR02-FPdduA6p28iIBOly3Xxg9IZTBl3Ux4sy64nfZldwBRpy0kyXalDZ_ExgSlAg/exec';
+const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyQeVDXso-BeLeev-j_YAn-arqgWa1mTIS5LxD_Xcfb3FaBiN5N6pjkuoKMZh5qq3ouag/exec';
 
 // --- DATA KONSTAN (SEKARANG KOSONG, AKAN DIAMBIL DARI SERVER) ---
 let DATA_AKADEMIK = [];
