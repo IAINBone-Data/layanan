@@ -5,13 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Layanan IAIN Bone</title>
 
-    <!-- External Libraries -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Styling (Tetap di head untuk mencegah FOUC - Flash of Unstyled Content) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" xintegrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
 
     <link rel="icon" type="image/png" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEivDAkuxazRpasK-Kj0Tf1RXGNSrUoVyfvMyq-lXn_NBI2wXgCdjb1CBLGR7sC-r5cGU6njQnQ3TG551VMK03pSui50uEU5Ot8ScLiKskrcY-2yjuNt_xt8jnGcIjCPCtXN7yzb_9Me6G2ceSWv55vF_ZDTCk8tF0zseZ4fdrW764wiSlnBMLItY_4xdyY/s1600/logoiainbone%20-%20Copy%20%283%20%282%29.png" />
     <!-- Custom CSS -->
@@ -226,6 +224,10 @@
         <a class="bg-brand-green text-white w-14 h-14 rounded-full shadow-lg hover:opacity-90 transition flex items-center justify-center text-2xl" href="/admin1" title="Login Admin"><i class="fas fa-user-shield"></i></a>
     </div>
     
-<script src="script.js"></script>
+    <!-- Skrip dipindahkan ke akhir body untuk pemuatan yang lebih cepat -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js" defer></script>
+    <!-- Menambahkan 'defer' ke skrip utama -->
+    <script src="script.js" defer></script>
 </body>
 </html>
