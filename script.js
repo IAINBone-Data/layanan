@@ -1,40 +1,9 @@
 // URL Web App Google Apps Script Anda
-const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxlI-TordTgSzkCfSdEdvBLyjFcjOH1841aXZy4P0e7w-R1cpAha9bmsVNfgF6zVp-2-A/exec';
+const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwbyX3Vj1oqz_aWz-C4fOKRGPfGd_rkSn3_Bdz8A8E93lbE2ZvLvHxuWo-wQNJXHk5r5w/exec';
 
-// --- DATA KONSTAN ---
-const DATA_AKADEMIK = [
-    { prodi: 'Hukum Keluarga Islam', fakultas: 'Fakultas Syariah dan Hukum Islam' },
-    { prodi: 'Hukum Tatanegara', fakultas: 'Fakultas Syariah dan Hukum Islam' },
-    { prodi: 'Hukum Ekonomi Syariah', fakultas: 'Fakultas Syariah dan Hukum Islam' },
-    { prodi: 'Pendidikan Agama Islam', fakultas: 'Fakultas Tarbiyah' },
-    { prodi: 'Pendidikan Bahasa Arab', fakultas: 'Fakultas Tarbiyah' },
-    { prodi: 'Tadris Bahasa Inggris', fakultas: 'Fakultas Tarbiyah' },
-    { prodi: 'Manajemen Pendidikan Islam', fakultas: 'Fakultas Tarbiyah' },
-    { prodi: 'Pendidikan Guru Madrasah Ibtidaiyah', fakultas: 'Fakultas Tarbiyah' },
-    { prodi: 'Pendidikan Islam Anak Usia Dini', fakultas: 'Fakultas Tarbiyah' },
-    { prodi: 'S3 Pendidikan Agama Islam', fakultas: 'Pascasarjana' },
-    { prodi: 'S2 Pendidikan Agama Islam', fakultas: 'Pascasarjana' },
-    { prodi: 'S2 Pendidikan Bahasa Arab', fakultas: 'Pascasarjana' },
-    { prodi: 'S2 Ekonomi Syariah', fakultas: 'Pascasarjana' },
-    { prodi: 'S2 Hukum Keluarga Islam', fakultas: 'Pascasarjana' },
-    { prodi: 'S2 Hukum Tatanegara', fakultas: 'Pascasarjana' },
-    { prodi: 'Ilmu Al-Qur\'an Dan Tafsir', fakultas: 'Fakultas Ushuluddin dan Dakwah' },
-    { prodi: 'Komunikasi Dan Penyiaran Islam', fakultas: 'Fakultas Ushuluddin dan Dakwah' },
-    { prodi: 'Bimbingan Penyuluhan Islam', fakultas: 'Fakultas Ushuluddin dan Dakwah' },
-    { prodi: 'Ekonomi Syariah', fakultas: 'Fakultas Ekonomi dan Bisnis Islam' },
-    { prodi: 'Perbankan Syariah', fakultas: 'Fakultas Ekonomi dan Bisnis Islam' },
-    { prodi: 'Akuntansi Syariah', fakultas: 'Fakultas Ekonomi dan Bisnis Islam' },
-    { prodi: 'Manajemen Bisnis Syariah', fakultas: 'Fakultas Ekonomi dan Bisnis Islam' }
-];
-
-const UNIT_KERJA_LAYANAN = [
-    'Rektorat',
-    'Fakultas Syariah dan Hukum Islam',
-    'Fakultas Tarbiyah',
-    'Fakultas Ekonomi dan Bisnis Islam',
-    'Fakultas Ushuluddin dan Dakwah',
-    'Pascasarjana'
-];
+// --- DATA KONSTAN (SEKARANG KOSONG, AKAN DIAMBIL DARI SERVER) ---
+let DATA_AKADEMIK = [];
+let UNIT_KERJA_LAYANAN = [];
 
 // --- EVENT LISTENER UTAMA ---
 document.addEventListener('DOMContentLoaded', function() {
@@ -101,6 +70,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 skeletonLoader.classList.add('hidden');
                 realContent.classList.remove('hidden');
                 
+                // Isi variabel global dari cache
+                DATA_AKADEMIK = cachedItem.data.konstanta?.akademik || [];
+                UNIT_KERJA_LAYANAN = cachedItem.data.konstanta?.unitKerja || [];
+
                 // Render UI dengan data cache
                 onLayananSuccess(cachedItem.data.layanan || []);
                 onInfoSuccess(cachedItem.data.info || []);
@@ -123,9 +96,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const CACHE_KEY = 'allPublicDataCache';
         const layananPromise = fetch(GAS_WEB_APP_URL + '?action=getPublicLayanan').then(res => res.json());
         const infoPromise = fetch(GAS_WEB_APP_URL + '?action=getPublicInfo').then(res => res.json());
+        // PERUBAHAN: Tambahkan promise untuk mengambil data konstan
+        const konstantaPromise = fetch(GAS_WEB_APP_URL + '?action=getKonstanta').then(res => res.json());
 
-        Promise.all([layananPromise, infoPromise])
-            .then(([freshLayananData, freshInfoData]) => {
+        Promise.all([layananPromise, infoPromise, konstantaPromise])
+            .then(([freshLayananData, freshInfoData, freshKonstantaData]) => {
                 console.log("Data baru berhasil diambil.");
                 
                 if (!isContentLoaded) {
@@ -134,15 +109,20 @@ document.addEventListener('DOMContentLoaded', function() {
                     realContent.classList.remove('hidden');
                 }
                 
+                // PERUBAHAN: Isi variabel global dengan data baru dari server
+                DATA_AKADEMIK = freshKonstantaData?.akademik || [];
+                UNIT_KERJA_LAYANAN = freshKonstantaData?.unitKerja || [];
+
                 // Render ulang UI dengan data baru dan perbarui state
                 onLayananSuccess(freshLayananData || []);
                 onInfoSuccess(freshInfoData || []);
 
-                // Perbarui cache
+                // PERUBAHAN: Perbarui cache dengan data konstan juga
                 const itemToCache = {
                     data: {
                         layanan: freshLayananData,
-                        info: freshInfoData
+                        info: freshInfoData,
+                        konstanta: freshKonstantaData
                     },
                     timestamp: Date.now()
                 };
@@ -150,7 +130,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log("Cache localStorage diperbarui dengan data baru.");
 
                 // OPTIMISASI: Prefetch data kalender saat browser idle.
-                // Ini memastikan tidak mengganggu rendering utama.
                 if ('requestIdleCallback' in window) {
                     requestIdleCallback(() => prefetchCalendarData(freshLayananData));
                 } else {
@@ -1589,4 +1568,5 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
+"
 
