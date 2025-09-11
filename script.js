@@ -862,8 +862,8 @@ document.addEventListener('DOMContentLoaded', function() {
             <input type="hidden" name="Jenis Layanan" value="${layananName}" />
             <div class="grid grid-cols-1 md:grid-cols-2 gap-x-4">
                 <div class="mb-4">
-                    <label for="form-input-Nama" class="block text-sm font-medium text-gray-700 mb-1">Nama <span class="text-red-500">*</span></label>
-                    <input type="text" id="form-input-Nama" name="Nama" required class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" />
+                    <label for="form-input-Unit-Kerja" class="block text-sm font-medium text-gray-700 mb-1">Unit Kerja <span class="text-red-500">*</span></label>
+                    <input type="text" id="form-input-Unit-Kerja" name="Unit Kerja" required class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" />
                 </div>
                 <div class="mb-4">
                     <label for="form-input-Perihal" class="block text-sm font-medium text-gray-700 mb-1">Perihal <span class="text-red-500">*</span></label>
