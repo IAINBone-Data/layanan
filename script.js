@@ -82,18 +82,22 @@ document.addEventListener('DOMContentLoaded', function() {
         const CACHE_KEY = 'allPublicDataCache';
         const CACHE_DURATION_MS = 5 * 60 * 1000; // 5 menit
 
+        // 1. Coba muat dari cache terlebih dahulu untuk pemuatan instan
         const cachedItemStr = localStorage.getItem(CACHE_KEY);
         let isLoadedFromCache = false;
+        let cachedData = null;
+
         if (cachedItemStr) {
             try {
                 const cachedItem = JSON.parse(cachedItemStr);
                 const isExpired = Date.now() - cachedItem.timestamp > CACHE_DURATION_MS;
                 if (!isExpired) {
-                    console.log("Memuat data dari cache localStorage...");
+                    console.log("Memuat data dari cache localStorage (Stale-While-Revalidate)...");
+                    cachedData = cachedItem.data;
+                    onLayananSuccess(cachedData.layanan || []);
+                    onInfoSuccess(cachedData.info || []);
                     skeletonLoader.classList.add('hidden');
                     realContent.classList.remove('hidden');
-                    onLayananSuccess(cachedItem.data.layanan || []);
-                    onInfoSuccess(cachedItem.data.info || []);
                     isLoadedFromCache = true;
                 }
             } catch (e) {
@@ -101,44 +105,80 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
 
+        // 2. Selalu ambil data baru dari jaringan
         console.log("Mengambil data baru dari jaringan...");
-        const layananPromise = fetch(GAS_WEB_APP_URL + '?action=getPublicLayanan').then(res => res.json());
-        const infoPromise = fetch(GAS_WEB_APP_URL + '?action=getPublicInfo').then(res => res.json());
+        const layananPromise = fetch(GAS_WEB_APP_URL + '?action=getPublicLayanan').then(res => {
+            if (!res.ok) throw new Error('Network response was not ok for layanan');
+            return res.json();
+        });
+        const infoPromise = fetch(GAS_WEB_APP_URL + '?action=getPublicInfo').then(res => {
+            if (!res.ok) throw new Error('Network response was not ok for info');
+            return res.json();
+        });
 
-        Promise.allSettled([layananPromise, infoPromise])
-            .then((results) => {
-                const layananSuccess = results[0].status === 'fulfilled';
-                const infoSuccess = results[1].status === 'fulfilled';
+        // 3. Siapkan objek untuk menampung data baru
+        let freshLayananData = null;
+        let freshInfoData = null;
+        let promisesFinished = 0;
 
-                if (layananSuccess && infoSuccess) {
-                    const freshLayananData = results[0].value || [];
-                    const freshInfoData = results[1].value || [];
+        const checkPromisesAndFinalize = () => {
+            promisesFinished++;
+            // Hanya finalisasi setelah kedua promise selesai
+            if (promisesFinished < 2) return;
 
-                    if (!isLoadedFromCache) {
-                        skeletonLoader.classList.add('hidden');
-                        realContent.classList.remove('hidden');
-                    }
-                    onLayananSuccess(freshLayananData);
-                    onInfoSuccess(freshInfoData);
-                    const itemToCache = {
-                        data: {
-                            layanan: freshLayananData,
-                            info: freshInfoData
-                        },
-                        timestamp: Date.now()
-                    };
-                    localStorage.setItem(CACHE_KEY, JSON.stringify(itemToCache));
-                    console.log("Cache localStorage diperbarui.");
+            console.log("Kedua promise selesai. Memperbarui cache.");
 
-                    setTimeout(() => prefetchCalendarData(freshLayananData), 1000);
+            // Jika tidak ada data yang dimuat dari cache, sembunyikan skeleton sekarang
+            if (!isLoadedFromCache) {
+                skeletonLoader.classList.add('hidden');
+                realContent.classList.remove('hidden');
+            }
 
-                } else {
-                    if (!isLoadedFromCache) {
-                        if (!layananSuccess) onLayananFailure(results[0].reason);
-                        if (!infoSuccess) onInfoFailure(results[1].reason);
-                    }
+            // Buat objek cache baru hanya dengan data yang berhasil diambil
+            const finalCacheData = {
+                layanan: freshLayananData !== null ? freshLayananData : (cachedData ? cachedData.layanan : []),
+                info: freshInfoData !== null ? freshInfoData : (cachedData ? cachedData.info : [])
+            };
+            
+            const itemToCache = {
+                data: finalCacheData,
+                timestamp: Date.now()
+            };
+            localStorage.setItem(CACHE_KEY, JSON.stringify(itemToCache));
+            console.log("Cache localStorage diperbarui dengan data baru.");
+        };
+        
+        // 4. Proses setiap promise secara individual untuk Progressive Rendering
+        layananPromise
+            .then(data => {
+                console.log("Data layanan baru diterima.");
+                freshLayananData = data || [];
+                onLayananSuccess(freshLayananData); // Re-render dengan data baru
+                prefetchCalendarData(freshLayananData); // Prefetch setelah layanan dimuat
+            })
+            .catch(err => {
+                console.error("Gagal mengambil data layanan baru:", err);
+                if (!isLoadedFromCache) { // Hanya tampilkan error jika tidak ada cache sama sekali
+                    onLayananFailure(err);
                 }
-            });
+            })
+            .finally(checkPromisesAndFinalize);
+
+        infoPromise
+            .then(data => {
+                console.log("Data info baru diterima.");
+                freshInfoData = data || [];
+                onInfoSuccess(freshInfoData); // Re-render dengan data baru
+            })
+            .catch(err => {
+                console.error("Gagal mengambil data info baru:", err);
+                if (!isLoadedFromCache) { // Hanya tampilkan error jika tidak ada cache sama sekali
+                    onInfoFailure(err);
+                }
+            })
+            .finally(checkPromisesAndFinalize);
+
+        // 5. Catat kunjungan (tidak perlu menunggu)
         fetch(GAS_WEB_APP_URL + '?action=recordVisit');
     }
 
@@ -1569,3 +1609,4 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
+
