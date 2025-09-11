@@ -33,7 +33,7 @@ body {
     background-color: var(--fc-today-bg-color);
 }
 
-/* Smaller calendar arrows */
+/* UPDATED: Smaller calendar arrows */
 .fc .fc-prev-button, .fc .fc-next-button {
     padding: 0.2em 0.4em !important;
 }
