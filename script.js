@@ -778,19 +778,19 @@ document.addEventListener('DOMContentLoaded', function() {
             switch (fieldLower) {
                 case 'prodi':
                     inputHtml = `<select id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm">
-                                    <option value="" disabled selected>-- Pilih Prodi --</option>
-                                    ${prodiOptions}
-                                </select>`;
+                                        <option value="" disabled selected>-- Pilih Prodi --</option>
+                                        ${prodiOptions}
+                                    </select>`;
                     break;
                 case 'fakultas':
                     inputHtml = `<input type="text" id="${fieldId}" name="${field}" readonly class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm bg-gray-100" />`;
                     break;
                 case 'jenis kelamin':
                     inputHtml = `<select id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm">
-                                    <option value="" disabled selected>-- Pilih --</option>
-                                    <option value="Laki-laki">Laki-laki</option>
-                                    <option value="Perempuan">Perempuan</option>
-                                </select>`;
+                                        <option value="" disabled selected>-- Pilih --</option>
+                                        <option value="Laki-laki">Laki-laki</option>
+                                        <option value="Perempuan">Perempuan</option>
+                                    </select>`;
                     break;
                 case 'tempat lahir':
                     inputHtml = `<input type="text" id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" />
@@ -855,6 +855,51 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // --- BARU: Fungsi untuk render form Lacak SK/SE ---
+    function renderLacakSkSeForm(allFields, pengolah, layananName) {
+        let formHtml = `
+            <input type="hidden" name="Pengolah" value="${pengolah}" />
+            <input type="hidden" name="Jenis Layanan" value="${layananName}" />
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-4">
+                <div class="mb-4">
+                    <label for="form-input-Nama" class="block text-sm font-medium text-gray-700 mb-1">Nama <span class="text-red-500">*</span></label>
+                    <input type="text" id="form-input-Nama" name="Nama" required class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" />
+                </div>
+                <div class="mb-4">
+                    <label for="form-input-Perihal" class="block text-sm font-medium text-gray-700 mb-1">Perihal <span class="text-red-500">*</span></label>
+                    <input type="text" id="form-input-Perihal" name="Perihal" required class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" />
+                    <p class="text-xs text-gray-500 mt-1">Isi Draft Ringkasan Judul SK</p>
+                </div>
+                 <div class="mb-4 md:col-span-2">
+                    <label for="form-input-Jenis" class="block text-sm font-medium text-gray-700 mb-1">Jenis <span class="text-red-500">*</span></label>
+                    <select id="form-input-Jenis" name="Jenis" required class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm">
+                        <option value="" disabled selected>-- Pilih Jenis Naskah --</option>
+                        <option value="Umum">Umum</option>
+                        <option value="Akademik">Akademik</option>
+                        <option value="Kemahasiswaan">Kemahasiswaan</option>
+                    </select>
+                    <div class="text-xs text-gray-500 mt-2 p-2 bg-gray-50 rounded-md">
+                        <p><strong class="text-gray-700">Umum:</strong> Naskah non Akademik dan Kemahasiswaan</p>
+                        <p><strong class="text-gray-700">Akademik:</strong> Naskah terkait proses Perkuliahaan Akademik</p>
+                        <p><strong class="text-gray-700">Kemahasiswaan:</strong> Naskah yang terkait Kegiatan Kemahasiswaan</p>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label for="form-input-Email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input type="email" id="form-input-Email" name="Email" class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" />
+                    <p class="text-xs text-gray-500 mt-1">Opsional, tidak wajib diisi.</p>
+                </div>
+                <div class="mb-4">
+                    <label for="form-input-Telepon" class="block text-sm font-medium text-gray-700 mb-1">Telepon</label>
+                    <input type="number" id="form-input-Telepon" name="Telepon" class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" />
+                    <p class="text-xs text-gray-500 mt-1">Opsional, tidak wajib diisi.</p>
+                </div>
+            </div>
+        `;
+        permohonanForm.innerHTML = formHtml;
+    }
+
+
     function renderSuketKuliahForm(allFields, pengolah, layananName) {
         
         let formHtml = `<input type="hidden" name="Pengolah" value="${pengolah}" />`;
@@ -902,20 +947,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 case 'semester':
                     const semesterOptions = ['I (Satu)', 'II (Dua)', 'III (Tiga)', 'IV (Empat)', 'V (Lima)', 'VI (Enam)', 'VII (Tujuh)', 'VIII (Delapan)', 'IX (Sembilan)', 'X (Sepuluh)', 'XI (Sebelas)', 'XII (Dua Belas)', 'XIII (Tiga Belas)', 'XIV (Empat Belas)'];
                     inputHtml = `<select id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm">
-                                    <option value="" disabled selected>-- Pilih --</option>
-                                    ${semesterOptions.map(o => `<option value="${o}">${o}</option>`).join('')}
-                                </select>`;
+                                        <option value="" disabled selected>-- Pilih --</option>
+                                        ${semesterOptions.map(o => `<option value="${o}">${o}</option>`).join('')}
+                                    </select>`;
                     break;
                 case 'jenis kelamin':
                     inputHtml = `<select id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm">
-                                    <option value="" disabled selected>-- Pilih --</option>
-                                    <option>Laki-laki</option><option>Perempuan</option>
-                                </select>`;
+                                        <option value="" disabled selected>-- Pilih --</option>
+                                        <option>Laki-laki</option><option>Perempuan</option>
+                                    </select>`;
                     break;
                 case 'prodi':
                     inputHtml = `<select id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm">
-                                    <option value="" disabled selected>-- Pilih Unit Kerja dulu --</option>
-                                </select>`;
+                                        <option value="" disabled selected>-- Pilih Unit Kerja dulu --</option>
+                                    </select>`;
                     break;
                 case 'fakultas':
                     inputHtml = `<input type="text" id="${fieldId}" name="${field}" readonly class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm bg-gray-100" />`;
@@ -925,8 +970,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     const years = [`${currentYear - 2}/${currentYear - 1}`, `${currentYear - 1}/${currentYear}`, `${currentYear}/${currentYear + 1}`];
                     const yearOptions = years.map(y => `<option value="${y}" ${ (new Date().getMonth() > 6 ? years[2] : years[1]) === y ? 'selected' : ''}>${y}</option>`).join('');
                     inputHtml = `<select id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm">
-                                    ${yearOptions}
-                                </select>`;
+                                        ${yearOptions}
+                                    </select>`;
                     break;
                 default:
                     inputHtml = `<input type="text" id="${fieldId}" name="${field}" ${isRequired ? 'required' : ''} class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" />`;
@@ -1135,28 +1180,28 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         formHtml += `
-          <div class="mb-4">
-              <label class="flex items-center cursor-pointer">
-                  <input type="checkbox" id="lapor-terlapor-checkbox" class="h-4 w-4 text-green-800 border-gray-300 rounded focus:ring-green-800" />
-                  <span class="ml-3 text-sm font-medium text-gray-800">Saya ingin melaporkan Terlapor</span>
-              </label>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6">
-              <div>
-                  <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">Informasi Pelapor</h3>
-                  ${pelaporHtml}
-              </div>
-              <div id="terlapor-section">
-                  <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">Informasi Terlapor</h3>
-                  ${terlaporHtml}
-              </div>
-          </div>
-          <div class="mt-4">
-              <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">Informasi Lainnya</h3>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6">
-                  ${lainnyaHtml}
-              </div>
-          </div>
+            <div class="mb-4">
+                <label class="flex items-center cursor-pointer">
+                    <input type="checkbox" id="lapor-terlapor-checkbox" class="h-4 w-4 text-green-800 border-gray-300 rounded focus:ring-green-800" />
+                    <span class="ml-3 text-sm font-medium text-gray-800">Saya ingin melaporkan Terlapor</span>
+                </label>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">Informasi Pelapor</h3>
+                    ${pelaporHtml}
+                </div>
+                <div id="terlapor-section">
+                    <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">Informasi Terlapor</h3>
+                    ${terlaporHtml}
+                </div>
+            </div>
+            <div class="mt-4">
+                <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">Informasi Lainnya</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6">
+                    ${lainnyaHtml}
+                </div>
+            </div>
         `;
         permohonanForm.innerHTML = formHtml;
         const laporCheckbox = document.getElementById('lapor-terlapor-checkbox');
@@ -1212,6 +1257,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (lowerLayananName.includes('suket lulus')) {
             renderSuketLulusForm(allFields, layananName);
+        } else if (lowerLayananName.includes('lacak sk')) { // --- PERUBAHAN: Kondisi baru ---
+            renderLacakSkSeForm(allFields, pengolah, layananName);
         } else if (lowerLayananName.includes('suket')) {
             renderSuketKuliahForm(allFields, pengolah, layananName);
         } else if (lowerLayananName.includes('peminjaman')) {
@@ -1568,4 +1615,3 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
-
