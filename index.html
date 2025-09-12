@@ -133,13 +133,97 @@
         </footer>
     </div>
 
-    <!-- MODALS (Tidak ada perubahan) -->
-    <div class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-40" id="formModal"><!-- ... --></div>
-    <div class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" id="notificationModal"><!-- ... --></div>
-    <div class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-40" id="calendarModal"><!-- ... --></div>
-    <div class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-40" id="searchModal"><!-- ... --></div>
-    <div class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-40" id="helpdeskModal"><!-- ... --></div>
-    <div class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-40" id="quickServicesModal"><!-- ... --></div>
+    <!-- MODALS -->
+    <div class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-40" id="formModal">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col">
+            <header class="p-4 border-b flex justify-between items-center">
+                <h2 class="text-xl font-bold text-brand-green" id="modalTitle">Formulir Permohonan</h2>
+                <button class="text-gray-500 hover:text-gray-800 text-2xl" id="closeModalBtn">&#215;</button>
+            </header>
+            <main class="p-6 overflow-y-auto">
+                <form id="permohonanForm">
+                    <!-- Input fields will be generated here by JavaScript -->
+                </form>
+            </main>
+            <footer class="p-4 bg-gray-50 border-t flex justify-end gap-4">
+                <button class="bg-gray-200 text-gray-800 font-bold py-2 px-6 rounded-lg hover:bg-gray-300" id="cancelModalBtn" type="button">Batal</button>
+                <button class="bg-brand-green text-white font-bold py-2 px-6 rounded-lg hover:opacity-90" form="permohonanForm" id="submitPermohonanBtn" type="submit">Kirim</button>
+            </footer>
+        </div>
+    </div>
+    <div class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" id="notificationModal">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm text-center p-6 transform transition-all scale-95 opacity-0" id="notificationModalContent">
+            <div class="mx-auto mb-4 w-16 h-16 flex items-center justify-center rounded-full text-4xl" id="notificationIcon"></div>
+            <h2 class="text-xl font-bold text-gray-800 mb-2" id="notificationTitle"></h2>
+            <p class="text-gray-600 mb-6" id="notificationMessage"></p>
+            <button class="bg-brand-green text-white font-bold py-2 px-8 rounded-lg hover:opacity-90 w-full" id="closeNotificationBtn">Tutup</button>
+        </div>
+    </div>
+    <div class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-40" id="calendarModal">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl h-[90vh] flex flex-col">
+            <header class="p-4 border-b flex justify-between items-center flex-shrink-0">
+                <h2 class="text-xl font-bold text-brand-green">Kalender Peminjaman</h2>
+                <div class="flex items-center gap-2 ml-auto mr-4">
+                    <label for="calendarFilter" class="text-sm font-medium text-gray-600 hidden sm:block">Unit:</label>
+                    <select id="calendarFilter" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-800 focus:border-green-800 block w-full p-1.5">
+                        <option selected value="all">Semua</option>
+                    </select>
+                </div>
+                <button class="text-gray-500 hover:text-gray-800 text-2xl" id="closeCalendarModalBtn">&#215;</button>
+            </header>
+            <main class="p-4 overflow-hidden flex-grow relative">
+                <div class="hidden absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center z-10" id="calendarLoader">
+                    <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-brand-green"></div>
+                </div>
+                <div class="h-full" id="calendar"></div>
+            </main>
+        </div>
+    </div>
+    <div class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-40" id="searchModal">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg">
+            <header class="p-4 border-b flex justify-between items-center">
+                <h2 class="text-xl font-bold text-brand-green">Lacak Permohonan</h2>
+                <button class="text-gray-500 hover:text-gray-800 text-2xl" id="closeSearchModalBtn">&#215;</button>
+            </header>
+            <main class="p-6">
+                <form class="space-y-3" id="mobileTrackingForm">
+                    <input class="w-full px-4 py-3 border border-gray-300 rounded-lg" id="mobilePermohonanId" placeholder="Ketik ID Permohonan Anda" required type="text" />
+                    <select class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white" id="mobileTrackingLayananSelect">
+                        <option value="">Pilih Jenis Layanan</option>
+                    </select>
+                    <button class="w-full bg-brand-green text-white py-3 rounded-lg" id="mobileTrackButton" type="submit">Lacak</button>
+                </form>
+                <div class="mt-4" id="mobileTrackingResult"></div>
+            </main>
+        </div>
+    </div>
+    <div class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-40" id="helpdeskModal">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg">
+            <header class="p-4 border-b flex justify-between items-center">
+                <h2 class="text-xl font-bold text-brand-green">Help Desk</h2>
+                <button class="text-gray-500 hover:text-gray-800 text-2xl" id="closeHelpdeskModalBtn">&#215;</button>
+            </header>
+            <main class="p-6">
+                <form class="space-y-4" id="helpdeskForm">
+                    <input class="w-full px-4 py-2 border rounded-lg" name="Nama" placeholder="Nama Anda" required type="text" />
+                    <input class="w-full px-4 py-2 border rounded-lg" name="Kontak" placeholder="Kontak (WA/Email)" required type="text" />
+                    <textarea class="w-full px-4 py-2 border rounded-lg" name="Pesan" placeholder="Pesan Anda" required rows="4"></textarea>
+                    <button class="w-full bg-brand-green text-white py-3 rounded-lg" id="submitHelpdeskBtn" type="submit">Kirim</button>
+                </form>
+            </main>
+        </div>
+    </div>
+    <div class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-40" id="quickServicesModal">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-[80vh] flex flex-col">
+            <header class="p-4 border-b flex justify-between items-center">
+                <h2 class="text-xl font-bold text-brand-green">Link Cepat Layanan</h2>
+                <button class="text-gray-500 hover:text-gray-800 text-2xl" id="closeQuickServicesModalBtn">&#215;</button>
+            </header>
+            <main class="p-6 overflow-y-auto" id="quickServicesContainer">
+                <!-- Service list will be rendered here -->
+            </main>
+        </div>
+    </div>
 
     <!-- PERUBAHAN: Floating Bottom Navigation -->
     <nav class="block md:hidden fixed bg-white/90 backdrop-blur-md z-30" id="bottom-nav">
