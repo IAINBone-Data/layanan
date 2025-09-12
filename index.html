@@ -24,7 +24,6 @@
                     <img alt="Logo IAIN Bone" class="h-10 w-10 object-contain" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEivDAkuxazRpasK-Kj0Tf1RXGNSrUoVyfvMyq-lXn_NBI2wXgCdjb1CBLGR7sC-r5cGU6njQnQ3TG551VMK03pSui50uEU5Ot8ScLiKskrcY-2yjuNt_xt8jnGcIjCPCtXN7yzb_9Me6G2ceSWv55vF_ZDTCk8tF0zseZ4fdrW764wiSlnBMLItY_4xdyY/s1600/logoiainbone%20-%20Copy%20%283%20%282%29.png" />
                     <h1 class="text-xl font-bold text-brand-green">Layanan IAIN Bone</h1>
                 </div>
-                <!-- PERUBAHAN: Form Pelacakan Desktop Tetap Ada -->
                 <section class="hidden md:flex items-center gap-2" id="tracking-section">
                     <form class="flex items-center gap-2" id="trackingForm">
                         <input class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-800 focus:border-transparent transition text-sm font-normal w-48" id="permohonanId" placeholder="Ketik ID Permohonan" required type="text" />
@@ -84,23 +83,23 @@
                     </div>
                 </div>
                 
-                <!-- PERUBAHAN: Form Pelacakan KHUSUS MOBILE -->
+                <!-- PERBAIKAN: Form Pelacakan KHUSUS MOBILE dengan tata letak baru -->
                 <section class="block md:hidden mb-6" id="mobile-tracking-section">
-                    <form class="space-y-3" id="mobileTrackingForm">
-                        <h2 class="text-base font-semibold text-gray-800 text-center mb-3">Lacak Permohonan Anda</h2>
-                        <input class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white" id="mobilePermohonanId" placeholder="Ketik ID Permohonan Anda" required type="text" />
-                        <select class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white" id="mobileTrackingLayananSelect">
-                            <option value="">Pilih Jenis Layanan</option>
+                    <h2 class="text-base font-semibold text-gray-800 text-left mb-3">Lacak Permohonan Anda</h2>
+                    <form id="mobileTrackingForm">
+                        <div class="flex items-center gap-2 mb-2">
+                            <input class="flex-grow px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm" id="mobilePermohonanId" placeholder="Ketik ID Permohonan" required type="text" />
+                            <button class="bg-brand-green text-white p-2.5 rounded-lg hover:opacity-90 transition flex items-center justify-center text-lg" id="mobileTrackButton" type="submit">
+                                <i class="fas fa-search" id="mobileTrackButtonIcon"></i>
+                                <div class="hidden animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white" id="mobileTrackButtonSpinner"></div>
+                            </button>
+                        </div>
+                        <select class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm" id="mobileTrackingLayananSelect">
+                            <option value="">Pilih Jenis Layanan untuk melacak</option>
                         </select>
-                        <button class="w-full bg-brand-green text-white py-3 rounded-lg font-semibold flex items-center justify-center" id="mobileTrackButton" type="submit">
-                            <i class="fas fa-search mr-2" id="mobileTrackButtonIcon"></i>
-                            <div class="hidden animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white" id="mobileTrackButtonSpinner"></div>
-                            <span>Lacak</span>
-                        </button>
                     </form>
                     <div class="mt-4" id="mobileTrackingResult"></div>
                 </section>
-
 
                 <section class="mb-4 md:mb-8" id="quicklink-section">
                     <div class="flex justify-between items-center mb-4">
@@ -185,7 +184,6 @@
             </main>
         </div>
     </div>
-    <!-- PERUBAHAN: searchModal dihapus karena tidak lagi digunakan -->
     <div class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-40" id="helpdeskModal">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg">
             <header class="p-4 border-b flex justify-between items-center">
@@ -214,7 +212,7 @@
     </div>
 
     <!-- Floating Bottom Navigation -->
-    <nav class="block md:hidden fixed bg-white/90 backdrop-blur-md z-30" id="bottom-nav">
+    <nav class="block md:hidden fixed z-30" id="bottom-nav">
         <div class="flex justify-around items-center h-16">
             <button class="nav-btn flex flex-col items-center text-gray-500 w-16" id="navServices">
                 <i class="fas fa-th-large text-xl nav-icon"></i>
