@@ -29,8 +29,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const closeCalendarModalBtn = document.getElementById('closeCalendarModalBtn');
     const calendarEl = document.getElementById('calendar');
     const calendarLoader = document.getElementById('calendarLoader');
-    const searchModal = document.getElementById('searchModal');
-    const closeSearchModalBtn = document.getElementById('closeSearchModalBtn');
     const helpdeskModal = document.getElementById('helpdeskModal');
     const closeHelpdeskModalBtn = document.getElementById('closeHelpdeskModalBtn');
     const quickServicesModal = document.getElementById('quickServicesModal');
@@ -40,9 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const fabHelpdeskBtn = document.getElementById('fabHelpdeskBtn');
     let calendar;
 
-    // --- BARU: Selektor untuk fitur baru ---
-    const layananSearchInput = document.getElementById('layananSearchInput');
-    const layananSearchResults = document.getElementById('layananSearchResults');
+    // --- Selektor untuk fitur baru ---
     const navServices = document.getElementById('navServices');
     const navHelp = document.getElementById('navHelp');
     const navReport = document.getElementById('navReport');
@@ -136,7 +132,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const modalClosers = [
             { btn: closeModalBtn, modal: formModal }, { btn: cancelModalBtn, modal: formModal },
-            { btn: closeSearchModalBtn, modal: searchModal }, { btn: closeHelpdeskModalBtn, modal: helpdeskModal },
+            { btn: closeHelpdeskModalBtn, modal: helpdeskModal },
             { btn: closeQuickServicesModalBtn, modal: quickServicesModal }, { btn: closeCalendarModalBtn, modal: calendarModal }
         ];
         modalClosers.forEach(item => {
@@ -164,10 +160,6 @@ document.addEventListener('DOMContentLoaded', function() {
             if (container) container.addEventListener('click', handleLinkClick);
         });
         
-        // --- BARU: Event Listener untuk fitur baru ---
-        if (layananSearchInput) layananSearchInput.addEventListener('input', handleLayananSearch);
-        if (layananSearchResults) layananSearchResults.addEventListener('click', handleSearchResultClick);
-
         if (navServices) navServices.addEventListener('click', () => {
             quickServicesModal.classList.remove('hidden');
             updateNavActiveState('navServices');
@@ -179,7 +171,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (navReport) navReport.addEventListener('click', handleNavReportClick);
     }
     
-    // --- BARU: Fungsi untuk mengelola state aktif bottom nav ---
     function updateNavActiveState(activeId) {
         const navButtons = document.querySelectorAll('#bottom-nav .nav-btn');
         navButtons.forEach(btn => {
@@ -191,11 +182,11 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // --- BARU: Fungsi untuk menangani klik tombol "Lapor" ---
     function handleNavReportClick() {
+        // PERBAIKAN: Mencari "Pengaduan Layanan" secara spesifik
         const layananPengaduan = semuaLayanan.find(l => {
             const namaLayanan = getValueCaseInsensitive(l, 'jenis layanan') || '';
-            return namaLayanan.toLowerCase().includes('pengaduan');
+            return namaLayanan.toLowerCase().trim() === 'pengaduan layanan';
         });
 
         if (layananPengaduan) {
@@ -210,57 +201,7 @@ document.addEventListener('DOMContentLoaded', function() {
             openFormModal({ currentTarget: { dataset: dataset } });
             updateNavActiveState('navReport');
         } else {
-            showNotificationModal('Error', 'Layanan pengaduan tidak ditemukan.', 'error');
-        }
-    }
-
-    // --- BARU: Fungsi untuk menangani pencarian layanan ---
-    function handleLayananSearch(e) {
-        const query = e.target.value.toLowerCase().trim();
-        layananSearchResults.innerHTML = '';
-
-        if (query.length < 2) {
-            layananSearchResults.classList.add('hidden');
-            return;
-        }
-
-        const filteredLayanan = semuaLayanan.filter(layanan => {
-            const namaLayanan = getValueCaseInsensitive(layanan, 'jenis layanan') || '';
-            return namaLayanan.toLowerCase().includes(query);
-        });
-
-        if (filteredLayanan.length > 0) {
-            const resultsHtml = filteredLayanan.map(layanan => {
-                const namaLayanan = getValueCaseInsensitive(layanan, 'jenis layanan');
-                const ikon = getIconForLayanan(layanan);
-                // Salin semua data-attributes yang diperlukan
-                const dataAttrs = `
-                    data-form-fields="${getValueCaseInsensitive(layanan, 'form') || ''}"
-                    data-layanan-name="${namaLayanan || ''}"
-                    data-pengolah="${getValueCaseInsensitive(layanan, 'pengolah') || ''}"
-                    data-jenis="${getValueCaseInsensitive(layanan, 'jenis') || ''}"
-                    data-sheet="${getValueCaseInsensitive(layanan, 'sheet') || ''}"
-                    data-sheet-id="${getValueCaseInsensitive(layanan, 'Sheet ID') || ''}"
-                `;
-                return `<button class="w-full text-left p-3 hover:bg-gray-100 flex items-center gap-3 search-result-item" ${dataAttrs}>
-                            <i class="fas fa-${ikon} text-brand-green w-5 text-center"></i>
-                            <span>${namaLayanan}</span>
-                        </button>`;
-            }).join('');
-            layananSearchResults.innerHTML = resultsHtml;
-            layananSearchResults.classList.remove('hidden');
-        } else {
-            layananSearchResults.classList.add('hidden');
-        }
-    }
-
-    // --- BARU: Fungsi untuk menangani klik pada hasil pencarian ---
-    function handleSearchResultClick(e) {
-        const target = e.target.closest('.search-result-item');
-        if (target) {
-            openFormModal({ currentTarget: target });
-            layananSearchInput.value = '';
-            layananSearchResults.classList.add('hidden');
+            showNotificationModal('Error', 'Layanan "Pengaduan Layanan" tidak ditemukan.', 'error');
         }
     }
     
@@ -523,11 +464,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     serviceItem.rel = 'noopener noreferrer';
                 }
                 
+                // PERBAIKAN: Mengembalikan warna ikon layanan
                 const bgColor = getValueCaseInsensitive(layanan, 'warna') || '#e5e7eb';
                 const textColor = getTextColorForBg(bgColor);
 
                 serviceItem.innerHTML = `
-                    <div class="bg-gray-100 w-16 h-16 rounded-xl flex items-center justify-center text-2xl transition-transform group-hover:scale-110" style="background-color:${bgColor}; color:${textColor}">
+                    <div class="w-16 h-16 rounded-xl flex items-center justify-center text-2xl transition-transform group-hover:scale-110" style="background-color:${bgColor}; color:${textColor};">
                         <i class="fas fa-${getIconForLayanan(layanan)}"></i>
                     </div>
                     <h3 class="font-medium text-xs text-gray-700">${getValueCaseInsensitive(layanan, 'jenis layanan')}</h3>`;
@@ -1202,23 +1144,29 @@ document.addEventListener('DOMContentLoaded', function() {
                 lainnyaHtml += fieldWrapperHtml;
             }
         });
+
+        // PERBAIKAN: Logika kondisional untuk menyembunyikan bagian terlapor
+        const isPengaduanLayanan = layananName.toLowerCase().includes('layanan');
+        
         formHtml += `
-            <div class="mb-4">
-                <label class="flex items-center cursor-pointer">
-                    <input type="checkbox" id="lapor-terlapor-checkbox" class="h-4 w-4 text-green-800 border-gray-300 rounded focus:ring-green-800" />
-                    <span class="ml-3 text-sm font-medium text-gray-800">Saya ingin melaporkan Terlapor</span>
-                </label>
-            </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6">
                 <div>
                     <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">Informasi Pelapor</h3>
                     ${pelaporHtml}
                 </div>
+                ${!isPengaduanLayanan ? `
                 <div id="terlapor-section">
                     <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">Informasi Terlapor</h3>
                     ${terlaporHtml}
-                </div>
+                </div>` : ''}
             </div>
+            ${!isPengaduanLayanan ? `
+            <div class="mb-4">
+                <label class="flex items-center cursor-pointer">
+                    <input type="checkbox" id="lapor-terlapor-checkbox" class="h-4 w-4 text-green-800 border-gray-300 rounded focus:ring-green-800" />
+                    <span class="ml-3 text-sm font-medium text-gray-800">Saya ingin melaporkan Terlapor</span>
+                </label>
+            </div>` : ''}
             <div class="mt-4">
                 <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">Informasi Lainnya</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6">
@@ -1227,24 +1175,27 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         `;
         permohonanForm.innerHTML = formHtml;
-        const laporCheckbox = document.getElementById('lapor-terlapor-checkbox');
-        const terlaporSection = document.getElementById('terlapor-section');
-        if (laporCheckbox && terlaporSection) {
-            const terlaporInputs = terlaporSection.querySelectorAll('input, select, textarea');
-            const updateTerlaporState = (shouldBeEnabled) => {
-                terlaporSection.classList.toggle('section-disabled', !shouldBeEnabled);
-                terlaporInputs.forEach(input => {
-                    input.disabled = !shouldBeEnabled;
-                    const inputName = input.name.toLowerCase();
-                    if (!inputName.includes('anonim') && !inputName.includes('rahasia')) {
-                        input.required = shouldBeEnabled;
-                    }
+
+        if (!isPengaduanLayanan) {
+            const laporCheckbox = document.getElementById('lapor-terlapor-checkbox');
+            const terlaporSection = document.getElementById('terlapor-section');
+            if (laporCheckbox && terlaporSection) {
+                const terlaporInputs = terlaporSection.querySelectorAll('input, select, textarea');
+                const updateTerlaporState = (shouldBeEnabled) => {
+                    terlaporSection.classList.toggle('section-disabled', !shouldBeEnabled);
+                    terlaporInputs.forEach(input => {
+                        input.disabled = !shouldBeEnabled;
+                        const inputName = input.name.toLowerCase();
+                        if (!inputName.includes('anonim') && !inputName.includes('rahasia')) {
+                            input.required = shouldBeEnabled;
+                        }
+                    });
+                };
+                updateTerlaporState(false);
+                laporCheckbox.addEventListener('change', (e) => {
+                    updateTerlaporState(e.target.checked);
                 });
-            };
-            updateTerlaporState(false);
-            laporCheckbox.addEventListener('change', (e) => {
-                updateTerlaporState(e.target.checked);
-            });
+            }
         }
     }
 
