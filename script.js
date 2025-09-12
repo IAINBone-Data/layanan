@@ -47,6 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const mobileServiceFilterBtn = document.getElementById('mobileServiceFilterBtn');
     const serviceFilterContainer = document.getElementById('serviceFilterContainer');
     const mobileTrackingResult = document.getElementById('mobileTrackingResult');
+    const welcomePopup = document.getElementById('welcomePopup');
 
 
     // --- State Aplikasi ---
@@ -433,12 +434,17 @@ document.addEventListener('DOMContentLoaded', function() {
         const infoItems = [],
             pinItems = [],
             linkItems = [];
+        
+        let popupData = null;
+
         (allData || []).forEach(item => {
             const jenis = (getValueCaseInsensitive(item, 'jenis') || '').toLowerCase();
             if (jenis === 'info') infoItems.push(item);
             else if (jenis === 'pin') pinItems.push(item);
             else if (jenis === 'link') linkItems.push(item);
+            else if (jenis === 'pop') popupData = item; // Menemukan data pop-up
         });
+
         const topWrapper = document.getElementById('top-content-wrapper');
         if (infoItems.length >= 1 && pinItems.length >= 1) {
             topWrapper.className = 'grid grid-cols-1 md:grid-cols-2 md:gap-8 items-start';
@@ -448,6 +454,10 @@ document.addEventListener('DOMContentLoaded', function() {
         renderInfoSlider(infoItems);
         renderPinnedButtons(pinItems);
         renderQuickLinks(linkItems);
+
+        if (popupData) {
+            handleWelcomePopup(popupData);
+        }
     }
 
     function onInfoFailure(error) {
@@ -455,6 +465,57 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('infoContainer').innerHTML = '';
         document.getElementById('pinnedContainer').innerHTML = '';
         document.getElementById('quicklinkContainer').innerHTML = '';
+    }
+
+    function handleWelcomePopup(popupData) {
+        const popupId = getValueCaseInsensitive(popupData, 'ID Pop') || getValueCaseInsensitive(popupData, 'info');
+        const durationDays = parseInt(getValueCaseInsensitive(popupData, 'Durasi'), 10) || 1;
+        
+        const storageKey = `seenPopup_${popupId}`;
+        const expiryTimestamp = localStorage.getItem(storageKey);
+        const now = new Date().getTime();
+
+        if (expiryTimestamp && now < parseInt(expiryTimestamp, 10)) {
+            console.log(`Popup ${popupId} sudah dilihat. Dilewati.`);
+            return; 
+        }
+
+        showWelcomePopup(popupData, storageKey, durationDays);
+    }
+
+    function showWelcomePopup(popupData, storageKey, durationDays) {
+        if (!welcomePopup) return;
+        
+        const content = document.getElementById('welcomePopupContent');
+        const image = document.getElementById('welcomePopupImage');
+        const text = document.getElementById('welcomePopupText');
+        const link = document.getElementById('welcomePopupLink');
+        const closeBtn = document.getElementById('welcomePopupCloseBtn');
+        const dismissBtn = document.getElementById('welcomePopupDismissBtn');
+
+        image.src = getValueCaseInsensitive(popupData, 'gambar') || '';
+        text.textContent = getValueCaseInsensitive(popupData, 'info') || '';
+        link.href = getValueCaseInsensitive(popupData, 'link') || '#';
+
+        const hideAndSetSeen = () => {
+            content.classList.remove('scale-100', 'opacity-100');
+            content.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                welcomePopup.classList.add('hidden');
+                const now = new Date().getTime();
+                const expiry = now + durationDays * 24 * 60 * 60 * 1000;
+                localStorage.setItem(storageKey, expiry.toString());
+            }, 300);
+        };
+
+        closeBtn.onclick = hideAndSetSeen;
+        dismissBtn.onclick = hideAndSetSeen;
+        link.onclick = hideAndSetSeen;
+
+        welcomePopup.classList.remove('hidden');
+        setTimeout(() => {
+            content.classList.add('scale-100', 'opacity-100');
+        }, 10);
     }
 
     function toggleUserType(e) {
@@ -591,7 +652,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    function renderQuickServicesModal() {
+    function renderQuickServicesModal() { 
         const container = document.getElementById('quickServicesContainer');
         if (!container || semuaLayanan.length === 0) return;
         container.innerHTML = '';
@@ -647,8 +708,7 @@ document.addEventListener('DOMContentLoaded', function() {
             container.appendChild(categoryWrapper);
         }
     }
-
-    function renderInfoSlider(data) {
+    function renderInfoSlider(data) { 
         const infoSlider = document.querySelector('.info-swiper');
         const infoWrapper = document.getElementById('infoContainer');
         const infoSection = document.getElementById('info-section');
@@ -697,8 +757,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         infoSlider.classList.toggle('info-grid', !isSliderActive);
     }
-
-    function renderPinnedButtons(data) {
+    function renderPinnedButtons(data) { 
         const pinnedWrapper = document.getElementById('pinnedContainer');
         const pinnedSection = document.getElementById('pinned-section');
         pinnedWrapper.innerHTML = '';
@@ -732,8 +791,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-
-    function renderQuickLinks(data) {
+    function renderQuickLinks(data) { 
         const quicklinkWrapper = document.getElementById('quicklinkContainer');
         const quicklinkSection = document.getElementById('quicklink-section');
         quicklinkWrapper.innerHTML = '';
@@ -783,8 +841,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-
-    function renderSuketLulusForm(allFields, layananName) {
+    function renderSuketLulusForm(allFields, layananName) { 
         let formHtml = `
             <div class="mb-4 text-sm bg-yellow-50 border-l-4 border-yellow-400 text-yellow-800 p-4" role="alert">
                 <p class="font-bold">PERSYARATAN PENERBITAN SKL:</p>
@@ -897,7 +954,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     }
-
     function renderLacakSkSeForm(allFields, pengolah, layananName) {
         let formHtml = `
             <input type="hidden" name="Pengolah" value="${pengolah}" />
@@ -940,9 +996,7 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
         permohonanForm.innerHTML = formHtml;
     }
-
-    function renderSuketKuliahForm(allFields, pengolah, layananName) {
-        
+    function renderSuketKuliahForm(allFields, pengolah, layananName) { 
         let formHtml = `<input type="hidden" name="Pengolah" value="${pengolah}" />`;
         formHtml += `<input type="hidden" name="Jenis Layanan" value="${layananName}" />`;
         let fieldsHtml = '';
@@ -1070,8 +1124,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         unitKerjaSelect.dispatchEvent(new Event('change'));
     }
-
-    function renderPeminjamanForm(allFields, pengolah, layananName) {
+    function renderPeminjamanForm(allFields, pengolah, layananName) { 
         let formHtml = `<input type="hidden" name="Pengolah" value="${pengolah}" />`;
         let fieldsContainerHtml = '';
 
@@ -1161,8 +1214,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     }
-    
-    function renderPengaduanForm(allFields, pengolah, layananName) {
+    function renderPengaduanForm(allFields, pengolah, layananName) { 
         let formHtml = `<input type="hidden" name="Pengolah" value="${pengolah}" />`;
         formHtml += `<input type="hidden" name="Jenis Layanan" value="${layananName}" />`;
         
@@ -1273,8 +1325,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     }
-
-    function renderGenericForm(allFields, pengolah, layananName) {
+    function renderGenericForm(allFields, pengolah, layananName) { 
         let formHtml = `<input type="hidden" name="Pengolah" value="${pengolah}" />`;
         formHtml += `<input type="hidden" name="Jenis Layanan" value="${layananName}" />`;
         
@@ -1292,8 +1343,7 @@ document.addEventListener('DOMContentLoaded', function() {
         formHtml += `<div class="grid grid-cols-1 md:grid-cols-2 gap-x-4">${fieldsContainerHtml}</div>`;
         permohonanForm.innerHTML = formHtml;
     }
-
-    function openFormModal(event) {
+    function openFormModal(event) { 
         const card = event.currentTarget;
         const { formFields, layananName, pengolah, sheet, sheetId } = card.dataset;
         if (!formFields || !sheet) return;
@@ -1320,8 +1370,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
         formModal.classList.remove('hidden');
     }
-
-    function handlePermohonanSubmit(e) {
+    function handlePermohonanSubmit(e) { 
         e.preventDefault();
         const { targetSheet, targetSheetId } = e.target.dataset;
         const submitBtn = document.getElementById('submitPermohonanBtn');
@@ -1373,8 +1422,7 @@ document.addEventListener('DOMContentLoaded', function() {
             runServerCall();
         }
     }
-
-    function handleHelpdeskSubmit(e) {
+    function handleHelpdeskSubmit(e) { 
         e.preventDefault();
         const btn = document.getElementById('submitHelpdeskBtn');
         btn.textContent = 'Mengirim...';
@@ -1408,8 +1456,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 btn.disabled = false;
             });
     }
-
-    function onPermohonanSuccess(response) {
+    function onPermohonanSuccess(response) { 
         formModal.classList.add('hidden');
         if (response.success) {
             if (response.id) {
@@ -1428,15 +1475,13 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('submitPermohonanBtn').textContent = 'Kirim';
         document.getElementById('submitPermohonanBtn').disabled = false;
     }
-
-    function onPermohonanFailure(error) {
+    function onPermohonanFailure(error) { 
         showNotificationModal('Error', 'Terjadi kesalahan saat mengirim permohonan.', 'error');
         console.error('Submit Gagal:', error);
         document.getElementById('submitPermohonanBtn').textContent = 'Kirim';
         document.getElementById('submitPermohonanBtn').disabled = false;
     }
-
-    function openCalendarModal(event) {
+    function openCalendarModal(event) { 
         const { sheet, sheetId } = event.currentTarget.dataset;
         if (!sheet) {
             showNotificationModal('Error Konfigurasi', 'Sheet untuk kalender belum diatur.', 'error');
@@ -1559,8 +1604,7 @@ document.addEventListener('DOMContentLoaded', function() {
             calendar.refetchEvents();
         }
     }
-
-    function handleTracking(e) {
+    function handleTracking(e) { 
         e.preventDefault();
         setTrackingLoading(true, 'trackButton');
         trackingResult.innerHTML = '';
@@ -1577,8 +1621,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(onTrackSuccess)
             .catch(onTrackFailure);
     }
-
-    function handleMobileTracking(e) {
+    function handleMobileTracking(e) { 
         e.preventDefault();
         setTrackingLoading(true, 'mobileTrackButton');
         mobileTrackingResult.innerHTML = '';
@@ -1596,8 +1639,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(result => onTrackSuccess(result, 'mobile'))
             .catch(err => onTrackFailure(err, 'mobile'));
     }
-
-    function onTrackSuccess(result, view = 'desktop') {
+    function onTrackSuccess(result, view = 'desktop') { 
         setTrackingLoading(false, view === 'desktop' ? 'trackButton' : 'mobileTrackButton');
         const resultContainer = view === 'desktop' ? trackingResult : mobileTrackingResult;
         let content = '';
@@ -1641,15 +1683,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         resultContainer.innerHTML = content.replace('</div>', '<button class="js-close-track-result absolute top-2 right-3 text-gray-500 hover:text-gray-800 text-2xl font-bold">&#215;</button></div>');
     }
-
-    function onTrackFailure(error, view = 'desktop') {
+    function onTrackFailure(error, view = 'desktop') { 
         setTrackingLoading(false, view === 'desktop' ? 'trackButton' : 'mobileTrackButton');
         const resultContainer = view === 'desktop' ? trackingResult : mobileTrackingResult;
         console.error('Gagal melacak:', error);
         resultContainer.innerHTML = `<div class="p-4 bg-red-100 text-red-700 rounded-lg relative">Terjadi kesalahan. <button class="js-close-track-result absolute top-2 right-3">&#215;</button></div>`;
     }
-
-    function setTrackingLoading(isLoading, buttonId) {
+    function setTrackingLoading(isLoading, buttonId) { 
         const button = document.getElementById(buttonId);
         if (!button) return;
         const icon = button.querySelector('i');
