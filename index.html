@@ -83,20 +83,21 @@
                     </div>
                 </div>
                 
-                <!-- PERBAIKAN: Form Pelacakan KHUSUS MOBILE dengan tata letak baru -->
                 <section class="block md:hidden mb-6" id="mobile-tracking-section">
                     <h2 class="text-base font-semibold text-gray-800 text-left mb-3">Lacak Permohonan Anda</h2>
                     <form id="mobileTrackingForm">
                         <div class="flex items-center gap-2 mb-2">
-                            <input class="flex-grow px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm" id="mobilePermohonanId" placeholder="Ketik ID Permohonan" required type="text" />
-                            <button class="bg-brand-green text-white p-2.5 rounded-lg hover:opacity-90 transition flex items-center justify-center text-lg" id="mobileTrackButton" type="submit">
-                                <i class="fas fa-search" id="mobileTrackButtonIcon"></i>
-                                <div class="hidden animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white" id="mobileTrackButtonSpinner"></div>
-                            </button>
+                             <input class="flex-grow px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm" id="mobilePermohonanId" placeholder="Ketik ID Permohonan" required type="text" />
+                             <button type="button" id="mobileServiceFilterBtn" class="p-2.5 border border-gray-300 rounded-lg bg-white">
+                                <i class="fas fa-filter text-gray-600"></i>
+                             </button>
+                             <button class="bg-brand-green text-white p-2.5 rounded-lg hover:opacity-90 transition flex items-center justify-center text-lg" id="mobileTrackButton" type="submit">
+                                 <i class="fas fa-search" id="mobileTrackButtonIcon"></i>
+                                 <div class="hidden animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white" id="mobileTrackButtonSpinner"></div>
+                             </button>
                         </div>
-                        <select class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm" id="mobileTrackingLayananSelect">
-                            <option value="">Pilih Jenis Layanan untuk melacak</option>
-                        </select>
+                        <div id="mobileSelectedServiceText" class="text-sm text-gray-600 px-1">Pilih jenis layanan untuk melacak</div>
+                        <input type="hidden" id="mobileSelectedServiceValue" name="mobileSelectedService">
                     </form>
                     <div class="mt-4" id="mobileTrackingResult"></div>
                 </section>
@@ -211,6 +212,19 @@
         </div>
     </div>
 
+    <!-- BARU: Modal untuk Filter Layanan di Mobile -->
+    <div class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-40" id="serviceFilterModal">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-[80vh] flex flex-col">
+            <header class="p-4 border-b flex justify-between items-center">
+                <h2 class="text-xl font-bold text-brand-green">Pilih Jenis Layanan</h2>
+                <button class="text-gray-500 hover:text-gray-800 text-2xl" id="closeServiceFilterModalBtn">&#215;</button>
+            </header>
+            <main class="p-6 overflow-y-auto" id="serviceFilterContainer">
+                <!-- Daftar layanan akan dirender di sini oleh JS -->
+            </main>
+        </div>
+    </div>
+
     <!-- Floating Bottom Navigation -->
     <nav class="block md:hidden fixed z-30" id="bottom-nav">
         <div class="flex justify-around items-center h-16">
@@ -232,7 +246,6 @@
             </a>
         </div>
     </nav>
-
     <div class="hidden md:flex fixed bottom-8 right-8 z-30 flex-col items-center space-y-3">
         <button class="bg-white text-brand-green w-14 h-14 rounded-full shadow-lg hover:bg-gray-100 transition flex items-center justify-center text-2xl" id="fabHelpdeskBtn" title="Bantuan"><i class="fas fa-headset"></i></button>
         <a class="bg-brand-green text-white w-14 h-14 rounded-full shadow-lg hover:opacity-90 transition flex items-center justify-center text-2xl" href="/admin1" title="Login Admin"><i class="fas fa-user-shield"></i></a>
