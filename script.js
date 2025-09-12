@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const infoContainer = document.getElementById('infoContainer');
     const pinnedContainer = document.getElementById('pinnedContainer');
     const quicklinkContainer = document.getElementById('quicklinkContainer');
-    const footerLinkContainer = document.getElementById('footerLinkContainer');
+    // const footerLinkContainer = document.getElementById('footerLinkContainer'); // Dihapus karena footer menjadi statis
     const userTypeToggleContainer = document.getElementById('userTypeToggleContainer');
     const formModal = document.getElementById('formModal');
     const modalTitle = document.getElementById('modalTitle');
@@ -51,10 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
     setupEventListeners();
 
     /**
-     * @dev PERUBAHAN UTAMA: Menerapkan strategi Stale-While-Revalidate (SWR).
-     * 1. Mencoba memuat data dari cache dan menampilkannya SEGERA.
-     * 2. SELALU memicu pengambilan data baru dari jaringan di latar belakang.
-     * 3. Memperbarui UI dan cache ketika data baru diterima.
+     * @dev Menerapkan strategi Stale-While-Revalidate (SWR).
      */
     function initializePageData() {
         const CACHE_KEY = 'allPublicDataCache';
@@ -65,16 +62,10 @@ document.addEventListener('DOMContentLoaded', function() {
             try {
                 const cachedItem = JSON.parse(cachedItemStr);
                 console.log("Memuat data dari cache localStorage...");
-                
-                // Tampilkan konten dari cache segera
                 skeletonLoader.classList.add('hidden');
                 realContent.classList.remove('hidden');
-                
-                // Isi variabel global dari cache
                 DATA_AKADEMIK = cachedItem.data.konstanta?.akademik || [];
                 UNIT_KERJA_LAYANAN = cachedItem.data.konstanta?.unitKerja || [];
-
-                // Render UI dengan data cache
                 onLayananSuccess(cachedItem.data.layanan || []);
                 onInfoSuccess(cachedItem.data.info || []);
                 isCacheAvailable = true;
@@ -84,11 +75,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
 
-        // Selalu ambil data terbaru dari jaringan
         console.log("Memulai pengambilan data baru dari jaringan...");
         fetchFreshDataAndUpdate(isCacheAvailable);
-
-        // Kirim event visit
         fetch(GAS_WEB_APP_URL + '?action=recordVisit');
     }
     
@@ -96,7 +84,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const CACHE_KEY = 'allPublicDataCache';
         const layananPromise = fetch(GAS_WEB_APP_URL + '?action=getPublicLayanan').then(res => res.json());
         const infoPromise = fetch(GAS_WEB_APP_URL + '?action=getPublicInfo').then(res => res.json());
-        // PERUBAHAN: Tambahkan promise untuk mengambil data konstan
         const konstantaPromise = fetch(GAS_WEB_APP_URL + '?action=getKonstanta').then(res => res.json());
 
         Promise.all([layananPromise, infoPromise, konstantaPromise])
@@ -104,20 +91,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log("Data baru berhasil diambil.");
                 
                 if (!isContentLoaded) {
-                    // Jika belum ada konten sama sekali (cache kosong/gagal)
                     skeletonLoader.classList.add('hidden');
                     realContent.classList.remove('hidden');
                 }
                 
-                // PERUBAHAN: Isi variabel global dengan data baru dari server
                 DATA_AKADEMIK = freshKonstantaData?.akademik || [];
                 UNIT_KERJA_LAYANAN = freshKonstantaData?.unitKerja || [];
-
-                // Render ulang UI dengan data baru dan perbarui state
                 onLayananSuccess(freshLayananData || []);
                 onInfoSuccess(freshInfoData || []);
 
-                // PERUBAHAN: Perbarui cache dengan data konstan juga
                 const itemToCache = {
                     data: {
                         layanan: freshLayananData,
@@ -129,17 +111,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 localStorage.setItem(CACHE_KEY, JSON.stringify(itemToCache));
                 console.log("Cache localStorage diperbarui dengan data baru.");
 
-                // OPTIMISASI: Prefetch data kalender saat browser idle.
                 if ('requestIdleCallback' in window) {
                     requestIdleCallback(() => prefetchCalendarData(freshLayananData));
                 } else {
-                    setTimeout(() => prefetchCalendarData(freshLayananData), 1500); // Fallback
+                    setTimeout(() => prefetchCalendarData(freshLayananData), 1500);
                 }
             })
             .catch(error => {
                 console.error("Gagal mengambil data baru dari jaringan:", error);
                 if (!isContentLoaded) {
-                    // Tampilkan pesan error hanya jika halaman masih kosong
                     realContent.innerHTML = `<p class="text-red-500 text-center p-8">Gagal memuat data. Periksa koneksi internet Anda dan coba muat ulang halaman.</p>`;
                     skeletonLoader.classList.add('hidden');
                     realContent.classList.remove('hidden');
@@ -171,13 +151,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 const textElement = link.querySelector('p');
                 const itemName = `Klik: ${ (textElement) ? textElement.textContent.trim() : link.dataset.itemName}`;
                 if (itemName) {
-                    // Menggunakan navigator.sendBeacon untuk pengiriman data yang tidak memblokir
                     const data = new URLSearchParams({ action: 'recordClick', itemName: itemName });
                     navigator.sendBeacon(GAS_WEB_APP_URL, data);
                 }
             }
         }
-        [infoContainer, pinnedContainer, quicklinkContainer, footerLinkContainer].forEach(container => {
+        // Dihapus: footerLinkContainer dari event listener
+        [infoContainer, pinnedContainer, quicklinkContainer].forEach(container => {
             if (container) container.addEventListener('click', handleLinkClick);
         });
         const navHome = document.getElementById('navHome');
@@ -229,7 +209,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (copyBtn && copyTarget) {
             copyBtn.onclick = () => {
                 const textToCopy = copyTarget.innerText;
-                // Menggunakan API Clipboard modern jika tersedia, dengan fallback
                 if (navigator.clipboard && window.isSecureContext) {
                     navigator.clipboard.writeText(textToCopy).then(() => {
                         copyBtn.textContent = 'Tersalin!';
@@ -243,7 +222,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         copyBtn.textContent = 'Gagal';
                     });
                 } else {
-                    // Fallback untuk environment tidak aman (seperti iframe)
                     const textArea = document.createElement('textarea');
                     textArea.value = textToCopy;
                     textArea.style.position = 'absolute';
@@ -275,14 +253,9 @@ document.addEventListener('DOMContentLoaded', function() {
             trackingLayananSelect.selectedIndex = 0;
         }
     }
-
-    /**
-     * @dev Prefetches calendar data for services marked as 'kalender'.
-     * This runs in the background to make opening the calendar modal faster.
-     */
+    
     function prefetchCalendarData(layananList = []) {
         const calendarServices = layananList.filter(l => (getValueCaseInsensitive(l, 'jenis') || '').toLowerCase() === 'kalender');
-
         calendarServices.forEach(service => {
             const sheet = getValueCaseInsensitive(service, 'sheet');
             const sheetId = getValueCaseInsensitive(service, 'Sheet ID') || '';
@@ -302,7 +275,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // --- FUNGSI UTILITAS (Tidak diubah) ---
     function getValueCaseInsensitive(object, key) {
         if (!object || !key) return undefined;
         const asLowercase = key.toLowerCase();
@@ -330,19 +302,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         return 'concierge-bell';
     }
-
-    function getFooterIcon(text) {
-        const lowerText = text.toLowerCase();
-        if (lowerText.includes('facebook')) return 'fab fa-facebook-f';
-        if (lowerText.includes('instagram')) return 'fab fa-instagram';
-        if (lowerText.includes('youtube')) return 'fab fa-youtube';
-        if (lowerText.includes('tiktok')) return 'fab fa-tiktok';
-        if (lowerText.includes('website')) return 'fas fa-globe';
-        return 'fas fa-link';
-    }
-
-    // --- FUNGSI RENDER (Tidak ada perubahan signifikan, hanya memastikan berjalan dengan data baru) ---
-
+    
     function onLayananSuccess(data) {
         semuaLayanan = data || [];
         if (!semuaLayanan || semuaLayanan.length === 0) {
@@ -353,7 +313,6 @@ document.addEventListener('DOMContentLoaded', function() {
         renderLayananByFilter(currentUserType);
         
         const mobileTrackingSelect = document.getElementById('mobileTrackingLayananSelect');
-        // Kosongkan select sebelum mengisi ulang
         if (trackingLayananSelect) trackingLayananSelect.innerHTML = '<option value="">Pilih Jenis Layanan</option>';
         if (mobileTrackingSelect) mobileTrackingSelect.innerHTML = '<option value="">Pilih Jenis Layanan</option>';
     
@@ -380,28 +339,24 @@ document.addEventListener('DOMContentLoaded', function() {
     function onInfoSuccess(allData) {
         const infoItems = [],
             pinItems = [],
-            linkItems = [],
-            footerLinkItems = [];
+            linkItems = [];
         (allData || []).forEach(item => {
             const jenis = (getValueCaseInsensitive(item, 'jenis') || '').toLowerCase();
             if (jenis === 'info') infoItems.push(item);
             else if (jenis === 'pin') pinItems.push(item);
             else if (jenis === 'link') linkItems.push(item);
-            else if (jenis === 'footer link') footerLinkItems.push(item);
+            // Dihapus: Logika untuk 'footer link'
         });
         const topWrapper = document.getElementById('top-content-wrapper');
-        // const topSectionTitle = document.getElementById('top-section-title'); // Dihapus karena elemen HTML sudah tidak ada
         if (infoItems.length >= 1 && pinItems.length >= 1) {
             topWrapper.className = 'grid grid-cols-1 md:grid-cols-2 md:gap-8 items-start';
-            // if(topSectionTitle) topSectionTitle.classList.add('hidden'); // Dihapus
         } else {
             topWrapper.className = '';
-            // if(topSectionTitle) topSectionTitle.classList.remove('hidden'); // Dihapus
         }
         renderInfoSlider(infoItems);
         renderPinnedButtons(pinItems);
         renderQuickLinks(linkItems);
-        renderFooterLinks(footerLinkItems);
+        // Dihapus: Pemanggilan renderFooterLinks()
     }
 
     function onInfoFailure(error) {
@@ -442,14 +397,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const groupedLayananData = filteredData.reduce((acc, layanan) => {
             const kategoriString = getValueCaseInsensitive(layanan, 'Kategori') || 'Lainnya';
             const kategoriList = kategoriString.split(',').map(k => k.trim());
-
             kategoriList.forEach(kategori => {
                 if (!acc[kategori]) {
                     acc[kategori] = [];
                 }
                 acc[kategori].push(layanan);
             });
-            
             return acc;
         }, {});
         const categories = Object.keys(groupedLayananData);
@@ -463,9 +416,9 @@ document.addEventListener('DOMContentLoaded', function() {
             contentPanel.id = `panel-${kategori}`;
             contentPanel.className = 'layanan-content-panel';
             
-            // PERUBAHAN: Menghilangkan kartu pembungkus dan mengubah grid
             const iconsGrid = document.createElement('div');
-            iconsGrid.className = "grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-7 gap-4 text-center";
+            // PERUBAHAN: Menyesuaikan grid untuk 3 (mobile) hingga 6 (desktop) ikon
+            iconsGrid.className = "grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4 text-center";
 
             groupedLayananData[kategori].forEach((layanan, i) => {
                 const jenisLayanan = (getValueCaseInsensitive(layanan, 'jenis') || '').toLowerCase();
@@ -500,7 +453,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 iconsGrid.appendChild(serviceItem);
             });
-            contentPanel.appendChild(iconsGrid); // Langsung append grid, tanpa kartu
+            contentPanel.appendChild(iconsGrid);
             layananContentContainer.appendChild(contentPanel);
             if (index === 0) {
                 tabSlide.querySelector('button').classList.add('active');
@@ -533,14 +486,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const groupedData = layananTampil.reduce((acc, layanan) => {
             const kategoriString = getValueCaseInsensitive(layanan, 'Kategori') || 'Lainnya';
             const kategoriList = kategoriString.split(',').map(k => k.trim());
-
             kategoriList.forEach(kategori => {
                 if (!acc[kategori]) {
                     acc[kategori] = [];
                 }
                 acc[kategori].push(layanan);
             });
-            
             return acc;
         }, {});
         for (const kategori in groupedData) {
@@ -718,28 +669,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    function renderFooterLinks(data) {
-        const footerWrapper = document.getElementById('footerLinkContainer');
-        footerWrapper.innerHTML = '';
-        if (!data || data.length === 0) {
-            return;
-        }
-        data.forEach(item => {
-            const infoText = getValueCaseInsensitive(item, 'info');
-            const link = getValueCaseInsensitive(item, 'link');
-            if (infoText && link) {
-                const iconClass = getFooterIcon(infoText);
-                const footerLink = document.createElement('a');
-                footerLink.href = link;
-                footerLink.target = '_blank';
-                footerLink.rel = 'noopener noreferrer';
-                footerLink.className = 'text-gray-500 hover:text-brand-green transition-colors text-xl';
-                footerLink.dataset.itemName = infoText;
-                footerLink.innerHTML = `<i class="${iconClass}"></i>`;
-                footerWrapper.appendChild(footerLink);
-            }
-        });
-    }
+    // Dihapus: Seluruh fungsi renderFooterLinks() sudah tidak diperlukan
 
     function renderSuketLulusForm(allFields, layananName) {
         let formHtml = `
@@ -855,7 +785,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // --- BARU: Fungsi untuk render form Lacak SK/SE ---
     function renderLacakSkSeForm(allFields, pengolah, layananName) {
         let formHtml = `
             <input type="hidden" name="Pengolah" value="${pengolah}" />
@@ -1257,7 +1186,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (lowerLayananName.includes('suket lulus')) {
             renderSuketLulusForm(allFields, layananName);
-        } else if (lowerLayananName.includes('lacak sk')) { // --- PERUBAHAN: Kondisi baru ---
+        } else if (lowerLayananName.includes('lacak sk')) {
             renderLacakSkSeForm(allFields, pengolah, layananName);
         } else if (lowerLayananName.includes('suket')) {
             renderSuketKuliahForm(allFields, pengolah, layananName);
@@ -1462,7 +1391,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 const year = startDate.getFullYear();
                                 value = `${day}/${month}/${year}`;
                             } else {
-                                value = getValueCaseInsensitive(props, field); // Fallback
+                                value = getValueCaseInsensitive(props, field);
                             }
                         } else if (fieldLower === 'tanggal selesai') {
                             const endDate = info.event.end;
@@ -1475,7 +1404,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 const year = correctedEndDate.getFullYear();
                                 value = `${day}/${month}/${year}`;
                             } else {
-                                value = getValueCaseInsensitive(props, field); // Fallback
+                                value = getValueCaseInsensitive(props, field);
                             }
                         } else {
                             value = getValueCaseInsensitive(props, field);
@@ -1615,3 +1544,4 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
+
