@@ -483,7 +483,7 @@ document.addEventListener('DOMContentLoaded', function() {
         showWelcomePopup(popupData, storageKey, durationDays);
     }
 
-    function showWelcomePopup(popupData, storageKey, durationDays) {
+        function showWelcomePopup(popupData, storageKey, durationDays) {
         if (!welcomePopup) return;
         
         const content = document.getElementById('welcomePopupContent');
@@ -495,7 +495,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
         image.src = getValueCaseInsensitive(popupData, 'gambar') || '';
         text.textContent = getValueCaseInsensitive(popupData, 'info') || '';
-        link.href = getValueCaseInsensitive(popupData, 'link') || '#';
+        
+        // PERBAIKAN: Memastikan URL menjadi absolut
+        let url = getValueCaseInsensitive(popupData, 'link') || '#';
+        if (url && !url.startsWith('http://') && !url.startsWith('https://') && url !== '#') {
+            url = 'https://' + url;
+        }
+        link.href = url;
 
         const hideAndSetSeen = () => {
             content.classList.remove('scale-100', 'opacity-100');
