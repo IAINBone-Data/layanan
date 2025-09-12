@@ -1261,6 +1261,149 @@ document.addEventListener('DOMContentLoaded', function() {
         permohonanForm.innerHTML = formHtml;
     }
 
+    function openFormModal(event) {
+        const card = event.currentTarget;
+        const { formFields, layananName, pengolah, sheet, sheetId } = card.dataset;
+        if (!formFields || !sheet) return;
+        modalTitle.textContent = `Formulir ${layananName}`;
+        const allFields = formFields.split(',').map(field => field.trim());
+        permohonanForm.dataset.targetSheet = sheet;
+        permohonanForm.dataset.targetSheetId = sheetId;
+        
+        const lowerLayananName = layananName.toLowerCase();
+
+        if (lowerLayananName.includes('suket lulus')) {
+            renderSuketLulusForm(allFields, layananName);
+        } else if (lowerLayananName.includes('lacak sk')) {
+            renderLacakSkSeForm(allFields, pengolah, layananName);
+        } else if (lowerLayananName.includes('suket')) {
+            renderSuketKuliahForm(allFields, pengolah, layananName);
+        } else if (lowerLayananName.includes('peminjaman')) {
+            renderPeminjamanForm(allFields, pengolah, layananName);
+        } else if (lowerLayananName.includes('pengaduan')) {
+            renderPengaduanForm(allFields, pengolah, layananName);
+        } else {
+            renderGenericForm(allFields, pengolah, layananName);
+        }
+    
+        formModal.classList.remove('hidden');
+    }
+
+    function handlePermohonanSubmit(e) {
+        e.preventDefault();
+        const { targetSheet, targetSheetId } = e.target.dataset;
+        const submitBtn = document.getElementById('submitPermohonanBtn');
+        if (!targetSheet) {
+            showNotificationModal('Error', 'Tujuan penyimpanan data tidak ditemukan.', 'error');
+            return;
+        }
+        const formData = new FormData(e.target);
+        const dataObject = Object.fromEntries(formData.entries());
+        submitBtn.textContent = 'Mengirim...';
+        submitBtn.disabled = true;
+        const fileInput = e.target.querySelector('input[type="file"][name="File"]');
+        const file = fileInput ? fileInput.files[0] : null;
+        const runServerCall = (fileData = null) => {
+            if (fileData) dataObject.fileData = fileData;
+            delete dataObject.File;
+            fetch(GAS_WEB_APP_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        action: 'submitPermohonan',
+                        formData: dataObject,
+                        sheetName: targetSheet,
+                        sheetId: targetSheetId
+                    })
+                })
+                .then(res => res.json())
+                .then(onPermohonanSuccess)
+                .catch(onPermohonanFailure);
+        };
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const base64Data = e.target.result.split(',')[1];
+                const fileData = {
+                    base64Data: base64Data,
+                    name: file.name,
+                    type: file.type
+                };
+                runServerCall(fileData);
+            };
+            reader.onerror = function() {
+                showNotificationModal('Error', 'Gagal membaca file lampiran.', 'error');
+                submitBtn.textContent = 'Kirim';
+                submitBtn.disabled = false;
+            };
+            reader.readAsDataURL(file);
+        } else {
+            runServerCall();
+        }
+    }
+
+    function handleHelpdeskSubmit(e) {
+        e.preventDefault();
+        const btn = document.getElementById('submitHelpdeskBtn');
+        btn.textContent = 'Mengirim...';
+        btn.disabled = true;
+        const formData = new FormData(e.target);
+        const dataObject = Object.fromEntries(formData.entries());
+        fetch(GAS_WEB_APP_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({
+                    action: 'submitHelpdesk',
+                    formData: dataObject
+                })
+            })
+            .then(res => res.json())
+            .then(response => {
+                helpdeskModal.classList.add('hidden');
+                if (response.success) {
+                    showNotificationModal('Berhasil', 'Pesan Anda telah terkirim. Terima kasih.', 'success');
+                    helpdeskForm.reset();
+                } else {
+                    showNotificationModal('Gagal', `Gagal mengirim pesan: ${response.message}`, 'error');
+                }
+                btn.textContent = 'Kirim';
+                btn.disabled = false;
+            })
+            .catch(err => {
+                showNotificationModal('Error', 'Terjadi kesalahan saat mengirim pesan.', 'error');
+                console.error(err);
+                btn.textContent = 'Kirim';
+                btn.disabled = false;
+            });
+    }
+
+    function onPermohonanSuccess(response) {
+        formModal.classList.add('hidden');
+        if (response.success) {
+            if (response.id) {
+                const successMessage = `Permohonan Anda telah dikirim. Gunakan ID ini untuk melacak:
+                <div class='flex items-center justify-between bg-gray-100 p-2 rounded-lg mt-4'>
+                    <strong id='copy-target-id' class='text-lg font-mono tracking-wider'>${response.id}</strong>
+                    <button id='copy-id-btn' type='button' class='bg-gray-200 px-3 py-1 rounded-md text-sm font-semibold hover:bg-gray-300 transition-colors'>Copy ID</button>
+                </div>`;
+                showNotificationModal('Berhasil!', successMessage, 'success');
+            } else {
+                showNotificationModal('Berhasil!', 'Permohonan Anda telah terkirim, namun ID pelacakan tidak dapat dibuat. Silakan hubungi admin.', 'success');
+            }
+        } else {
+            showNotificationModal('Gagal', `Gagal mengirim permohonan: ${response.message || 'Terjadi kesalahan yang tidak diketahui.'}`, 'error');
+        }
+        document.getElementById('submitPermohonanBtn').textContent = 'Kirim';
+        document.getElementById('submitPermohonanBtn').disabled = false;
+    }
+
+    function onPermohonanFailure(error) {
+        showNotificationModal('Error', 'Terjadi kesalahan saat mengirim permohonan.', 'error');
+        console.error('Submit Gagal:', error);
+        document.getElementById('submitPermohonanBtn').textContent = 'Kirim';
+        document.getElementById('submitPermohonanBtn').disabled = false;
+    }
+
     function openCalendarModal(event) {
         const { sheet, sheetId } = event.currentTarget.dataset;
         if (!sheet) {
