@@ -68,7 +68,7 @@ background-color: #1a3a3a !important;
 width: auto !important;
 }
 
-/* Tab and Toggle Button Styles /
+/* Tab and Toggle Button Styles */
 .layanan-tab {
 transition: all 0.3s ease;
 padding: 6px 16px;
@@ -77,7 +77,7 @@ white-space: nowrap;
 font-size: 12px;
 color: #6b7280;
 }
-/ PERUBAHAN: Warna tab aktif menjadi hijau */
+/* PERUBAHAN: Warna tab aktif menjadi hijau */
 .layanan-tab.active {
 color: #ffffff;
 font-weight: 700;
