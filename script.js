@@ -250,9 +250,9 @@ document.addEventListener('DOMContentLoaded', function() {
     function handleServiceFilterSelection(e) {
         const target = e.target.closest('.service-filter-item');
         if (target) {
-            const { value, text } = target.dataset;
+            const { value } = target.dataset;
             document.getElementById('mobileSelectedServiceValue').value = value;
-            document.getElementById('mobileSelectedServiceText').textContent = text;
+            mobileServiceFilterBtn.classList.add('filter-selected');
             serviceFilterModal.classList.add('hidden');
         }
     }
@@ -343,7 +343,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 mobileTrackingResult.innerHTML = '';
                 document.getElementById('mobilePermohonanId').value = '';
                 document.getElementById('mobileSelectedServiceValue').value = '';
-                document.getElementById('mobileSelectedServiceText').textContent = 'Pilih jenis layanan untuk melacak';
+                mobileServiceFilterBtn.classList.remove('filter-selected');
             }
         }
     }
@@ -1601,9 +1601,12 @@ document.addEventListener('DOMContentLoaded', function() {
         setTrackingLoading(false, view === 'desktop' ? 'trackButton' : 'mobileTrackButton');
         const resultContainer = view === 'desktop' ? trackingResult : mobileTrackingResult;
         let content = '';
-        if (result && result.error) {
+
+        if (!result) { // PERBAIKAN: Menangani respons null dari server
+            content = `<div class="p-4 bg-yellow-100 text-yellow-800 rounded-lg relative">ID Permohonan tidak ditemukan.</div>`;
+        } else if (result.error) {
             content = `<div class="p-4 bg-red-100 text-red-700 rounded-lg relative">${result.error}</div>`;
-        } else if (result) {
+        } else {
             const isAnonim = (getValueCaseInsensitive(result, 'anonim') === 'on' || getValueCaseInsensitive(result, 'anonim') === true);
             const fieldsToHide = ['Nama Pelapor', 'Email Identitas Pelapor', 'Telepon Identitas Pelapor', 'No Identitas Pelapor'];
             if (isAnonim) {
@@ -1635,8 +1638,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 <p class="text-2xl font-bold">${status}</p>
                 <dl class="mt-4 border-t border-gray-200 pt-4 grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2">${detailsHtml}</dl>
             </div>`;
-        } else {
-            content = `<div class="p-4 bg-yellow-100 text-yellow-800 rounded-lg relative">ID Permohonan tidak ditemukan.</div>`;
         }
         resultContainer.innerHTML = content.replace('</div>', '<button class="js-close-track-result absolute top-2 right-3 text-gray-500 hover:text-gray-800 text-2xl font-bold">&#215;</button></div>');
     }
@@ -1663,6 +1664,5 @@ document.addEventListener('DOMContentLoaded', function() {
             button.disabled = false;
         }
     }
-
 });
 
