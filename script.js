@@ -164,6 +164,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (container) container.addEventListener('click', handleLinkClick);
         });
         
+        // --- BARU: Event Listener untuk fitur baru ---
         if (layananSearchInput) layananSearchInput.addEventListener('input', handleLayananSearch);
         if (layananSearchResults) layananSearchResults.addEventListener('click', handleSearchResultClick);
 
@@ -178,6 +179,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (navReport) navReport.addEventListener('click', handleNavReportClick);
     }
     
+    // --- BARU: Fungsi untuk mengelola state aktif bottom nav ---
     function updateNavActiveState(activeId) {
         const navButtons = document.querySelectorAll('#bottom-nav .nav-btn');
         navButtons.forEach(btn => {
@@ -189,6 +191,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // --- BARU: Fungsi untuk menangani klik tombol "Lapor" ---
     function handleNavReportClick() {
         const layananPengaduan = semuaLayanan.find(l => {
             const namaLayanan = getValueCaseInsensitive(l, 'jenis layanan') || '';
@@ -211,6 +214,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // --- BARU: Fungsi untuk menangani pencarian layanan ---
     function handleLayananSearch(e) {
         const query = e.target.value.toLowerCase().trim();
         layananSearchResults.innerHTML = '';
@@ -229,6 +233,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const resultsHtml = filteredLayanan.map(layanan => {
                 const namaLayanan = getValueCaseInsensitive(layanan, 'jenis layanan');
                 const ikon = getIconForLayanan(layanan);
+                // Salin semua data-attributes yang diperlukan
                 const dataAttrs = `
                     data-form-fields="${getValueCaseInsensitive(layanan, 'form') || ''}"
                     data-layanan-name="${namaLayanan || ''}"
@@ -249,6 +254,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // --- BARU: Fungsi untuk menangani klik pada hasil pencarian ---
     function handleSearchResultClick(e) {
         const target = e.target.closest('.search-result-item');
         if (target) {
