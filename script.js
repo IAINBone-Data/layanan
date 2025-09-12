@@ -334,20 +334,18 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function handleCloseTrackResult(e, view) {
-        if (e.target.closest('.js-close-track-result')) {
-            if (view === 'desktop') {
-                trackingResult.innerHTML = '';
-                document.getElementById('permohonanId').value = '';
-                trackingLayananSelect.selectedIndex = 0;
-            } else {
-                mobileTrackingResult.innerHTML = '';
-                document.getElementById('mobilePermohonanId').value = '';
-                document.getElementById('mobileSelectedServiceValue').value = '';
-                mobileServiceFilterBtn.classList.remove('filter-selected');
-            }
+        function handleServiceFilterSelection(e) {
+        const target = e.target.closest('.service-filter-item');
+        if (target) {
+            const { value } = target.dataset;
+            document.getElementById('mobileSelectedServiceValue').value = value;
+            // PERBAIKAN: Menambahkan kelas warna pada tombol filter
+            mobileServiceFilterBtn.classList.add('filter-selected');
+            serviceFilterModal.classList.add('hidden');
         }
     }
+    
+    function showNotificationModal(title, message, type = 'info') {
 
     function prefetchCalendarData(layananList = []) {
         const calendarServices = layananList.filter(l => (getValueCaseInsensitive(l, 'jenis') || '').toLowerCase() === 'kalender');
