@@ -18,7 +18,6 @@
 <body class="text-gray-800 flex flex-col min-h-screen">
 
     <div class="flex flex-col flex-grow" id="content-wrapper">
-        <!-- PERBAIKAN: Header disembunyikan di mobile -->
         <header class="hidden md:block px-3 pt-3 pb-1 md:py-6">
             <div class="container mx-auto max-w-4xl flex items-center justify-between gap-4">
                 <div class="flex items-center gap-4">
@@ -87,7 +86,6 @@
                 <section class="block md:hidden mb-6" id="mobile-tracking-section">
                     <h2 class="text-base font-semibold text-gray-800 text-left mb-3">Lacak Permohonan Anda</h2>
                     <form id="mobileTrackingForm">
-                        <!-- PERBAIKAN: Menggunakan flex items-stretch untuk tinggi yang sama -->
                         <div class="flex items-stretch gap-2">
                              <input class="flex-grow px-4 py-2.5 border border-gray-300 rounded-lg bg-white text-sm" id="mobilePermohonanId" placeholder="Ketik ID Permohonan" required type="text" />
                              <button type="button" id="mobileServiceFilterBtn" class="p-2.5 border border-gray-300 rounded-lg bg-white">
@@ -98,7 +96,6 @@
                                  <div class="hidden animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white" id="mobileTrackButtonSpinner"></div>
                              </button>
                         </div>
-                        <!-- PERBAIKAN: Teks placeholder dihapus, input ini menyimpan nilai -->
                         <input type="hidden" id="mobileSelectedServiceValue" name="mobileSelectedService">
                     </form>
                     <div class="mt-4" id="mobileTrackingResult"></div>
@@ -150,8 +147,7 @@
                 <button class="text-gray-500 hover:text-gray-800 text-2xl" id="closeModalBtn">&#215;</button>
             </header>
             <main class="p-6 overflow-y-auto">
-                <form id="permohonanForm">
-                </form>
+                <form id="permohonanForm"></form>
             </main>
             <footer class="p-4 bg-gray-50 border-t flex justify-end gap-4">
                 <button class="bg-gray-200 text-gray-800 font-bold py-2 px-6 rounded-lg hover:bg-gray-300" id="cancelModalBtn" type="button">Batal</button>
@@ -213,8 +209,6 @@
             </main>
         </div>
     </div>
-
-    <!-- BARU: Modal untuk Filter Layanan di Mobile -->
     <div class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-40" id="serviceFilterModal">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-[80vh] flex flex-col">
             <header class="p-4 border-b flex justify-between items-center">
@@ -224,6 +218,21 @@
             <main class="p-6 overflow-y-auto" id="serviceFilterContainer">
                 <!-- Daftar layanan akan dirender di sini oleh JS -->
             </main>
+        </div>
+    </div>
+
+    <!-- BARU: Welcome Popup Modal -->
+    <div class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50" id="welcomePopup">
+        <div class="bg-white rounded-lg shadow-2xl w-full max-w-sm overflow-hidden transform transition-all scale-95 opacity-0" id="welcomePopupContent">
+            <img id="welcomePopupImage" src="" alt="Pengumuman" class="w-full h-40 object-cover">
+            <div class="p-6 relative">
+                 <button class="absolute top-2 right-2 text-gray-400 hover:text-gray-700 text-2xl" id="welcomePopupDismissBtn">&#215;</button>
+                 <div id="welcomePopupText" class="text-gray-600 text-sm mb-6 whitespace-pre-wrap"></div>
+                 <div class="flex items-center gap-4">
+                    <a href="#" id="welcomePopupLink" target="_blank" rel="noopener noreferrer" class="flex-1 bg-brand-green text-white font-bold py-2.5 px-4 rounded-lg text-center text-sm">Klik Saya</a>
+                    <button id="welcomePopupCloseBtn" class="flex-1 bg-gray-200 text-gray-800 font-bold py-2.5 px-4 rounded-lg text-center text-sm">Tutup</button>
+                 </div>
+            </div>
         </div>
     </div>
 
