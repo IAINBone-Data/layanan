@@ -32,11 +32,12 @@ body {
 .fc .fc-daygrid-day.fc-day-today {
     background-color: var(--fc-today-bg-color);
 }
+
 .fc .fc-prev-button, .fc .fc-next-button {
     padding: 0.2em 0.4em !important;
 }
 .fc .fc-button .fc-icon {
-    font-size: 1.2em;
+    font-size: 1.2em; /* Adjust icon size inside the smaller button */
 }
 
 
@@ -78,11 +79,10 @@ body {
     font-size: 12px;
     color: #6b7280;
 }
-/* PERBAIKAN: Warna label aktif */
 .layanan-tab.active {
+    background-color: #1a3a3a;
     color: white;
     font-weight: 700;
-    background-color: #1a3a3a;
 }
 .toggle-btn {
     transition: all 0.3s ease-in-out;
@@ -94,41 +94,9 @@ body {
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
 }
 
-/* PERBAIKAN: Floating Bottom Navigation & Filter Button */
-#bottom-nav {
-    left: 50%;
-    transform: translateX(-50%);
-    bottom: 1rem;
-    width: calc(100% - 2rem);
-    max-width: 400px;
-    border-radius: 99px;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-#bottom-nav .flex {
-    justify-content: space-around;
-}
-.nav-btn.active .nav-icon {
-    color: #1a3a3a;
-}
-.nav-btn.active .nav-text {
-    font-weight: 600;
-    color: #1a3a3a;
-}
-/* BARU: Kelas untuk menandai filter layanan mobile telah dipilih */
-.filter-selected {
-    background-color: #dcfce7 !important; /* light green */
-    border-color: #15803d !important;
-}
-.filter-selected i {
-    color: #15803d !important;
-}
-
-
 /* Modal and Disabled Section Styles */
-#notificationModal.visible #notificationModalContent {
+#notificationModal.visible #notificationModalContent,
+#welcomePopup.visible #welcomePopupContent { /* Ditambahkan untuk Welcome Popup */
     transform: scale(1);
     opacity: 1;
 }
@@ -142,7 +110,7 @@ input:disabled, select:disabled, textarea:disabled {
     cursor: not-allowed;
 }
 
-/* Responsive Adjustments for Mobile */
+/* Mobile Specific Styles */
 @media (max-width: 767px) {
     .fc .fc-toolbar-title { font-size: 1.1em; }
     .fc .fc-button { padding: .2em .5em; font-size: 0.9em; }
@@ -150,5 +118,29 @@ input:disabled, select:disabled, textarea:disabled {
     #calendarModal .w-full { max-height: 95vh; }
     .fc .fc-col-header-cell-cushion { font-weight: normal; font-size: 0.75em; }
     .fc .fc-daygrid-day-number { font-size: 0.8em; }
+
+    /* Floating Bottom Nav */
+    #bottom-nav {
+        bottom: 1rem;
+        left: 1rem;
+        right: 1rem;
+        width: calc(100% - 2rem);
+        border-radius: 99px;
+        box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
+        background-color: rgba(255, 255, 255, 0.8);
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
+    }
+    #bottom-nav > div {
+        justify-content: space-around;
+    }
+    .nav-btn.active .nav-icon { color: #1a3a3a; }
+    .nav-btn.active .nav-text { color: #1a3a3a; font-weight: 600; }
+    
+    /* Mobile Tracking Form */
+    .filter-selected {
+        background-color: #dcfce7; /* green-100 */
+        border-color: #4ade80; /* green-400 */
+    }
 }
 
