@@ -227,7 +227,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const trackableLayanan = semuaLayanan.filter(layanan => (getValueCaseInsensitive(layanan, 'jenis') || '').toLowerCase() !== 'setting');
         
         const list = document.createElement('ul');
-        list.className = 'space-y-2';
+        list.className = 'space-y-1';
 
         trackableLayanan.forEach(layanan => {
             const layananName = getValueCaseInsensitive(layanan, 'jenis layanan');
@@ -237,10 +237,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 const optionValue = JSON.stringify({ name: targetSheet, id: targetSheetId });
                 const listItem = document.createElement('li');
                 const button = document.createElement('button');
-                button.className = 'w-full text-left p-2 rounded-lg hover:bg-gray-100 service-filter-item';
-                button.textContent = layananName;
+                button.className = 'w-full text-left p-2 rounded-lg hover:bg-gray-100 service-filter-item flex justify-between items-center';
                 button.dataset.value = optionValue;
-                button.dataset.text = layananName;
+                
+                button.innerHTML = `
+                    <span>${layananName}</span>
+                    <i class="fas fa-check check-icon text-green-600"></i>
+                `;
                 listItem.appendChild(button);
                 list.appendChild(listItem);
             }
@@ -251,10 +254,18 @@ document.addEventListener('DOMContentLoaded', function() {
     function handleServiceFilterSelection(e) {
         const target = e.target.closest('.service-filter-item');
         if (target) {
-            const { value } = target.dataset;
+            serviceFilterContainer.querySelectorAll('.service-filter-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            target.classList.add('selected');
+
+            const { value, text } = target.dataset;
             document.getElementById('mobileSelectedServiceValue').value = value;
             mobileServiceFilterBtn.classList.add('filter-selected');
-            serviceFilterModal.classList.add('hidden');
+            
+            setTimeout(() => {
+                serviceFilterModal.classList.add('hidden');
+            }, 200);
         }
     }
     
@@ -334,18 +345,23 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-        function handleServiceFilterSelection(e) {
-        const target = e.target.closest('.service-filter-item');
-        if (target) {
-            const { value } = target.dataset;
-            document.getElementById('mobileSelectedServiceValue').value = value;
-            // PERBAIKAN: Menambahkan kelas warna pada tombol filter
-            mobileServiceFilterBtn.classList.add('filter-selected');
-            serviceFilterModal.classList.add('hidden');
+    function handleCloseTrackResult(e, view) {
+        if (e.target.closest('.js-close-track-result')) {
+            if (view === 'desktop') {
+                trackingResult.innerHTML = '';
+                document.getElementById('permohonanId').value = '';
+                trackingLayananSelect.selectedIndex = 0;
+            } else {
+                mobileTrackingResult.innerHTML = '';
+                document.getElementById('mobilePermohonanId').value = '';
+                document.getElementById('mobileSelectedServiceValue').value = '';
+                mobileServiceFilterBtn.classList.remove('filter-selected');
+                serviceFilterContainer.querySelectorAll('.service-filter-item').forEach(item => {
+                    item.classList.remove('selected');
+                });
+            }
         }
     }
-    
-    function showNotificationModal(title, message, type = 'info') {
 
     function prefetchCalendarData(layananList = []) {
         const calendarServices = layananList.filter(l => (getValueCaseInsensitive(l, 'jenis') || '').toLowerCase() === 'kalender');
@@ -440,7 +456,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (jenis === 'info') infoItems.push(item);
             else if (jenis === 'pin') pinItems.push(item);
             else if (jenis === 'link') linkItems.push(item);
-            else if (jenis === 'pop') popupData = item; // Menemukan data pop-up
+            else if (jenis === 'pop') popupData = item;
         });
 
         const topWrapper = document.getElementById('top-content-wrapper');
@@ -481,25 +497,24 @@ document.addEventListener('DOMContentLoaded', function() {
         showWelcomePopup(popupData, storageKey, durationDays);
     }
 
-        function showWelcomePopup(popupData, storageKey, durationDays) {
+    function showWelcomePopup(popupData, storageKey, durationDays) {
         if (!welcomePopup) return;
         
         const content = document.getElementById('welcomePopupContent');
         const image = document.getElementById('welcomePopupImage');
         const text = document.getElementById('welcomePopupText');
-        const link = document.getElementById('welcomePopupLink');
+        const linkEl = document.getElementById('welcomePopupLink');
         const closeBtn = document.getElementById('welcomePopupCloseBtn');
         const dismissBtn = document.getElementById('welcomePopupDismissBtn');
 
+        let linkUrl = getValueCaseInsensitive(popupData, 'link') || '#';
+        if (linkUrl && !linkUrl.startsWith('http')) {
+            linkUrl = 'https://' + linkUrl;
+        }
+
         image.src = getValueCaseInsensitive(popupData, 'gambar') || '';
         text.textContent = getValueCaseInsensitive(popupData, 'info') || '';
-        
-        // PERBAIKAN: Memastikan URL menjadi absolut
-        let url = getValueCaseInsensitive(popupData, 'link') || '#';
-        if (url && !url.startsWith('http://') && !url.startsWith('https://') && url !== '#') {
-            url = 'https://' + url;
-        }
-        link.href = url;
+        linkEl.href = linkUrl;
 
         const hideAndSetSeen = () => {
             content.classList.remove('scale-100', 'opacity-100');
@@ -514,7 +529,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         closeBtn.onclick = hideAndSetSeen;
         dismissBtn.onclick = hideAndSetSeen;
-        link.onclick = hideAndSetSeen;
+        linkEl.onclick = hideAndSetSeen;
 
         welcomePopup.classList.remove('hidden');
         setTimeout(() => {
@@ -656,6 +671,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // ... sisa kode tidak berubah
     function renderQuickServicesModal() { 
         const container = document.getElementById('quickServicesContainer');
         if (!container || semuaLayanan.length === 0) return;
@@ -958,7 +974,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     }
-    function renderLacakSkSeForm(allFields, pengolah, layananName) {
+    function renderLacakSkSeForm(allFields, pengolah, layananName) { 
         let formHtml = `
             <input type="hidden" name="Pengolah" value="${pengolah}" />
             <input type="hidden" name="Jenis Layanan" value="${layananName}" />
@@ -1709,3 +1725,4 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
+
