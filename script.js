@@ -183,7 +183,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function handleNavReportClick() {
-        // PERBAIKAN: Mencari "Pengaduan Layanan" secara spesifik
         const layananPengaduan = semuaLayanan.find(l => {
             const namaLayanan = getValueCaseInsensitive(l, 'jenis layanan') || '';
             return namaLayanan.toLowerCase().trim() === 'pengaduan layanan';
@@ -350,7 +349,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const mobileTrackingSelect = document.getElementById('mobileTrackingLayananSelect');
         if (trackingLayananSelect) trackingLayananSelect.innerHTML = '<option value="">Pilih Jenis Layanan</option>';
-        if (mobileTrackingSelect) mobileTrackingSelect.innerHTML = '<option value="">Pilih Jenis Layanan</option>';
+        if (mobileTrackingSelect) mobileTrackingSelect.innerHTML = '<option value="">Pilih Jenis Layanan untuk melacak</option>';
     
         const trackableLayanan = semuaLayanan.filter(layanan => (getValueCaseInsensitive(layanan, 'jenis') || '').toLowerCase() !== 'setting');
         trackableLayanan.forEach(layanan => {
@@ -442,6 +441,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return acc;
         }, {});
         const categories = Object.keys(groupedLayananData);
+        
         categories.forEach((kategori, index) => {
             const tabSlide = document.createElement('div');
             tabSlide.className = 'swiper-slide';
@@ -452,7 +452,18 @@ document.addEventListener('DOMContentLoaded', function() {
             contentPanel.className = 'layanan-content-panel';
             const iconsGrid = document.createElement('div');
             iconsGrid.className = "grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4 text-center";
-            groupedLayananData[kategori].forEach((layanan) => {
+            
+            // PERBAIKAN: Palet warna untuk ikon layanan
+            const colorPalette = [
+                { bg: '#eff6ff', text: '#1d4ed8' }, // blue
+                { bg: '#fff7ed', text: '#c2410c' }, // orange
+                { bg: '#f5f3ff', text: '#6d28d9' }, // purple
+                { bg: '#f0fdf4', text: '#15803d' }, // green
+                { bg: '#fff1f2', text: '#be123c' }, // red
+                { bg: '#eef2ff', text: '#4338ca' }  // indigo
+            ];
+
+            groupedLayananData[kategori].forEach((layanan, i) => {
                 const jenisLayanan = (getValueCaseInsensitive(layanan, 'jenis') || '').toLowerCase();
                 const linkUrl = getValueCaseInsensitive(layanan, 'link');
                 
@@ -464,9 +475,17 @@ document.addEventListener('DOMContentLoaded', function() {
                     serviceItem.rel = 'noopener noreferrer';
                 }
                 
-                // PERBAIKAN: Mengembalikan warna ikon layanan
-                const bgColor = getValueCaseInsensitive(layanan, 'warna') || '#e5e7eb';
-                const textColor = getTextColorForBg(bgColor);
+                const customColor = getValueCaseInsensitive(layanan, 'warna');
+                let bgColor, textColor;
+
+                if (customColor) {
+                    bgColor = customColor;
+                    textColor = getTextColorForBg(customColor);
+                } else {
+                    const randomColor = colorPalette[i % colorPalette.length];
+                    bgColor = randomColor.bg;
+                    textColor = randomColor.text;
+                }
 
                 serviceItem.innerHTML = `
                     <div class="w-16 h-16 rounded-xl flex items-center justify-center text-2xl transition-transform group-hover:scale-110" style="background-color:${bgColor}; color:${textColor};">
@@ -1145,7 +1164,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        // PERBAIKAN: Logika kondisional untuk menyembunyikan bagian terlapor
         const isPengaduanLayanan = layananName.toLowerCase().includes('layanan');
         
         formHtml += `
