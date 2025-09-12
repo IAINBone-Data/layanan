@@ -42,6 +42,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const navServices = document.getElementById('navServices');
     const navHelp = document.getElementById('navHelp');
     const navReport = document.getElementById('navReport');
+    const serviceFilterModal = document.getElementById('serviceFilterModal');
+    const closeServiceFilterModalBtn = document.getElementById('closeServiceFilterModalBtn');
+    const mobileServiceFilterBtn = document.getElementById('mobileServiceFilterBtn');
+    const serviceFilterContainer = document.getElementById('serviceFilterContainer');
+    const mobileTrackingResult = document.getElementById('mobileTrackingResult');
+
 
     // --- State Aplikasi ---
     let semuaLayanan = [];
@@ -133,15 +139,25 @@ document.addEventListener('DOMContentLoaded', function() {
         const modalClosers = [
             { btn: closeModalBtn, modal: formModal }, { btn: cancelModalBtn, modal: formModal },
             { btn: closeHelpdeskModalBtn, modal: helpdeskModal },
-            { btn: closeQuickServicesModalBtn, modal: quickServicesModal }, { btn: closeCalendarModalBtn, modal: calendarModal }
+            { btn: closeQuickServicesModalBtn, modal: quickServicesModal }, { btn: closeCalendarModalBtn, modal: calendarModal },
+            { btn: closeServiceFilterModalBtn, modal: serviceFilterModal }
         ];
         modalClosers.forEach(item => {
             if (item && item.btn) item.btn.addEventListener('click', () => item.modal.classList.add('hidden'));
         });
+        
+        if (mobileServiceFilterBtn) mobileServiceFilterBtn.addEventListener('click', () => {
+            serviceFilterModal.classList.remove('hidden');
+        });
+
+        if (serviceFilterContainer) serviceFilterContainer.addEventListener('click', handleServiceFilterSelection);
 
         if (permohonanForm) permohonanForm.addEventListener('submit', handlePermohonanSubmit);
         if (helpdeskForm) helpdeskForm.addEventListener('submit', handleHelpdeskSubmit);
-        if (trackingResult) trackingResult.addEventListener('click', handleCloseTrackResult);
+        
+        if (trackingResult) trackingResult.addEventListener('click', (e) => handleCloseTrackResult(e, 'desktop'));
+        if (mobileTrackingResult) mobileTrackingResult.addEventListener('click', (e) => handleCloseTrackResult(e, 'mobile'));
+
         if (userTypeToggleContainer) userTypeToggleContainer.addEventListener('click', toggleUserType);
         if (fabHelpdeskBtn) fabHelpdeskBtn.addEventListener('click', () => helpdeskModal.classList.remove('hidden'));
         
@@ -201,6 +217,43 @@ document.addEventListener('DOMContentLoaded', function() {
             updateNavActiveState('navReport');
         } else {
             showNotificationModal('Error', 'Layanan "Pengaduan Layanan" tidak ditemukan.', 'error');
+        }
+    }
+
+    function renderServiceFilterModal() {
+        if (!serviceFilterContainer) return;
+        serviceFilterContainer.innerHTML = '';
+        const trackableLayanan = semuaLayanan.filter(layanan => (getValueCaseInsensitive(layanan, 'jenis') || '').toLowerCase() !== 'setting');
+        
+        const list = document.createElement('ul');
+        list.className = 'space-y-2';
+
+        trackableLayanan.forEach(layanan => {
+            const layananName = getValueCaseInsensitive(layanan, 'jenis layanan');
+            const targetSheet = getValueCaseInsensitive(layanan, 'sheet');
+            const targetSheetId = getValueCaseInsensitive(layanan, 'Sheet ID') || '';
+            if (layananName && targetSheet) {
+                const optionValue = JSON.stringify({ name: targetSheet, id: targetSheetId });
+                const listItem = document.createElement('li');
+                const button = document.createElement('button');
+                button.className = 'w-full text-left p-2 rounded-lg hover:bg-gray-100 service-filter-item';
+                button.textContent = layananName;
+                button.dataset.value = optionValue;
+                button.dataset.text = layananName;
+                listItem.appendChild(button);
+                list.appendChild(listItem);
+            }
+        });
+        serviceFilterContainer.appendChild(list);
+    }
+    
+    function handleServiceFilterSelection(e) {
+        const target = e.target.closest('.service-filter-item');
+        if (target) {
+            const { value, text } = target.dataset;
+            document.getElementById('mobileSelectedServiceValue').value = value;
+            document.getElementById('mobileSelectedServiceText').textContent = text;
+            serviceFilterModal.classList.add('hidden');
         }
     }
     
@@ -280,11 +333,18 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function handleCloseTrackResult(e) {
+    function handleCloseTrackResult(e, view) {
         if (e.target.closest('.js-close-track-result')) {
-            trackingResult.innerHTML = '';
-            document.getElementById('permohonanId').value = '';
-            trackingLayananSelect.selectedIndex = 0;
+            if (view === 'desktop') {
+                trackingResult.innerHTML = '';
+                document.getElementById('permohonanId').value = '';
+                trackingLayananSelect.selectedIndex = 0;
+            } else {
+                mobileTrackingResult.innerHTML = '';
+                document.getElementById('mobilePermohonanId').value = '';
+                document.getElementById('mobileSelectedServiceValue').value = '';
+                document.getElementById('mobileSelectedServiceText').textContent = 'Pilih jenis layanan untuk melacak';
+            }
         }
     }
 
@@ -347,10 +407,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         renderLayananByFilter(currentUserType);
         
-        const mobileTrackingSelect = document.getElementById('mobileTrackingLayananSelect');
         if (trackingLayananSelect) trackingLayananSelect.innerHTML = '<option value="">Pilih Jenis Layanan</option>';
-        if (mobileTrackingSelect) mobileTrackingSelect.innerHTML = '<option value="">Pilih Jenis Layanan untuk melacak</option>';
-    
         const trackableLayanan = semuaLayanan.filter(layanan => (getValueCaseInsensitive(layanan, 'jenis') || '').toLowerCase() !== 'setting');
         trackableLayanan.forEach(layanan => {
             const layananName = getValueCaseInsensitive(layanan, 'jenis layanan');
@@ -360,10 +417,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 const optionValue = JSON.stringify({ name: targetSheet, id: targetSheetId });
                 const option = `<option value='${optionValue}'>${layananName}</option>`;
                 if (trackingLayananSelect) trackingLayananSelect.innerHTML += option;
-                if (mobileTrackingSelect) mobileTrackingSelect.innerHTML += option;
             }
         });
+
         renderQuickServicesModal();
+        renderServiceFilterModal();
     }
     
     function onLayananFailure(error) {
@@ -453,14 +511,13 @@ document.addEventListener('DOMContentLoaded', function() {
             const iconsGrid = document.createElement('div');
             iconsGrid.className = "grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4 text-center";
             
-            // PERBAIKAN: Palet warna untuk ikon layanan
             const colorPalette = [
-                { bg: '#eff6ff', text: '#1d4ed8' }, // blue
-                { bg: '#fff7ed', text: '#c2410c' }, // orange
-                { bg: '#f5f3ff', text: '#6d28d9' }, // purple
-                { bg: '#f0fdf4', text: '#15803d' }, // green
-                { bg: '#fff1f2', text: '#be123c' }, // red
-                { bg: '#eef2ff', text: '#4338ca' }  // indigo
+                { bg: '#eff6ff', text: '#1d4ed8' }, 
+                { bg: '#f0fdf4', text: '#15803d' }, 
+                { bg: '#fffbeb', text: '#b45309' }, 
+                { bg: '#f5f3ff', text: '#6d28d9' }, 
+                { bg: '#fff1f2', text: '#be123c' }, 
+                { bg: '#eef2ff', text: '#4338ca' }
             ];
 
             groupedLayananData[kategori].forEach((layanan, i) => {
@@ -1524,12 +1581,12 @@ document.addEventListener('DOMContentLoaded', function() {
     function handleMobileTracking(e) {
         e.preventDefault();
         setTrackingLoading(true, 'mobileTrackButton');
-        const resultContainer = document.getElementById('mobileTrackingResult');
-        resultContainer.innerHTML = '';
+        mobileTrackingResult.innerHTML = '';
         const permohonanId = document.getElementById('mobilePermohonanId').value;
-        const selectedOption = document.getElementById('mobileTrackingLayananSelect').value;
+        const selectedOption = document.getElementById('mobileSelectedServiceValue').value;
+
         if (!selectedOption) {
-            onTrackSuccess({ error: 'Silakan pilih jenis layanan.' }, 'mobile');
+            onTrackSuccess({ error: 'Silakan pilih jenis layanan melalui tombol filter.' }, 'mobile');
             return;
         }
         const { name: sheetName, id: sheetId } = JSON.parse(selectedOption);
@@ -1542,7 +1599,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function onTrackSuccess(result, view = 'desktop') {
         setTrackingLoading(false, view === 'desktop' ? 'trackButton' : 'mobileTrackButton');
-        const resultContainer = view === 'desktop' ? trackingResult : document.getElementById('mobileTrackingResult');
+        const resultContainer = view === 'desktop' ? trackingResult : mobileTrackingResult;
         let content = '';
         if (result && result.error) {
             content = `<div class="p-4 bg-red-100 text-red-700 rounded-lg relative">${result.error}</div>`;
@@ -1586,7 +1643,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function onTrackFailure(error, view = 'desktop') {
         setTrackingLoading(false, view === 'desktop' ? 'trackButton' : 'mobileTrackButton');
-        const resultContainer = view === 'desktop' ? trackingResult : document.getElementById('mobileTrackingResult');
+        const resultContainer = view === 'desktop' ? trackingResult : mobileTrackingResult;
         console.error('Gagal melacak:', error);
         resultContainer.innerHTML = `<div class="p-4 bg-red-100 text-red-700 rounded-lg relative">Terjadi kesalahan. <button class="js-close-track-result absolute top-2 right-3">&#215;</button></div>`;
     }
