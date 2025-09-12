@@ -1,7 +1,7 @@
 // URL Web App Google Apps Script Anda
 const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbz8BJJV_7uACRPNLiFWgZMdgiLBwbGLTEHYhIwoU7A10HyVQwuBNgWQM5_QJZ09T5mm7A/exec';
 
-// --- DATA KONSTAN (SEKARANG KOSONG, AKAN DIAMBIL DARI SERVER) ---
+// --- DATA KONSTAN (DIAMBIL DARI SERVER) ---
 let DATA_AKADEMIK = [];
 let UNIT_KERJA_LAYANAN = [];
 
@@ -19,7 +19,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const infoContainer = document.getElementById('infoContainer');
     const pinnedContainer = document.getElementById('pinnedContainer');
     const quicklinkContainer = document.getElementById('quicklinkContainer');
-    // const footerLinkContainer = document.getElementById('footerLinkContainer'); // Dihapus karena footer menjadi statis
     const userTypeToggleContainer = document.getElementById('userTypeToggleContainer');
     const formModal = document.getElementById('formModal');
     const modalTitle = document.getElementById('modalTitle');
@@ -41,6 +40,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const fabHelpdeskBtn = document.getElementById('fabHelpdeskBtn');
     let calendar;
 
+    // --- BARU: Selektor untuk fitur baru ---
+    const layananSearchInput = document.getElementById('layananSearchInput');
+    const layananSearchResults = document.getElementById('layananSearchResults');
+    const navServices = document.getElementById('navServices');
+    const navHelp = document.getElementById('navHelp');
+    const navReport = document.getElementById('navReport');
+
     // --- State Aplikasi ---
     let semuaLayanan = [];
     let currentUserType = 'Umum';
@@ -50,9 +56,6 @@ document.addEventListener('DOMContentLoaded', function() {
     initializePageData();
     setupEventListeners();
 
-    /**
-     * @dev Menerapkan strategi Stale-While-Revalidate (SWR).
-     */
     function initializePageData() {
         const CACHE_KEY = 'allPublicDataCache';
         const cachedItemStr = localStorage.getItem(CACHE_KEY);
@@ -130,6 +133,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function setupEventListeners() {
         if (trackingForm) trackingForm.addEventListener('submit', handleTracking);
         if (mobileTrackingForm) mobileTrackingForm.addEventListener('submit', handleMobileTracking);
+        
         const modalClosers = [
             { btn: closeModalBtn, modal: formModal }, { btn: cancelModalBtn, modal: formModal },
             { btn: closeSearchModalBtn, modal: searchModal }, { btn: closeHelpdeskModalBtn, modal: helpdeskModal },
@@ -146,30 +150,114 @@ document.addEventListener('DOMContentLoaded', function() {
         if (fabHelpdeskBtn) fabHelpdeskBtn.addEventListener('click', () => helpdeskModal.classList.remove('hidden'));
         
         function handleLinkClick(event) {
-            const link = event.target.closest('a');
-            if (link && link.href) {
-                const textElement = link.querySelector('p');
-                const itemName = `Klik: ${ (textElement) ? textElement.textContent.trim() : link.dataset.itemName}`;
-                if (itemName) {
-                    const data = new URLSearchParams({ action: 'recordClick', itemName: itemName });
-                    navigator.sendBeacon(GAS_WEB_APP_URL, data);
-                }
-            }
+             const link = event.target.closest('a');
+             if (link && link.href) {
+                 const textElement = link.querySelector('p');
+                 const itemName = `Klik: ${ (textElement) ? textElement.textContent.trim() : link.dataset.itemName}`;
+                 if (itemName) {
+                     const data = new URLSearchParams({ action: 'recordClick', itemName: itemName });
+                     navigator.sendBeacon(GAS_WEB_APP_URL, data);
+                 }
+             }
         }
-        // Dihapus: footerLinkContainer dari event listener
         [infoContainer, pinnedContainer, quicklinkContainer].forEach(container => {
             if (container) container.addEventListener('click', handleLinkClick);
         });
-        const navHome = document.getElementById('navHome');
-        const navSearch = document.getElementById('navSearch');
-        const navServices = document.getElementById('navServices');
-        const navHelp = document.getElementById('navHelp');
-        if (navHome) navHome.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-        if (navSearch) navSearch.addEventListener('click', () => searchModal.classList.remove('hidden'));
-        if (navServices) navServices.addEventListener('click', () => quickServicesModal.classList.remove('hidden'));
-        if (navHelp) navHelp.addEventListener('click', () => helpdeskModal.classList.remove('hidden'));
+        
+        if (layananSearchInput) layananSearchInput.addEventListener('input', handleLayananSearch);
+        if (layananSearchResults) layananSearchResults.addEventListener('click', handleSearchResultClick);
+
+        if (navServices) navServices.addEventListener('click', () => {
+            quickServicesModal.classList.remove('hidden');
+            updateNavActiveState('navServices');
+        });
+        if (navHelp) navHelp.addEventListener('click', () => {
+            helpdeskModal.classList.remove('hidden');
+            updateNavActiveState('navHelp');
+        });
+        if (navReport) navReport.addEventListener('click', handleNavReportClick);
+    }
+    
+    function updateNavActiveState(activeId) {
+        const navButtons = document.querySelectorAll('#bottom-nav .nav-btn');
+        navButtons.forEach(btn => {
+            if (btn.id === activeId) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
     }
 
+    function handleNavReportClick() {
+        const layananPengaduan = semuaLayanan.find(l => {
+            const namaLayanan = getValueCaseInsensitive(l, 'jenis layanan') || '';
+            return namaLayanan.toLowerCase().includes('pengaduan');
+        });
+
+        if (layananPengaduan) {
+            const dataset = {
+                formFields: getValueCaseInsensitive(layananPengaduan, 'form') || '',
+                layananName: getValueCaseInsensitive(layananPengaduan, 'jenis layanan') || '',
+                pengolah: getValueCaseInsensitive(layananPengaduan, 'pengolah') || '',
+                jenis: getValueCaseInsensitive(layananPengaduan, 'jenis') || '',
+                sheet: getValueCaseInsensitive(layananPengaduan, 'sheet') || '',
+                sheetId: getValueCaseInsensitive(layananPengaduan, 'Sheet ID') || ''
+            };
+            openFormModal({ currentTarget: { dataset: dataset } });
+            updateNavActiveState('navReport');
+        } else {
+            showNotificationModal('Error', 'Layanan pengaduan tidak ditemukan.', 'error');
+        }
+    }
+
+    function handleLayananSearch(e) {
+        const query = e.target.value.toLowerCase().trim();
+        layananSearchResults.innerHTML = '';
+
+        if (query.length < 2) {
+            layananSearchResults.classList.add('hidden');
+            return;
+        }
+
+        const filteredLayanan = semuaLayanan.filter(layanan => {
+            const namaLayanan = getValueCaseInsensitive(layanan, 'jenis layanan') || '';
+            return namaLayanan.toLowerCase().includes(query);
+        });
+
+        if (filteredLayanan.length > 0) {
+            const resultsHtml = filteredLayanan.map(layanan => {
+                const namaLayanan = getValueCaseInsensitive(layanan, 'jenis layanan');
+                const ikon = getIconForLayanan(layanan);
+                const dataAttrs = `
+                    data-form-fields="${getValueCaseInsensitive(layanan, 'form') || ''}"
+                    data-layanan-name="${namaLayanan || ''}"
+                    data-pengolah="${getValueCaseInsensitive(layanan, 'pengolah') || ''}"
+                    data-jenis="${getValueCaseInsensitive(layanan, 'jenis') || ''}"
+                    data-sheet="${getValueCaseInsensitive(layanan, 'sheet') || ''}"
+                    data-sheet-id="${getValueCaseInsensitive(layanan, 'Sheet ID') || ''}"
+                `;
+                return `<button class="w-full text-left p-3 hover:bg-gray-100 flex items-center gap-3 search-result-item" ${dataAttrs}>
+                            <i class="fas fa-${ikon} text-brand-green w-5 text-center"></i>
+                            <span>${namaLayanan}</span>
+                        </button>`;
+            }).join('');
+            layananSearchResults.innerHTML = resultsHtml;
+            layananSearchResults.classList.remove('hidden');
+        } else {
+            layananSearchResults.classList.add('hidden');
+        }
+    }
+
+    function handleSearchResultClick(e) {
+        const target = e.target.closest('.search-result-item');
+        if (target) {
+            openFormModal({ currentTarget: target });
+            layananSearchInput.value = '';
+            layananSearchResults.classList.add('hidden');
+        }
+    }
+    
     function showNotificationModal(title, message, type = 'info') {
         const modal = document.getElementById('notificationModal');
         const iconContainer = document.getElementById('notificationIcon');
@@ -253,9 +341,10 @@ document.addEventListener('DOMContentLoaded', function() {
             trackingLayananSelect.selectedIndex = 0;
         }
     }
-    
+
     function prefetchCalendarData(layananList = []) {
         const calendarServices = layananList.filter(l => (getValueCaseInsensitive(l, 'jenis') || '').toLowerCase() === 'kalender');
+
         calendarServices.forEach(service => {
             const sheet = getValueCaseInsensitive(service, 'sheet');
             const sheetId = getValueCaseInsensitive(service, 'Sheet ID') || '';
@@ -302,7 +391,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         return 'concierge-bell';
     }
-    
+
     function onLayananSuccess(data) {
         semuaLayanan = data || [];
         if (!semuaLayanan || semuaLayanan.length === 0) {
@@ -345,7 +434,6 @@ document.addEventListener('DOMContentLoaded', function() {
             if (jenis === 'info') infoItems.push(item);
             else if (jenis === 'pin') pinItems.push(item);
             else if (jenis === 'link') linkItems.push(item);
-            // Dihapus: Logika untuk 'footer link'
         });
         const topWrapper = document.getElementById('top-content-wrapper');
         if (infoItems.length >= 1 && pinItems.length >= 1) {
@@ -356,7 +444,6 @@ document.addEventListener('DOMContentLoaded', function() {
         renderInfoSlider(infoItems);
         renderPinnedButtons(pinItems);
         renderQuickLinks(linkItems);
-        // Dihapus: Pemanggilan renderFooterLinks()
     }
 
     function onInfoFailure(error) {
@@ -397,16 +484,17 @@ document.addEventListener('DOMContentLoaded', function() {
         const groupedLayananData = filteredData.reduce((acc, layanan) => {
             const kategoriString = getValueCaseInsensitive(layanan, 'Kategori') || 'Lainnya';
             const kategoriList = kategoriString.split(',').map(k => k.trim());
+
             kategoriList.forEach(kategori => {
                 if (!acc[kategori]) {
                     acc[kategori] = [];
                 }
                 acc[kategori].push(layanan);
             });
+            
             return acc;
         }, {});
         const categories = Object.keys(groupedLayananData);
-        const colorPalette = [{ bg: 'bg-blue-100', text: 'text-blue-800' }, { bg: 'bg-orange-100', text: 'text-orange-800' }, { bg: 'bg-purple-100', text: 'text-purple-800' }, { bg: 'bg-green-100', text: 'text-green-800' }, { bg: 'bg-red-100', text: 'text-red-800' }, { bg: 'bg-indigo-100', text: 'text-indigo-800' }];
         categories.forEach((kategori, index) => {
             const tabSlide = document.createElement('div');
             tabSlide.className = 'swiper-slide';
@@ -415,15 +503,12 @@ document.addEventListener('DOMContentLoaded', function() {
             const contentPanel = document.createElement('div');
             contentPanel.id = `panel-${kategori}`;
             contentPanel.className = 'layanan-content-panel';
-            
             const iconsGrid = document.createElement('div');
-            // PERUBAHAN: Menyesuaikan grid untuk 3 (mobile) hingga 6 (desktop) ikon
             iconsGrid.className = "grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4 text-center";
-
-            groupedLayananData[kategori].forEach((layanan, i) => {
+            groupedLayananData[kategori].forEach((layanan) => {
                 const jenisLayanan = (getValueCaseInsensitive(layanan, 'jenis') || '').toLowerCase();
                 const linkUrl = getValueCaseInsensitive(layanan, 'link');
-                const colors = colorPalette[i % colorPalette.length];
+                
                 const serviceItem = document.createElement(jenisLayanan === 'link' && linkUrl ? 'a' : 'div');
                 serviceItem.className = "flex flex-col items-center space-y-2 cursor-pointer group";
                 if (jenisLayanan === 'link' && linkUrl) {
@@ -431,8 +516,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     serviceItem.target = '_blank';
                     serviceItem.rel = 'noopener noreferrer';
                 }
+                
+                const bgColor = getValueCaseInsensitive(layanan, 'warna') || '#e5e7eb';
+                const textColor = getTextColorForBg(bgColor);
+
                 serviceItem.innerHTML = `
-                    <div class="${colors.bg} ${colors.text} w-16 h-16 rounded-xl flex items-center justify-center text-2xl transition-transform group-hover:scale-110">
+                    <div class="bg-gray-100 w-16 h-16 rounded-xl flex items-center justify-center text-2xl transition-transform group-hover:scale-110" style="background-color:${bgColor}; color:${textColor}">
                         <i class="fas fa-${getIconForLayanan(layanan)}"></i>
                     </div>
                     <h3 class="font-medium text-xs text-gray-700">${getValueCaseInsensitive(layanan, 'jenis layanan')}</h3>`;
@@ -486,12 +575,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const groupedData = layananTampil.reduce((acc, layanan) => {
             const kategoriString = getValueCaseInsensitive(layanan, 'Kategori') || 'Lainnya';
             const kategoriList = kategoriString.split(',').map(k => k.trim());
+
             kategoriList.forEach(kategori => {
                 if (!acc[kategori]) {
                     acc[kategori] = [];
                 }
                 acc[kategori].push(layanan);
             });
+            
             return acc;
         }, {});
         for (const kategori in groupedData) {
@@ -669,8 +760,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Dihapus: Seluruh fungsi renderFooterLinks() sudah tidak diperlukan
-
     function renderSuketLulusForm(allFields, layananName) {
         let formHtml = `
             <div class="mb-4 text-sm bg-yellow-50 border-l-4 border-yellow-400 text-yellow-800 p-4" role="alert">
@@ -827,7 +916,6 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
         permohonanForm.innerHTML = formHtml;
     }
-
 
     function renderSuketKuliahForm(allFields, pengolah, layananName) {
         
@@ -1173,149 +1261,6 @@ document.addEventListener('DOMContentLoaded', function() {
         permohonanForm.innerHTML = formHtml;
     }
 
-    function openFormModal(event) {
-        const card = event.currentTarget;
-        const { formFields, layananName, pengolah, sheet, sheetId } = card.dataset;
-        if (!formFields || !sheet) return;
-        modalTitle.textContent = `Formulir ${layananName}`;
-        const allFields = formFields.split(',').map(field => field.trim());
-        permohonanForm.dataset.targetSheet = sheet;
-        permohonanForm.dataset.targetSheetId = sheetId;
-        
-        const lowerLayananName = layananName.toLowerCase();
-
-        if (lowerLayananName.includes('suket lulus')) {
-            renderSuketLulusForm(allFields, layananName);
-        } else if (lowerLayananName.includes('lacak sk')) {
-            renderLacakSkSeForm(allFields, pengolah, layananName);
-        } else if (lowerLayananName.includes('suket')) {
-            renderSuketKuliahForm(allFields, pengolah, layananName);
-        } else if (lowerLayananName.includes('peminjaman')) {
-            renderPeminjamanForm(allFields, pengolah, layananName);
-        } else if (lowerLayananName.includes('pengaduan')) {
-            renderPengaduanForm(allFields, pengolah, layananName);
-        } else {
-            renderGenericForm(allFields, pengolah, layananName);
-        }
-    
-        formModal.classList.remove('hidden');
-    }
-
-    function handlePermohonanSubmit(e) {
-        e.preventDefault();
-        const { targetSheet, targetSheetId } = e.target.dataset;
-        const submitBtn = document.getElementById('submitPermohonanBtn');
-        if (!targetSheet) {
-            showNotificationModal('Error', 'Tujuan penyimpanan data tidak ditemukan.', 'error');
-            return;
-        }
-        const formData = new FormData(e.target);
-        const dataObject = Object.fromEntries(formData.entries());
-        submitBtn.textContent = 'Mengirim...';
-        submitBtn.disabled = true;
-        const fileInput = e.target.querySelector('input[type="file"][name="File"]');
-        const file = fileInput ? fileInput.files[0] : null;
-        const runServerCall = (fileData = null) => {
-            if (fileData) dataObject.fileData = fileData;
-            delete dataObject.File;
-            fetch(GAS_WEB_APP_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({
-                        action: 'submitPermohonan',
-                        formData: dataObject,
-                        sheetName: targetSheet,
-                        sheetId: targetSheetId
-                    })
-                })
-                .then(res => res.json())
-                .then(onPermohonanSuccess)
-                .catch(onPermohonanFailure);
-        };
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const base64Data = e.target.result.split(',')[1];
-                const fileData = {
-                    base64Data: base64Data,
-                    name: file.name,
-                    type: file.type
-                };
-                runServerCall(fileData);
-            };
-            reader.onerror = function() {
-                showNotificationModal('Error', 'Gagal membaca file lampiran.', 'error');
-                submitBtn.textContent = 'Kirim';
-                submitBtn.disabled = false;
-            };
-            reader.readAsDataURL(file);
-        } else {
-            runServerCall();
-        }
-    }
-
-    function handleHelpdeskSubmit(e) {
-        e.preventDefault();
-        const btn = document.getElementById('submitHelpdeskBtn');
-        btn.textContent = 'Mengirim...';
-        btn.disabled = true;
-        const formData = new FormData(e.target);
-        const dataObject = Object.fromEntries(formData.entries());
-        fetch(GAS_WEB_APP_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({
-                    action: 'submitHelpdesk',
-                    formData: dataObject
-                })
-            })
-            .then(res => res.json())
-            .then(response => {
-                helpdeskModal.classList.add('hidden');
-                if (response.success) {
-                    showNotificationModal('Berhasil', 'Pesan Anda telah terkirim. Terima kasih.', 'success');
-                    helpdeskForm.reset();
-                } else {
-                    showNotificationModal('Gagal', `Gagal mengirim pesan: ${response.message}`, 'error');
-                }
-                btn.textContent = 'Kirim';
-                btn.disabled = false;
-            })
-            .catch(err => {
-                showNotificationModal('Error', 'Terjadi kesalahan saat mengirim pesan.', 'error');
-                console.error(err);
-                btn.textContent = 'Kirim';
-                btn.disabled = false;
-            });
-    }
-
-    function onPermohonanSuccess(response) {
-        formModal.classList.add('hidden');
-        if (response.success) {
-            if (response.id) {
-                const successMessage = `Permohonan Anda telah dikirim. Gunakan ID ini untuk melacak:
-                <div class='flex items-center justify-between bg-gray-100 p-2 rounded-lg mt-4'>
-                    <strong id='copy-target-id' class='text-lg font-mono tracking-wider'>${response.id}</strong>
-                    <button id='copy-id-btn' type='button' class='bg-gray-200 px-3 py-1 rounded-md text-sm font-semibold hover:bg-gray-300 transition-colors'>Copy ID</button>
-                </div>`;
-                showNotificationModal('Berhasil!', successMessage, 'success');
-            } else {
-                showNotificationModal('Berhasil!', 'Permohonan Anda telah terkirim, namun ID pelacakan tidak dapat dibuat. Silakan hubungi admin.', 'success');
-            }
-        } else {
-            showNotificationModal('Gagal', `Gagal mengirim permohonan: ${response.message || 'Terjadi kesalahan yang tidak diketahui.'}`, 'error');
-        }
-        document.getElementById('submitPermohonanBtn').textContent = 'Kirim';
-        document.getElementById('submitPermohonanBtn').disabled = false;
-    }
-
-    function onPermohonanFailure(error) {
-        showNotificationModal('Error', 'Terjadi kesalahan saat mengirim permohonan.', 'error');
-        console.error('Submit Gagal:', error);
-        document.getElementById('submitPermohonanBtn').textContent = 'Kirim';
-        document.getElementById('submitPermohonanBtn').disabled = false;
-    }
-
     function openCalendarModal(event) {
         const { sheet, sheetId } = event.currentTarget.dataset;
         if (!sheet) {
@@ -1391,7 +1336,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 const year = startDate.getFullYear();
                                 value = `${day}/${month}/${year}`;
                             } else {
-                                value = getValueCaseInsensitive(props, field);
+                                value = getValueCaseInsensitive(props, field); // Fallback
                             }
                         } else if (fieldLower === 'tanggal selesai') {
                             const endDate = info.event.end;
@@ -1404,7 +1349,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 const year = correctedEndDate.getFullYear();
                                 value = `${day}/${month}/${year}`;
                             } else {
-                                value = getValueCaseInsensitive(props, field);
+                                value = getValueCaseInsensitive(props, field); // Fallback
                             }
                         } else {
                             value = getValueCaseInsensitive(props, field);
@@ -1543,5 +1488,6 @@ document.addEventListener('DOMContentLoaded', function() {
             button.disabled = false;
         }
     }
+
 });
 
