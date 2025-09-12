@@ -390,13 +390,13 @@ document.addEventListener('DOMContentLoaded', function() {
             else if (jenis === 'footer link') footerLinkItems.push(item);
         });
         const topWrapper = document.getElementById('top-content-wrapper');
-        const topSectionTitle = document.getElementById('top-section-title');
+        // const topSectionTitle = document.getElementById('top-section-title'); // Dihapus karena elemen HTML sudah tidak ada
         if (infoItems.length >= 1 && pinItems.length >= 1) {
             topWrapper.className = 'grid grid-cols-1 md:grid-cols-2 md:gap-8 items-start';
-            topSectionTitle.classList.add('hidden');
+            // if(topSectionTitle) topSectionTitle.classList.add('hidden'); // Dihapus
         } else {
             topWrapper.className = '';
-            topSectionTitle.classList.remove('hidden');
+            // if(topSectionTitle) topSectionTitle.classList.remove('hidden'); // Dihapus
         }
         renderInfoSlider(infoItems);
         renderPinnedButtons(pinItems);
@@ -462,10 +462,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const contentPanel = document.createElement('div');
             contentPanel.id = `panel-${kategori}`;
             contentPanel.className = 'layanan-content-panel';
-            const categoryCard = document.createElement('div');
-            categoryCard.className = "bg-white/50 backdrop-blur-lg p-6 rounded-xl shadow-lg border border-white/30";
+            
+            // PERUBAHAN: Menghilangkan kartu pembungkus dan mengubah grid
             const iconsGrid = document.createElement('div');
-            iconsGrid.className = "grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4 text-center";
+            iconsGrid.className = "grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-7 gap-4 text-center";
+
             groupedLayananData[kategori].forEach((layanan, i) => {
                 const jenisLayanan = (getValueCaseInsensitive(layanan, 'jenis') || '').toLowerCase();
                 const linkUrl = getValueCaseInsensitive(layanan, 'link');
@@ -499,8 +500,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 iconsGrid.appendChild(serviceItem);
             });
-            categoryCard.appendChild(iconsGrid);
-            contentPanel.appendChild(categoryCard);
+            contentPanel.appendChild(iconsGrid); // Langsung append grid, tanpa kartu
             layananContentContainer.appendChild(contentPanel);
             if (index === 0) {
                 tabSlide.querySelector('button').classList.add('active');
@@ -778,19 +778,19 @@ document.addEventListener('DOMContentLoaded', function() {
             switch (fieldLower) {
                 case 'prodi':
                     inputHtml = `<select id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm">
-                                        <option value="" disabled selected>-- Pilih Prodi --</option>
-                                        ${prodiOptions}
-                                    </select>`;
+                                    <option value="" disabled selected>-- Pilih Prodi --</option>
+                                    ${prodiOptions}
+                                </select>`;
                     break;
                 case 'fakultas':
                     inputHtml = `<input type="text" id="${fieldId}" name="${field}" readonly class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm bg-gray-100" />`;
                     break;
                 case 'jenis kelamin':
                     inputHtml = `<select id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm">
-                                        <option value="" disabled selected>-- Pilih --</option>
-                                        <option value="Laki-laki">Laki-laki</option>
-                                        <option value="Perempuan">Perempuan</option>
-                                    </select>`;
+                                    <option value="" disabled selected>-- Pilih --</option>
+                                    <option value="Laki-laki">Laki-laki</option>
+                                    <option value="Perempuan">Perempuan</option>
+                                </select>`;
                     break;
                 case 'tempat lahir':
                     inputHtml = `<input type="text" id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" />
@@ -947,20 +947,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 case 'semester':
                     const semesterOptions = ['I (Satu)', 'II (Dua)', 'III (Tiga)', 'IV (Empat)', 'V (Lima)', 'VI (Enam)', 'VII (Tujuh)', 'VIII (Delapan)', 'IX (Sembilan)', 'X (Sepuluh)', 'XI (Sebelas)', 'XII (Dua Belas)', 'XIII (Tiga Belas)', 'XIV (Empat Belas)'];
                     inputHtml = `<select id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm">
-                                        <option value="" disabled selected>-- Pilih --</option>
-                                        ${semesterOptions.map(o => `<option value="${o}">${o}</option>`).join('')}
-                                    </select>`;
+                                    <option value="" disabled selected>-- Pilih --</option>
+                                    ${semesterOptions.map(o => `<option value="${o}">${o}</option>`).join('')}
+                                </select>`;
                     break;
                 case 'jenis kelamin':
                     inputHtml = `<select id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm">
-                                        <option value="" disabled selected>-- Pilih --</option>
-                                        <option>Laki-laki</option><option>Perempuan</option>
-                                    </select>`;
+                                    <option value="" disabled selected>-- Pilih --</option>
+                                    <option>Laki-laki</option><option>Perempuan</option>
+                                </select>`;
                     break;
                 case 'prodi':
                     inputHtml = `<select id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm">
-                                        <option value="" disabled selected>-- Pilih Unit Kerja dulu --</option>
-                                    </select>`;
+                                    <option value="" disabled selected>-- Pilih Unit Kerja dulu --</option>
+                                </select>`;
                     break;
                 case 'fakultas':
                     inputHtml = `<input type="text" id="${fieldId}" name="${field}" readonly class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm bg-gray-100" />`;
@@ -970,8 +970,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     const years = [`${currentYear - 2}/${currentYear - 1}`, `${currentYear - 1}/${currentYear}`, `${currentYear}/${currentYear + 1}`];
                     const yearOptions = years.map(y => `<option value="${y}" ${ (new Date().getMonth() > 6 ? years[2] : years[1]) === y ? 'selected' : ''}>${y}</option>`).join('');
                     inputHtml = `<select id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm">
-                                        ${yearOptions}
-                                    </select>`;
+                                    ${yearOptions}
+                                </select>`;
                     break;
                 default:
                     inputHtml = `<input type="text" id="${fieldId}" name="${field}" ${isRequired ? 'required' : ''} class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" />`;
