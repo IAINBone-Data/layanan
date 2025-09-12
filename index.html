@@ -18,13 +18,14 @@
 <body class="text-gray-800 flex flex-col min-h-screen">
 
     <div class="flex flex-col flex-grow" id="content-wrapper">
-        <header class="px-3 pt-3 pb-1 md:py-6">
+        <!-- PERBAIKAN: Header disembunyikan di mobile -->
+        <header class="hidden md:block px-3 pt-3 pb-1 md:py-6">
             <div class="container mx-auto max-w-4xl flex items-center justify-between gap-4">
                 <div class="flex items-center gap-4">
                     <img alt="Logo IAIN Bone" class="h-10 w-10 object-contain" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEivDAkuxazRpasK-Kj0Tf1RXGNSrUoVyfvMyq-lXn_NBI2wXgCdjb1CBLGR7sC-r5cGU6njQnQ3TG551VMK03pSui50uEU5Ot8ScLiKskrcY-2yjuNt_xt8jnGcIjCPCtXN7yzb_9Me6G2ceSWv55vF_ZDTCk8tF0zseZ4fdrW764wiSlnBMLItY_4xdyY/s1600/logoiainbone%20-%20Copy%20%283%20%282%29.png" />
                     <h1 class="text-xl font-bold text-brand-green">Layanan IAIN Bone</h1>
                 </div>
-                <section class="hidden md:flex items-center gap-2" id="tracking-section">
+                <section class="flex items-center gap-2" id="tracking-section">
                     <form class="flex items-center gap-2" id="trackingForm">
                         <input class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-800 focus:border-transparent transition text-sm font-normal w-48" id="permohonanId" placeholder="Ketik ID Permohonan" required type="text" />
                         <select class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-800 focus:border-transparent transition bg-white text-sm font-normal w-48" id="trackingLayananSelect">
@@ -40,7 +41,7 @@
             <div class="container mx-auto max-w-4xl mt-4" id="trackingResult"></div>
         </header>
 
-        <main class="container mx-auto px-4 pt-0 pb-2 sm:p-6 max-w-4xl flex-grow">
+        <main class="container mx-auto px-4 pt-4 md:pt-0 pb-2 sm:p-6 max-w-4xl flex-grow">
             <!-- Skeleton Loader -->
             <div id="skeleton-loader">
                 <div class="mb-4 md:mb-8 animate-pulse">
@@ -86,17 +87,18 @@
                 <section class="block md:hidden mb-6" id="mobile-tracking-section">
                     <h2 class="text-base font-semibold text-gray-800 text-left mb-3">Lacak Permohonan Anda</h2>
                     <form id="mobileTrackingForm">
-                        <div class="flex items-center gap-2 mb-2">
-                             <input class="flex-grow px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm" id="mobilePermohonanId" placeholder="Ketik ID Permohonan" required type="text" />
+                        <!-- PERBAIKAN: Menggunakan flex items-stretch untuk tinggi yang sama -->
+                        <div class="flex items-stretch gap-2">
+                             <input class="flex-grow px-4 py-2.5 border border-gray-300 rounded-lg bg-white text-sm" id="mobilePermohonanId" placeholder="Ketik ID Permohonan" required type="text" />
                              <button type="button" id="mobileServiceFilterBtn" class="p-2.5 border border-gray-300 rounded-lg bg-white">
                                 <i class="fas fa-filter text-gray-600"></i>
                              </button>
-                             <button class="bg-brand-green text-white p-2.5 rounded-lg hover:opacity-90 transition flex items-center justify-center text-lg" id="mobileTrackButton" type="submit">
+                             <button class="bg-brand-green text-white px-4 rounded-lg hover:opacity-90 transition flex items-center justify-center text-lg" id="mobileTrackButton" type="submit">
                                  <i class="fas fa-search" id="mobileTrackButtonIcon"></i>
                                  <div class="hidden animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white" id="mobileTrackButtonSpinner"></div>
                              </button>
                         </div>
-                        <div id="mobileSelectedServiceText" class="text-sm text-gray-600 px-1">Pilih jenis layanan untuk melacak</div>
+                        <!-- PERBAIKAN: Teks placeholder dihapus, input ini menyimpan nilai -->
                         <input type="hidden" id="mobileSelectedServiceValue" name="mobileSelectedService">
                     </form>
                     <div class="mt-4" id="mobileTrackingResult"></div>
