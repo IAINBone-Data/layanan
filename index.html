@@ -78,6 +78,8 @@
                             </div>
                         </section>
                         <section id="pinned-section">
+                            <!-- PERUBAHAN: Menambahkan judul yang akan ditampilkan secara dinamis -->
+                            <h2 id="pinned-section-title" class="text-base font-semibold mb-4 text-gray-800 hidden">Informasi Penting</h2>
                             <div class="grid grid-cols-1 gap-4" id="pinnedContainer"></div>
                         </section>
                     </div>
@@ -86,7 +88,6 @@
                 <section class="block md:hidden mb-6" id="mobile-tracking-section">
                     <h2 class="text-base font-semibold text-gray-800 text-left mb-3">Lacak Permohonan Anda</h2>
                     <form id="mobileTrackingForm">
-                        <!-- PERBAIKAN: Menggunakan w-full pada input dan flex-shrink-0 pada tombol -->
                         <div class="flex items-stretch gap-2">
                              <input class="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-white text-sm" id="mobilePermohonanId" placeholder="Ketik ID Permohonan" required type="text" />
                              <button type="button" id="mobileServiceFilterBtn" class="flex-shrink-0 px-4 py-2.5 border border-gray-300 rounded-lg bg-white">
@@ -267,3 +268,4 @@
     <script src="script.js" defer></script>
 </body>
 </html>
+
