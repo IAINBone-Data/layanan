@@ -460,8 +460,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         const topWrapper = document.getElementById('top-content-wrapper');
-        // PERUBAHAN: Mengubah wrapper menjadi flex column untuk menumpuk elemen secara vertikal.
-        // Ini akan membuat slider info (info-section) mengambil lebar penuh di semua layar.
         topWrapper.className = 'flex flex-col gap-8';
 
         renderInfoSlider(infoItems);
@@ -669,8 +667,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-
-    // ... sisa kode tidak berubah
+    
     function renderQuickServicesModal() { 
         const container = document.getElementById('quickServicesContainer');
         if (!container || semuaLayanan.length === 0) return;
@@ -765,26 +762,33 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         if (infoSlider.swiper) infoSlider.swiper.destroy(true, true);
         const isSliderActive = data.length > 1;
-        const swiper = new Swiper('.info-swiper', {
+        new Swiper('.info-swiper', {
             loop: isSliderActive,
             autoplay: isSliderActive ? { delay: 4000, disableOnInteraction: false } : false,
             slidesPerView: 1,
             spaceBetween: 24,
             grabCursor: true,
             pagination: { el: '.swiper-pagination', clickable: true },
-            breakpoints: { 768: { slidesPerView: data.length > 1 ? 2 : 1 } }
+            // PERUBAHAN: Mengatur slidesPerView menjadi 1 di desktop
+            breakpoints: { 768: { slidesPerView: 1 } }
         });
         infoSlider.classList.toggle('info-grid', !isSliderActive);
     }
     function renderPinnedButtons(data) { 
         const pinnedWrapper = document.getElementById('pinnedContainer');
         const pinnedSection = document.getElementById('pinned-section');
+        // PERUBAHAN: Mengambil elemen judul
+        const pinnedTitle = document.getElementById('pinned-section-title');
         pinnedWrapper.innerHTML = '';
+
         if (!data || data.length === 0) {
             if (pinnedSection) pinnedSection.style.display = 'none';
             return;
         }
+        // PERUBAHAN: Menampilkan section dan judulnya jika ada data
         if (pinnedSection) pinnedSection.style.display = 'block';
+        if (pinnedTitle) pinnedTitle.classList.remove('hidden');
+
         pinnedWrapper.classList.toggle('md:grid-cols-2', data.length > 1);
         data.forEach(item => {
             const infoText = getValueCaseInsensitive(item, 'info');
@@ -1724,3 +1728,4 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
+
