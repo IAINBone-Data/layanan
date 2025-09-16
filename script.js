@@ -460,11 +460,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         const topWrapper = document.getElementById('top-content-wrapper');
-        if (infoItems.length >= 1 && pinItems.length >= 1) {
-            topWrapper.className = 'grid grid-cols-1 md:grid-cols-2 md:gap-8 items-start';
-        } else {
-            topWrapper.className = '';
-        }
+        // PERUBAHAN: Mengubah wrapper menjadi flex column untuk menumpuk elemen secara vertikal.
+        // Ini akan membuat slider info (info-section) mengambil lebar penuh di semua layar.
+        topWrapper.className = 'flex flex-col gap-8';
+
         renderInfoSlider(infoItems);
         renderPinnedButtons(pinItems);
         renderQuickLinks(linkItems);
@@ -1725,4 +1724,3 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
-
