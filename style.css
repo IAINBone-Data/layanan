@@ -48,7 +48,7 @@ body {
 }
 @media (min-width: 768px) {
     .info-swiper.info-grid .swiper-wrapper {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(1, 1fr); /* PERUBAHAN: Menjadi 1 kolom di desktop */
     }
 }
 .info-swiper {
@@ -156,7 +156,6 @@ input:disabled, select:disabled, textarea:disabled {
     .fc .fc-col-header-cell-cushion { font-weight: normal; font-size: 0.75em; }
     .fc .fc-daygrid-day-number { font-size: 0.8em; }
 
-    /* PERUBAHAN: Menghapus padding bawah dan indikator titik slider di mobile */
     .info-swiper {
         padding-bottom: 0;
     }
@@ -164,3 +163,4 @@ input:disabled, select:disabled, textarea:disabled {
         display: none;
     }
 }
+
