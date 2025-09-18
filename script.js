@@ -1,5 +1,5 @@
 // URL Web App Google Apps Script Anda
-const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwlLpJPYynpVTcd2KgsXZeHAnToXjlyBwpWz3MMXTQPd9lSJ01SBUR0l3JIib5JLbIIRQ/exec';
+const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwDtqhkRQjCPn9DUXEzYlDYXJDWRtf4vrkB8xII6yjy_PX2E6HFPN1t-svWasZ5bFLeUw/exec';
 
 // --- DATA KONSTAN (DIAMBIL DARI SERVER) ---
 let DATA_AKADEMIK = [];
