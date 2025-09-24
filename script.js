@@ -1020,7 +1020,7 @@ document.addEventListener('DOMContentLoaded', function() {
         permohonanForm.innerHTML = formHtml;
     }
     function renderSuketKuliahForm(allFields, pengolah, layananName) { 
-        let formHtml = `<input type="hidden" name="Pengolah" value="${pengolah}" />`;
+        let formHtml = `<input type="hidden" id="form-pengolah" name="Pengolah" value="${pengolah}" />`;
         formHtml += `<input type="hidden" name="Jenis Layanan" value="${layananName}" />`;
         let fieldsHtml = '';
 
@@ -1108,6 +1108,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const unitKerjaSelect = permohonanForm.querySelector('#unit-kerja-layanan');
         const prodiSelect = permohonanForm.querySelector('[name="Prodi"]');
         const fakultasInput = permohonanForm.querySelector('[name="Fakultas"]');
+        const pengolahInput = permohonanForm.querySelector('#form-pengolah');
 
         unitKerjaSelect.addEventListener('change', function() {
             const selectedUnit = this.value;
@@ -1122,28 +1123,35 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
 
-                    if (pengolahInput) {
-            if (isRektorat) {
-                // Jika "Rektorat" dipilih, nilai input 'Pengolah' diubah menjadi "LA"
-                pengolahInput.value = 'LA';
-            } else {
-                // Jika yang lain dipilih, nilai kembali ke 'pengolah' awal dari data layanan
-                pengolahInput.value = pengolah;
+            if (pengolahInput) {
+                if (isRektorat) {
+                    pengolahInput.value = 'LA';
+                } else {
+                    pengolahInput.value = pengolah;
+                }
             }
-        }
 
             prodiSelect.innerHTML = '<option value="" disabled selected>-- Pilih Prodi --</option>';
             fakultasInput.value = '';
 
-            if (selectedUnit && !isRektorat) {
-                const filteredProdis = DATA_AKADEMIK.filter(item => item.fakultas === selectedUnit);
-                filteredProdis.forEach(item => {
-                    prodiSelect.innerHTML += `<option value="${item.prodi}">${item.prodi}</option>`;
-                });
+            let prodisToShow = [];
+            
+            if (isRektorat) {
+                prodisToShow = DATA_AKADEMIK;
+            } 
+            else if (selectedUnit) {
+                prodisToShow = DATA_AKADEMIK.filter(item => item.fakultas === selectedUnit);
+            }
+            
+            prodisToShow.forEach(item => {
+                prodiSelect.innerHTML += `<option value="${item.prodi}">${item.prodi}</option>`;
+            });
+
+            if (selectedUnit) {
                 prodiSelect.disabled = false;
             } else {
-                    prodiSelect.innerHTML = '<option value="" disabled selected>-- Tidak ada prodi --</option>';
-                    prodiSelect.disabled = true;
+                prodiSelect.innerHTML = '<option value="" disabled selected>-- Pilih Unit Kerja dulu --</option>';
+                prodiSelect.disabled = true;
             }
         });
 
@@ -1152,6 +1160,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const match = DATA_AKADEMIK.find(item => item.prodi === selectedProdi);
             if (match) {
                 fakultasInput.value = match.fakultas;
+            } else {
+                fakultasInput.value = '';
             }
         });
         
