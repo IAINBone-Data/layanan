@@ -1020,7 +1020,7 @@ document.addEventListener('DOMContentLoaded', function() {
         permohonanForm.innerHTML = formHtml;
     }
     function renderSuketKuliahForm(allFields, pengolah, layananName) { 
-        let formHtml = `<input type="hidden" id="form-pengolah" name="Pengolah" value="${pengolah}" />`;
+        let formHtml = `<input type="hidden" name="Pengolah" value="${pengolah}" />`;
         formHtml += `<input type="hidden" name="Jenis Layanan" value="${layananName}" />`;
         let fieldsHtml = '';
 
@@ -1108,7 +1108,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const unitKerjaSelect = permohonanForm.querySelector('#unit-kerja-layanan');
         const prodiSelect = permohonanForm.querySelector('[name="Prodi"]');
         const fakultasInput = permohonanForm.querySelector('[name="Fakultas"]');
-        const pengolahInput = permohonanForm.querySelector('#form-pengolah');
 
         unitKerjaSelect.addEventListener('change', function() {
             const selectedUnit = this.value;
@@ -1122,14 +1121,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     input.required = isRektorat;
                 }
             });
-
-            if (pengolahInput) {
-                if (isRektorat) {
-                    pengolahInput.value = 'LA';
-                } else {
-                    pengolahInput.value = pengolah;
-                }
-            }
 
             prodiSelect.innerHTML = '<option value="" disabled selected>-- Pilih Prodi --</option>';
             fakultasInput.value = '';
@@ -1423,6 +1414,16 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         const formData = new FormData(e.target);
         const dataObject = Object.fromEntries(formData.entries());
+
+        // Enforce business rule: If the service is "Suket Kuliah" and Unit Kerja is "Rektorat",
+        // set Pengolah to "LA" right before submission.
+        const jenisLayanan = dataObject['Jenis Layanan'] || '';
+        const unitKerja = dataObject['Unit Kerja Layanan'] || '';
+
+        if (jenisLayanan.toLowerCase().includes('suket kuliah') && unitKerja === 'Rektorat') {
+            dataObject['Pengolah'] = 'LA';
+        }
+
         submitBtn.textContent = 'Mengirim...';
         submitBtn.disabled = true;
         const fileInput = e.target.querySelector('input[type="file"][name="File"]');
@@ -1748,4 +1749,5 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
+"
 
