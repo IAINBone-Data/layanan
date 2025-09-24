@@ -1111,7 +1111,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         unitKerjaSelect.addEventListener('change', function() {
             const selectedUnit = this.value;
-            const isRektorat = selectedUnit === 'Rektorat';
+            const isRektorat = selectedUnit === 'LA';
 
             const orangTuaFields = permohonanForm.querySelectorAll('[data-group="orang-tua"]');
             orangTuaFields.forEach(field => {
