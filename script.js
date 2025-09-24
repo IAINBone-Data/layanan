@@ -1122,6 +1122,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
 
+                    if (pengolahInput) {
+            if (isRektorat) {
+                // Jika "Rektorat" dipilih, nilai input 'Pengolah' diubah menjadi "LA"
+                pengolahInput.value = 'LA';
+            } else {
+                // Jika yang lain dipilih, nilai kembali ke 'pengolah' awal dari data layanan
+                pengolahInput.value = pengolah;
+            }
+        }
+
             prodiSelect.innerHTML = '<option value="" disabled selected>-- Pilih Prodi --</option>';
             fakultasInput.value = '';
 
