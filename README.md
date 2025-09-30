@@ -38,4 +38,46 @@ Pilih workflow "Sinkronisasi Data dari Google Sheet".
 
 Klik tombol Run workflow.
 
+Bagaimana Saya Tahu Sistem Ini Berjalan?
+Ada dua cara utama untuk memastikan sistem sinkronisasi otomatis Anda berfungsi:
+
+1. Cek Log Eksekusi di Tab "Actions"
+Ini adalah cara paling pasti untuk melihat apakah alur kerja (workflow) berjalan sesuai jadwal.
+
+Buka repositori GitHub Anda dan klik tab Actions.
+
+Di sisi kiri, Anda akan melihat nama alur kerja: "Sinkronisasi Data dari Google Sheet". Klik di situ.
+
+Anda akan melihat daftar setiap eksekusi yang telah dijalankan. Eksekusi yang berhasil akan memiliki tanda centang hijau (✅). Jika gagal, akan ada tanda silang merah (❌).
+
+Anda bisa mengklik salah satu eksekusi untuk melihat detail log langkah demi langkah, yang sangat berguna untuk troubleshooting jika terjadi masalah.
+
+2. Cek Riwayat Commit
+Jika sinkronisasi berhasil dan ada perubahan data, bot GitHub Actions akan secara otomatis membuat commit baru.
+
+Pergi ke halaman utama repositori Anda (tab Code).
+
+Di atas daftar file, ada tautan yang menunjukkan jumlah commit. Klik di situ.
+
+Cari commit dengan pesan: "chore: Sinkronisasi data otomatis dari Google Sheet". Jika Anda melihat commit ini, itu artinya prosesnya telah berhasil berjalan dan memperbarui file data.json.
+
 Setelah langkah-langkah ini selesai, aplikasi Anda akan memiliki kecepatan muat yang sangat tinggi pada setiap kunjungan, termasuk yang pertama kali.
+
+Troubleshooting
+Error: Permission denied to github-actions[bot] (Error 403)
+
+Jika alur kerja Anda gagal pada langkah "Commit and push" dengan pesan error Permission denied atau 403, itu berarti bot Actions tidak memiliki izin untuk menulis file data.json kembali ke repositori Anda.
+
+Solusi: Ubah izin alur kerja di pengaturan repositori.
+
+Pergi ke tab Settings di repositori Anda.
+
+Di menu kiri, pilih Actions > General.
+
+Gulir ke bawah ke bagian "Workflow permissions".
+
+Pilih opsi "Read and write permissions".
+
+Klik Save.
+
+Setelah menyimpan, jalankan kembali alur kerja secara manual dari tab Actions.
