@@ -1,7 +1,7 @@
-// URL Web App Google Apps Script Anda
-const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwc2VY3AvCtb8gWPylkMu7OefyyZ4YNmxnrk-b5wGNKH-6bNaIs_8ZiAJaAYTeqiiYxLA/exec';
+// URL Web App Google Apps Script Anda (tetap diperlukan untuk tracking, submit, dll)
+const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxayAR8zZYPCZtt2jp2MQp5RcuGger_ugqQtavyA3IDzW9r8n0k8dLlZ3mca0q9BzKqXQ/exec?action=getInitialData';
 
-// --- DATA KONSTAN (DIAMBIL DARI SERVER) ---
+// --- DATA KONSTAN (akan diisi dari data.json) ---
 let DATA_AKADEMIK = [];
 let UNIT_KERJA_LAYANAN = [];
 
@@ -59,78 +59,53 @@ document.addEventListener('DOMContentLoaded', function() {
     initializePageData();
     setupEventListeners();
 
+    // PERUBAHAN BESAR: Logika inisialisasi diubah total untuk kecepatan
     function initializePageData() {
-        const CACHE_KEY = 'allPublicDataCache';
-        const cachedItemStr = localStorage.getItem(CACHE_KEY);
-        let isCacheAvailable = false;
+        console.log("Memuat data aplikasi dari data.json...");
 
-        if (cachedItemStr) {
-            try {
-                const cachedItem = JSON.parse(cachedItemStr);
-                console.log("Memuat data dari cache localStorage...");
+        // Ambil file data statis yang sudah disinkronkan oleh GitHub Actions
+        fetch('data.json')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Gagal memuat data.json: status ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Data berhasil dimuat. Merender halaman...");
+                
+                // Sembunyikan skeleton loader dan tampilkan konten utama
                 skeletonLoader.classList.add('hidden');
                 realContent.classList.remove('hidden');
-                DATA_AKADEMIK = cachedItem.data.konstanta?.akademik || [];
-                UNIT_KERJA_LAYANAN = cachedItem.data.konstanta?.unitKerja || [];
-                onLayananSuccess(cachedItem.data.layanan || []);
-                onInfoSuccess(cachedItem.data.info || []);
-                isCacheAvailable = true;
-            } catch (e) {
-                console.error("Gagal mem-parsing cache, akan mengambil data baru.", e);
-                localStorage.removeItem(CACHE_KEY);
-            }
-        }
 
-        console.log("Memulai pengambilan data baru dari jaringan...");
-        fetchFreshDataAndUpdate(isCacheAvailable);
-        fetch(GAS_WEB_APP_URL + '?action=recordVisit');
-    }
-    
-    function fetchFreshDataAndUpdate(isContentLoaded) {
-        const CACHE_KEY = 'allPublicDataCache';
-        const layananPromise = fetch(GAS_WEB_APP_URL + '?action=getPublicLayanan').then(res => res.json());
-        const infoPromise = fetch(GAS_WEB_APP_URL + '?action=getPublicInfo').then(res => res.json());
-        const konstantaPromise = fetch(GAS_WEB_APP_URL + '?action=getKonstanta').then(res => res.json());
+                // Isi variabel global dari data yang sudah ada
+                DATA_AKADEMIK = data.konstanta?.akademik || [];
+                UNIT_KERJA_LAYANAN = data.konstanta?.unitKerja || [];
 
-        Promise.all([layananPromise, infoPromise, konstantaPromise])
-            .then(([freshLayananData, freshInfoData, freshKonstantaData]) => {
-                console.log("Data baru berhasil diambil.");
-                
-                if (!isContentLoaded) {
-                    skeletonLoader.classList.add('hidden');
-                    realContent.classList.remove('hidden');
-                }
-                
-                DATA_AKADEMIK = freshKonstantaData?.akademik || [];
-                UNIT_KERJA_LAYANAN = freshKonstantaData?.unitKerja || [];
-                onLayananSuccess(freshLayananData || []);
-                onInfoSuccess(freshInfoData || []);
+                // Panggil fungsi untuk merender komponen halaman
+                onLayananSuccess(data.layanan || []);
+                onInfoSuccess(data.info || []);
 
-                const itemToCache = {
-                    data: {
-                        layanan: freshLayananData,
-                        info: freshInfoData,
-                        konstanta: freshKonstantaData
-                    },
-                    timestamp: Date.now()
-                };
-                localStorage.setItem(CACHE_KEY, JSON.stringify(itemToCache));
-                console.log("Cache localStorage diperbarui dengan data baru.");
-
+                // Lakukan prefetch data kalender di latar belakang setelah halaman utama termuat
                 if ('requestIdleCallback' in window) {
-                    requestIdleCallback(() => prefetchCalendarData(freshLayananData));
+                    requestIdleCallback(() => prefetchCalendarData(data.layanan || []));
                 } else {
-                    setTimeout(() => prefetchCalendarData(freshLayananData), 1500);
+                    setTimeout(() => prefetchCalendarData(data.layanan || []), 1500);
                 }
             })
             .catch(error => {
-                console.error("Gagal mengambil data baru dari jaringan:", error);
-                if (!isContentLoaded) {
-                    realContent.innerHTML = `<p class="text-red-500 text-center p-8">Gagal memuat data. Periksa koneksi internet Anda dan coba muat ulang halaman.</p>`;
-                    skeletonLoader.classList.add('hidden');
-                    realContent.classList.remove('hidden');
-                }
+                // Tangani jika file data.json tidak ditemukan atau korup
+                console.error("Gagal total memuat data aplikasi:", error);
+                skeletonLoader.classList.add('hidden');
+                realContent.classList.remove('hidden');
+                realContent.innerHTML = `<div class="text-center p-8">
+                    <h2 class="text-xl font-bold text-red-600">Gagal Memuat Aplikasi</h2>
+                    <p class="text-gray-600 mt-2">Tidak dapat mengambil data konfigurasi. Silakan coba muat ulang halaman atau hubungi administrator.</p>
+                </div>`;
             });
+        
+        // Tetap catat kunjungan secara asinkron
+        fetch(GAS_WEB_APP_URL + '?action=recordVisit');
     }
 
     function setupEventListeners() {
