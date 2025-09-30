@@ -1,5 +1,5 @@
 // URL Web App Google Apps Script Anda (tetap diperlukan untuk tracking, submit, dll)
-const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxayAR8zZYPCZtt2jp2MQp5RcuGger_ugqQtavyA3IDzW9r8n0k8dLlZ3mca0q9BzKqXQ/exec';
+const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzMChEsdKFsDgoHm7oTxNBC3RQEYf2ZU8kVTR8sBFqv9-BXkQfldK3QjssCFj-urrt75A/exec';
 
 // --- DATA KONSTAN (akan diisi dari data.json) ---
 let DATA_AKADEMIK = [];
@@ -59,11 +59,8 @@ document.addEventListener('DOMContentLoaded', function() {
     initializePageData();
     setupEventListeners();
 
-    // PERUBAHAN BESAR: Logika inisialisasi diubah total untuk kecepatan
     function initializePageData() {
         console.log("Memuat data aplikasi dari data.json...");
-
-        // Ambil file data statis yang sudah disinkronkan oleh GitHub Actions
         fetch('data.json')
             .then(response => {
                 if (!response.ok) {
@@ -73,20 +70,12 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(data => {
                 console.log("Data berhasil dimuat. Merender halaman...");
-                
-                // Sembunyikan skeleton loader dan tampilkan konten utama
                 skeletonLoader.classList.add('hidden');
                 realContent.classList.remove('hidden');
-
-                // Isi variabel global dari data yang sudah ada
                 DATA_AKADEMIK = data.konstanta?.akademik || [];
                 UNIT_KERJA_LAYANAN = data.konstanta?.unitKerja || [];
-
-                // Panggil fungsi untuk merender komponen halaman
                 onLayananSuccess(data.layanan || []);
                 onInfoSuccess(data.info || []);
-
-                // Lakukan prefetch data kalender di latar belakang setelah halaman utama termuat
                 if ('requestIdleCallback' in window) {
                     requestIdleCallback(() => prefetchCalendarData(data.layanan || []));
                 } else {
@@ -94,7 +83,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             })
             .catch(error => {
-                // Tangani jika file data.json tidak ditemukan atau korup
                 console.error("Gagal total memuat data aplikasi:", error);
                 skeletonLoader.classList.add('hidden');
                 realContent.classList.remove('hidden');
@@ -104,8 +92,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>`;
             });
         
-        // Tetap catat kunjungan secara asinkron
         fetch(GAS_WEB_APP_URL + '?action=recordVisit');
+    }
+
+    // --- FUNGSI STATISTIK BARU ---
+    /**
+     * Mengirim event klik ke backend untuk dicatat.
+     * @param {string} tipe Kategori klik (misalnya, 'Klik Info', 'Klik Layanan').
+     * @param {string} item Nama spesifik dari item yang diklik.
+     */
+    function recordClick(tipe, item) {
+        if (!tipe || !item) return;
+        console.log(`Mencatat klik: ${tipe} - ${item}`);
+        const data = new URLSearchParams({ action: 'recordClick', tipe: tipe, item: item });
+        // Menggunakan sendBeacon karena non-blocking dan andal untuk analitik
+        navigator.sendBeacon(GAS_WEB_APP_URL, data);
     }
 
     function setupEventListeners() {
@@ -137,19 +138,13 @@ document.addEventListener('DOMContentLoaded', function() {
         if (userTypeToggleContainer) userTypeToggleContainer.addEventListener('click', toggleUserType);
         if (fabHelpdeskBtn) fabHelpdeskBtn.addEventListener('click', () => helpdeskModal.classList.remove('hidden'));
         
-        function handleLinkClick(event) {
-             const link = event.target.closest('a');
-             if (link && link.href) {
-                 const textElement = link.querySelector('p');
-                 const itemName = `Klik: ${ (textElement) ? textElement.textContent.trim() : link.dataset.itemName}`;
-                 if (itemName) {
-                     const data = new URLSearchParams({ action: 'recordClick', itemName: itemName });
-                     navigator.sendBeacon(GAS_WEB_APP_URL, data);
-                 }
-             }
-        }
-        [infoContainer, pinnedContainer, quicklinkContainer].forEach(container => {
-            if (container) container.addEventListener('click', handleLinkClick);
+        // PERUBAHAN: Listener klik tunggal untuk semua item yang dapat dilacak
+        document.body.addEventListener('click', function(event) {
+            const trackableItem = event.target.closest('[data-tipe][data-item]');
+            if (trackableItem) {
+                const { tipe, item } = trackableItem.dataset;
+                recordClick(tipe, item);
+            }
         });
         
         if (navServices) navServices.addEventListener('click', () => {
@@ -575,13 +570,20 @@ document.addEventListener('DOMContentLoaded', function() {
             groupedLayananData[kategori].forEach((layanan, i) => {
                 const jenisLayanan = (getValueCaseInsensitive(layanan, 'jenis') || '').toLowerCase();
                 const linkUrl = getValueCaseInsensitive(layanan, 'link');
+                const layananNama = getValueCaseInsensitive(layanan, 'jenis layanan');
                 
                 const serviceItem = document.createElement(jenisLayanan === 'link' && linkUrl ? 'a' : 'div');
                 serviceItem.className = "flex flex-col items-center space-y-2 cursor-pointer group";
+                
+                // PERUBAHAN: Menambahkan atribut data untuk statistik
+                serviceItem.dataset.item = layananNama;
                 if (jenisLayanan === 'link' && linkUrl) {
                     serviceItem.href = linkUrl;
                     serviceItem.target = '_blank';
                     serviceItem.rel = 'noopener noreferrer';
+                    serviceItem.dataset.tipe = "Klik Layanan (Link)";
+                } else {
+                    serviceItem.dataset.tipe = "Buka Form Layanan";
                 }
                 
                 const customColor = getValueCaseInsensitive(layanan, 'warna');
@@ -600,13 +602,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="w-16 h-16 rounded-xl flex items-center justify-center text-2xl transition-transform group-hover:scale-110" style="background-color:${bgColor}; color:${textColor};">
                         <i class="fas fa-${getIconForLayanan(layanan)}"></i>
                     </div>
-                    <h3 class="font-medium text-xs text-gray-700">${getValueCaseInsensitive(layanan, 'jenis layanan')}</h3>`;
+                    <h3 class="font-medium text-xs text-gray-700">${layananNama}</h3>`;
+                
                 if (jenisLayanan !== 'link') {
                     Object.assign(serviceItem.dataset, {
                         formFields: getValueCaseInsensitive(layanan, 'form') || '',
-                        layananName: getValueCaseInsensitive(layanan, 'jenis layanan') || '',
+                        layananName: layananNama || '',
                         pengolah: getValueCaseInsensitive(layanan, 'pengolah') || '',
-                        jenis: getValueCaseInsensitive(layanan, 'jenis') || '',
+                        jenis: jenisLayanan || '',
                         sheet: getValueCaseInsensitive(layanan, 'sheet') || '',
                         sheetId: getValueCaseInsensitive(layanan, 'Sheet ID') || ''
                     });
@@ -671,15 +674,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 const listItem = document.createElement('li');
                 const button = document.createElement('button');
                 button.className = 'w-full text-left p-2 rounded-lg hover:bg-gray-100';
-                button.textContent = getValueCaseInsensitive(layanan, 'jenis layanan');
+                const layananNama = getValueCaseInsensitive(layanan, 'jenis layanan');
+                button.textContent = layananNama;
+
+                // PERUBAHAN: Menambahkan atribut data untuk statistik
+                button.dataset.tipe = "Buka Form Layanan (Cepat)";
+                button.dataset.item = layananNama;
+                
                 Object.assign(button.dataset, {
                     formFields: getValueCaseInsensitive(layanan, 'form') || '',
-                    layananName: getValueCaseInsensitive(layanan, 'jenis layanan') || '',
+                    layananName: layananNama || '',
                     pengolah: getValueCaseInsensitive(layanan, 'pengolah') || '',
                     jenis: getValueCaseInsensitive(layanan, 'jenis') || '',
                     sheet: getValueCaseInsensitive(layanan, 'sheet') || '',
                     sheetId: getValueCaseInsensitive(layanan, 'Sheet ID') || ''
                 });
+
+                // Menghapus event listener lama dan mengandalkan listener global
                 button.addEventListener('click', (e) => {
                     quickServicesModal.classList.add('hidden');
                     const serviceType = e.currentTarget.dataset.jenis.toLowerCase();
@@ -717,14 +728,18 @@ document.addEventListener('DOMContentLoaded', function() {
             if (infoText && link) {
                 const slide = document.createElement('div');
                 slide.className = 'swiper-slide h-auto';
+                
+                // PERUBAHAN: Menambahkan atribut data untuk statistik
+                const dataAttrs = `data-tipe="Klik Info" data-item="${infoText}"`;
+
                 let cardHtml = '';
                 if (gambar) {
-                    cardHtml = `<a href="${link}" target="_blank" rel="noopener noreferrer" class="block w-full h-full rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden"><img src="${gambar}" alt="${infoText}" class="w-full h-full object-cover aspect-[2.35/1]" onerror="this.parentElement.style.display='none'"/><p class="hidden">${infoText}</p></a>`;
+                    cardHtml = `<a href="${link}" ${dataAttrs} target="_blank" rel="noopener noreferrer" class="block w-full h-full rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden"><img src="${gambar}" alt="${infoText}" class="w-full h-full object-cover aspect-[2.35/1]" onerror="this.parentElement.style.display='none'"/><p class="hidden">${infoText}</p></a>`;
                 } else {
                     let bgColorStyle = `style="background-color: ${warna || '#10b981'}"`;
                     let textColorClass = getTextColorForBg(warna);
                     let iconBgStyle = `style="background-color: rgba(0,0,0,0.2)"`;
-                    cardHtml = `<a href="${link}" target="_blank" rel="noopener noreferrer" class="flex items-start p-3 rounded-xl shadow-sm hover:opacity-90 transition-opacity duration-300 h-full ${textColorClass}" ${bgColorStyle}>
+                    cardHtml = `<a href="${link}" ${dataAttrs} target="_blank" rel="noopener noreferrer" class="flex items-start p-3 rounded-xl shadow-sm hover:opacity-90 transition-opacity duration-300 h-full ${textColorClass}" ${bgColorStyle}>
                         <div class="rounded-lg p-2.5 mr-3" ${iconBgStyle}>
                             <i class="fas fa-bullhorn text-lg"></i>
                         </div>
@@ -744,7 +759,6 @@ document.addEventListener('DOMContentLoaded', function() {
             spaceBetween: 24,
             grabCursor: true,
             pagination: { el: '.swiper-pagination', clickable: true },
-            // PERUBAHAN: Mengatur slidesPerView menjadi 1 di desktop
             breakpoints: { 768: { slidesPerView: 1 } }
         });
         infoSlider.classList.toggle('info-grid', !isSliderActive);
@@ -752,7 +766,6 @@ document.addEventListener('DOMContentLoaded', function() {
     function renderPinnedButtons(data) { 
         const pinnedWrapper = document.getElementById('pinnedContainer');
         const pinnedSection = document.getElementById('pinned-section');
-        // PERUBAHAN: Mengambil elemen judul
         const pinnedTitle = document.getElementById('pinned-section-title');
         pinnedWrapper.innerHTML = '';
 
@@ -760,7 +773,6 @@ document.addEventListener('DOMContentLoaded', function() {
             if (pinnedSection) pinnedSection.style.display = 'none';
             return;
         }
-        // PERUBAHAN: Menampilkan section dan judulnya jika ada data
         if (pinnedSection) pinnedSection.style.display = 'block';
         if (pinnedTitle) pinnedTitle.classList.remove('hidden');
 
@@ -775,6 +787,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 button.href = link;
                 button.target = '_blank';
                 button.rel = 'noopener noreferrer';
+                
+                // PERUBAHAN: Menambahkan atribut data untuk statistik
+                button.dataset.tipe = "Klik Pin";
+                button.dataset.item = infoText;
+
                 let bgColor = warna || '#1a3a3a';
                 button.style.backgroundColor = bgColor;
                 let textColorClass = getTextColorForBg(bgColor);
@@ -819,6 +836,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 quickLink.target = '_blank';
                 quickLink.rel = 'noopener noreferrer';
                 quickLink.className = 'flex flex-col items-center space-y-2 text-gray-700 hover:opacity-80 transition-opacity';
+                
+                // PERUBAHAN: Menambahkan atribut data untuk statistik
+                quickLink.dataset.tipe = "Klik Quicklink";
+                quickLink.dataset.item = infoText;
+
                 let bgColor = '';
                 let textColor = '';
                 let styleAttr = '';
@@ -839,6 +861,9 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+    // ... Sisa fungsi (renderSuketLulusForm, dll) tetap sama ...
+    // ... (Kode tidak ditampilkan untuk keringkasan, tetapi tidak dihapus) ...
+    // --- Sisa file tetap tidak berubah ---
     function renderSuketLulusForm(allFields, layananName) { 
         let formHtml = `
             <div class="mb-4 text-sm bg-yellow-50 border-l-4 border-yellow-400 text-yellow-800 p-4" role="alert">
@@ -1390,8 +1415,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const formData = new FormData(e.target);
         const dataObject = Object.fromEntries(formData.entries());
 
-        // Enforce business rule: If the service is "Suket Kuliah" and Unit Kerja is "Rektorat",
-        // set Pengolah to "LA" right before submission.
         const jenisLayanan = dataObject['Jenis Layanan'] || '';
         const unitKerja = dataObject['Unit Kerja Layanan'] || '';
 
@@ -1663,7 +1686,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const resultContainer = view === 'desktop' ? trackingResult : mobileTrackingResult;
         let content = '';
 
-        if (!result) { // PERBAIKAN: Menangani respons null dari server
+        if (!result) {
             content = `<div class="p-4 bg-yellow-100 text-yellow-800 rounded-lg relative">ID Permohonan tidak ditemukan.</div>`;
         } else if (result.error) {
             content = `<div class="p-4 bg-red-100 text-red-700 rounded-lg relative">${result.error}</div>`;
@@ -1724,3 +1747,4 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
+
