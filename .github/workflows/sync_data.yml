@@ -1,0 +1,56 @@
+# Nama alur kerja yang akan tampil di tab "Actions" GitHub Anda
+name: Sinkronisasi Data dari Google Sheet
+
+# Pemicu (trigger) alur kerja
+on:
+  # 1. Memungkinkan Anda menjalankan alur kerja ini secara manual dari halaman Actions
+  workflow_dispatch:
+
+  # 2. Menjalankan alur kerja secara otomatis sesuai jadwal
+  schedule:
+    # Menggunakan format cron: berjalan setiap 6 jam sekali.
+    # (Menit Jam HariBulan Bulan HariMinggu)
+    # '0 */6 * * *' artinya pada menit ke-0, setiap 6 jam.
+    - cron: '0 */6 * * *'
+
+# Mendefinisikan pekerjaan (job) yang akan dijalankan
+jobs:
+  sync:
+    # Menentukan bahwa pekerjaan ini akan berjalan di server Ubuntu terbaru yang disediakan GitHub
+    runs-on: ubuntu-latest
+
+    # Langkah-langkah yang akan dieksekusi
+    steps:
+      # Langkah 1: Checkout Kode
+      # Mengunduh kode dari repositori Anda ke server runner
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Langkah 2: Ambil Data dan Simpan
+      # Menjalankan perintah command-line untuk mengambil data dari Google Apps Script
+      - name: Fetch data from Google Apps Script and save to data.json
+        run: |
+          # Menggunakan 'curl' untuk memanggil URL Web App Anda.
+          # -L: Mengikuti redirects, penting untuk URL Google.
+          # -o data.json: Menyimpan output langsung ke file bernama data.json.
+          # ${{ secrets.GAS_URL_FOR_SYNC }}: Mengambil URL dari "Secrets" repositori Anda.
+          # Ini adalah cara aman untuk menyimpan URL agar tidak terekspos di kode.
+          curl -L -o data.json "${{ secrets.GAS_URL_FOR_SYNC }}"
+
+      # Langkah 3: Commit dan Push Perubahan
+      # Menggunakan Action siap pakai untuk otomatisasi Git.
+      # Action ini akan memeriksa apakah file 'data.json' berubah.
+      # Jika ya, ia akan membuat commit baru dan mendorongnya (push) ke repositori.
+      - name: Commit and push if changed
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          # Pesan commit yang akan digunakan
+          commit_message: "chore: Sinkronisasi data otomatis dari Google Sheet"
+          
+          # Pola file yang akan diperiksa perubahannya
+          file_pattern: data.json
+          
+          # Informasi penulis commit (opsional, untuk kejelasan)
+          commit_user_name: GitHub Actions Bot
+          commit_user_email: actions@github.com
+          commit_author: GitHub Actions Bot <actions@github.com>
