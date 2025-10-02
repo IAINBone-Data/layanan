@@ -1,5 +1,5 @@
 // URL Web App Google Apps Script Anda (tetap diperlukan untuk tracking, submit, dll)
-const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzMChEsdKFsDgoHm7oTxNBC3RQEYf2ZU8kVTR8sBFqv9-BXkQfldK3QjssCFj-urrt75A/exec';
+const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby7nPw3kz_inmnpoG0Od-oOPafXNgZ9Hcm6yW4xGQM-oPfo9h2eDsxqoQLjAmK3nalvHA/exec';
 
 // --- DATA KONSTAN (akan diisi dari data.json) ---
 let DATA_AKADEMIK = [];
@@ -92,21 +92,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>`;
             });
         
-        fetch(GAS_WEB_APP_URL + '?action=recordVisit');
+        // DIHAPUS: Panggilan untuk mencatat kunjungan. Google Analytics melakukannya secara otomatis.
     }
 
-    // --- FUNGSI STATISTIK BARU ---
+    // --- FUNGSI PELACAKAN GOOGLE ANALYTICS ---
     /**
-     * Mengirim event klik ke backend untuk dicatat.
-     * @param {string} tipe Kategori klik (misalnya, 'Klik Info', 'Klik Layanan').
-     * @param {string} item Nama spesifik dari item yang diklik.
+     * Mengirim event kustom ke Google Analytics.
+     * @param {string} eventName Nama event (misalnya, 'klik_layanan').
+     * @param {object} eventParams Parameter tambahan untuk event tersebut.
      */
-    function recordClick(tipe, item) {
-        if (!tipe || !item) return;
-        console.log(`Mencatat klik: ${tipe} - ${item}`);
-        const data = new URLSearchParams({ action: 'recordClick', tipe: tipe, item: item });
-        // Menggunakan sendBeacon karena non-blocking dan andal untuk analitik
-        navigator.sendBeacon(GAS_WEB_APP_URL, data);
+    function trackGAEvent(eventName, eventParams) {
+        if (typeof gtag === 'function') {
+            gtag('event', eventName, eventParams);
+            console.log(`GA Event: ${eventName}`, eventParams);
+        } else {
+            console.warn('Google Analytics (gtag.js) tidak ditemukan. Pastikan sudah dipasang di HTML.');
+        }
     }
 
     function setupEventListeners() {
@@ -138,12 +139,16 @@ document.addEventListener('DOMContentLoaded', function() {
         if (userTypeToggleContainer) userTypeToggleContainer.addEventListener('click', toggleUserType);
         if (fabHelpdeskBtn) fabHelpdeskBtn.addEventListener('click', () => helpdeskModal.classList.remove('hidden'));
         
-        // PERUBAHAN: Listener klik tunggal untuk semua item yang dapat dilacak
+        // PERUBAHAN: Listener klik tunggal untuk semua item yang dapat dilacak dengan Google Analytics
         document.body.addEventListener('click', function(event) {
             const trackableItem = event.target.closest('[data-tipe][data-item]');
             if (trackableItem) {
                 const { tipe, item } = trackableItem.dataset;
-                recordClick(tipe, item);
+                // Mengonversi 'tipe' menjadi nama event yang lebih bersih untuk GA
+                const eventName = tipe.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
+                trackGAEvent(eventName, {
+                    item_clicked: item
+                });
             }
         });
         
@@ -458,7 +463,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (expiryTimestamp && now < parseInt(expiryTimestamp, 10)) {
             console.log(`Popup ${popupId} sudah dilihat. Dilewati.`);
-            return; 
+            return; 
         }
 
         showWelcomePopup(popupData, storageKey, durationDays);
@@ -1747,4 +1752,3 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
-
