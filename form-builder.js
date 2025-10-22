@@ -568,7 +568,7 @@ function renderBebasBeasiswaForm(allFields, layananName) {
     }
 }
 
-// FUNGSI RENDER SUKET ALUMNI (DIMODIFIKASI SECARA EKSTENSIF)
+// --- FUNGSI RENDER SUKET ALUMNI (DIMODIFIKASI) ---
 function renderSuketAlumniForm(allFields, layananName) {
     permohonanForm.innerHTML = `
         <input type="hidden" name="Pengolah" value="LA" />
@@ -614,7 +614,8 @@ function renderSuketAlumniForm(allFields, layananName) {
             <div class="mb-4">
                 <label for="form-input-Prodi" class="block text-sm font-medium text-gray-700 mb-1">Prodi <span class="text-red-500">*</span></label>
                 <input type="text" id="form-input-Prodi" name="Prodi" required class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" />
-                <p class="text-xs text-gray-500 mt-1">CANTUMKAN TULISAN PROGRAM STUDI DI DEPAN NAMA PRODI YBS.<br>Contoh: Program Studi Pendidikan Agama Islam</p>
+                <!-- DESKRIPSI DIUBAH SESUAI PERMINTAAN -->
+                <p class="text-xs text-gray-500 mt-1">CANTUMKAN TULISAN FAKULTAS / JURUSAN DI DEPAN NAMA FAKULTAS / JURUSAN YBS.<br>Contoh :  Fakultas Syariah / Jurusan Syariah dll.</p>
             </div>
             <div class="mb-4">
                 <label for="form-input-Fakultas" class="block text-sm font-medium text-gray-700 mb-1">FAKULTAS / JURUSAN <span class="text-red-500">*</span></label>
@@ -629,9 +630,10 @@ function renderSuketAlumniForm(allFields, layananName) {
         const selectedValue = lulusanSelect.value;
         let dynamicFieldsHtml = '';
         
-        if (selectedValue === 'IAIN') {
+        // PERBAIKAN: Gunakan nilai (value) lengkap dari <select>
+        if (selectedValue === 'Institut Agama Islam Negeri (IAIN) Bone') {
             dynamicFieldsHtml = renderIainFields();
-        } else if (selectedValue === 'STAIN') {
+        } else if (selectedValue === 'Sekolah Tinggi Agama Islam Negeri (STAIN) Watampone') {
             dynamicFieldsHtml = renderStainFields();
         }
 
@@ -692,7 +694,8 @@ function renderSuketAlumniForm(allFields, layananName) {
         `;
 
         // PERBAIKAN: Pindahkan event listener ke sini, setelah HTML di-render
-        if (selectedValue === 'IAIN') {
+        // PERBAIKAN: Gunakan nilai (value) lengkap dari <select>
+        if (selectedValue === 'Institut Agama Islam Negeri (IAIN) Bone') {
             const prodiSelect = permohonanForm.querySelector('[name="Prodi"]');
             const fakultasInput = permohonanForm.querySelector('[name="Fakultas"]');
             if (prodiSelect && fakultasInput) {
@@ -728,4 +731,3 @@ function renderGenericForm(allFields, pengolah, layananName) {
     formHtml += `<div class="grid grid-cols-1 md:grid-cols-2 gap-x-4">${fieldsContainerHtml}</div>`;
     permohonanForm.innerHTML = formHtml;
 }
-
