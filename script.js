@@ -616,7 +616,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         pengolah: getValueCaseInsensitive(layanan, 'pengolah') || '',
                         jenis: jenisLayanan || '',
                         sheet: getValueCaseInsensitive(layanan, 'sheet') || '',
-                        sheetId: getValueCaseInsensitive(layanan, 'Sheet ID') || ''
+                        sheetId: getValueCaseInsensitive(layanan, 'Sheet ID') || '',
+                        keterangan: getValueCaseInsensitive(layanan, 'keterangan') || '' // PENAMBAHAN: Mengambil data keterangan
                     });
                     if (serviceItem.dataset.jenis.toLowerCase() === 'kalender') {
                         serviceItem.addEventListener('click', openCalendarModal);
@@ -692,7 +693,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     pengolah: getValueCaseInsensitive(layanan, 'pengolah') || '',
                     jenis: getValueCaseInsensitive(layanan, 'jenis') || '',
                     sheet: getValueCaseInsensitive(layanan, 'sheet') || '',
-                    sheetId: getValueCaseInsensitive(layanan, 'Sheet ID') || ''
+                    sheetId: getValueCaseInsensitive(layanan, 'Sheet ID') || '',
+                    keterangan: getValueCaseInsensitive(layanan, 'keterangan') || '' // PENAMBAHAN: Mengambil data keterangan
                 });
 
                 // Menghapus event listener lama dan mengandalkan listener global
@@ -866,6 +868,89 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+    
+    // --- PENAMBAHAN FUNGSI BARU UNTUK FORM SUKET BEBAS BEASISWA ---
+    function renderBebasBeasiswaForm(allFields, pengolah, layananName) {
+        let formHtml = `<input type="hidden" name="Pengolah" value="${pengolah}" />`;
+        formHtml += `<input type="hidden" name="Jenis Layanan" value="${layananName}" />`;
+        let fieldsHtml = '';
+
+        const prodiOptions = DATA_AKADEMIK.map(item => `<option value="${item.prodi}">${item.prodi}</option>`).join('');
+
+        allFields.forEach(field => {
+            const fieldId = `form-input-${field.replace(/\s+/g, '-')}`;
+            const fieldLower = field.toLowerCase().trim();
+            
+            let isRequired = !['email', 'telepon'].includes(fieldLower);
+            let inputHtml = '';
+            let wrapperClass = 'mb-4';
+            let fieldLabel = field;
+            if (isRequired) {
+                fieldLabel += ` <span class="text-red-500">*</span>`;
+            }
+
+            switch (fieldLower) {
+                case 'prodi':
+                    inputHtml = `<select id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm">
+                                    <option value="" disabled selected>-- Pilih Prodi --</option>
+                                    ${prodiOptions}
+                                </select>`;
+                    break;
+                case 'fakultas':
+                    inputHtml = `<input type="text" id="${fieldId}" name="${field}" readonly class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm bg-gray-100" />`;
+                    break;
+                case 'jenis kelamin':
+                    inputHtml = `<select id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm">
+                                    <option value="" disabled selected>-- Pilih --</option>
+                                    <option value="Laki-laki">Laki-laki</option>
+                                    <option value="Perempuan">Perempuan</option>
+                                </select>`;
+                    break;
+                case 'tempat lahir':
+                    inputHtml = `<input type="text" id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" />`;
+                    break;
+                case 'tanggal lahir':
+                    inputHtml = `<input type="date" id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" />`;
+                    break;
+                case 'alamat':
+                    inputHtml = `<textarea id="${fieldId}" name="${field}" required rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm"></textarea>`;
+                    wrapperClass += ' md:col-span-2';
+                    break;
+                 case 'nama beasiswa':
+                    inputHtml = `<input type="text" id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" placeholder="Contoh: KIP Kuliah, Beasiswa Bank Indonesia" />`;
+                    break;
+                case 'periode penerimaan':
+                    inputHtml = `<input type="text" id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" placeholder="Contoh: 2024" />`;
+                    break;
+                default:
+                    inputHtml = `<input type="text" id="${fieldId}" name="${field}" ${isRequired ? 'required' : ''} class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" />`;
+                    break;
+            }
+                fieldsHtml += `
+                <div class="${wrapperClass}">
+                    <label for="${fieldId}" class="block text-sm font-medium text-gray-700 mb-1">${fieldLabel}</label>
+                    ${inputHtml}
+                </div>`;
+        });
+        
+        formHtml += `<div class="grid grid-cols-1 md:grid-cols-2 gap-x-4">${fieldsHtml}</div>`;
+        permohonanForm.innerHTML = formHtml;
+        
+        const prodiSelect = permohonanForm.querySelector('[name="Prodi"]');
+        const fakultasInput = permohonanForm.querySelector('[name="Fakultas"]');
+        
+        if(prodiSelect && fakultasInput) {
+            prodiSelect.addEventListener('change', function() {
+                const selectedProdi = this.value;
+                const match = DATA_AKADEMIK.find(item => item.prodi === selectedProdi);
+                if (match) {
+                    fakultasInput.value = match.fakultas;
+                }
+            });
+        }
+    }
+
+
     // ... Sisa fungsi (renderSuketLulusForm, dll) tetap sama ...
     // ... (Kode tidak ditampilkan untuk keringkasan, tetapi tidak dihapus) ...
     // --- Sisa file tetap tidak berubah ---
@@ -1384,7 +1469,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     function openFormModal(event) { 
         const card = event.currentTarget;
-        const { formFields, layananName, pengolah, sheet, sheetId } = card.dataset;
+        const { formFields, layananName, pengolah, sheet, sheetId, keterangan } = card.dataset; // PENAMBAHAN: Mendapatkan 'keterangan' dari dataset
         if (!formFields || !sheet) return;
         modalTitle.textContent = `Formulir ${layananName}`;
         const allFields = formFields.split(',').map(field => field.trim());
@@ -1397,7 +1482,12 @@ document.addEventListener('DOMContentLoaded', function() {
             renderSuketLulusForm(allFields, layananName);
         } else if (lowerLayananName.includes('lacak sk')) {
             renderLacakSkSeForm(allFields, pengolah, layananName);
-        } else if (lowerLayananName.includes('suket')) {
+        } 
+        // --- PENAMBAHAN KONDISI BARU ---
+        else if (lowerLayananName.includes('bebas beasiswa')) {
+            renderBebasBeasiswaForm(allFields, pengolah, layananName);
+        }
+        else if (lowerLayananName.includes('suket')) {
             renderSuketKuliahForm(allFields, pengolah, layananName);
         } else if (lowerLayananName.includes('peminjaman')) {
             renderPeminjamanForm(allFields, pengolah, layananName);
@@ -1405,6 +1495,18 @@ document.addEventListener('DOMContentLoaded', function() {
             renderPengaduanForm(allFields, pengolah, layananName);
         } else {
             renderGenericForm(allFields, pengolah, layananName);
+        }
+
+        // PENAMBAHAN: Logika untuk menampilkan kotak keterangan/informasi
+        // Ini akan berjalan untuk SEMUA jenis formulir secara otomatis.
+        if (keterangan && keterangan.trim() !== '') {
+            const keteranganHtml = `
+                <div class="mb-6 text-sm bg-blue-50 border-l-4 border-blue-400 text-blue-800 p-4 rounded-r-lg" role="alert">
+                    <p class="font-bold mb-2">Informasi:</p>
+                    <div>${keterangan.replace(/\n/g, '<br>')}</div>
+                </div>
+            `;
+            permohonanForm.insertAdjacentHTML('afterbegin', keteranganHtml);
         }
     
         formModal.classList.remove('hidden');
@@ -1752,3 +1854,4 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
+
