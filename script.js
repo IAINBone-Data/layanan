@@ -1,10 +1,9 @@
 // URL Web App Google Apps Script Anda (tetap diperlukan untuk tracking, submit, dll)
-const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyk_MSGIR72CnlQ4ZHI_n9rCtxXPiQQEyCzS1QAUcQkfBifNak4DlRpLCj6PU9Gg6VxFQ/exec';
+const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbx31cH8X54AaLRxYHK9wHhjJ7-NUh0EgVWd2JHcrxRHWlcQoOMmUGG092IPZZ_V2SXQPQ/exec';
 
 // --- DATA KONSTAN (akan diisi dari data.json) ---
 let DATA_AKADEMIK = [];
 let UNIT_KERJA_LAYANAN = [];
-let DATA_SEMESTER = []; // PENAMBAHAN: Variabel untuk data semester
 
 // --- EVENT LISTENER UTAMA ---
 document.addEventListener('DOMContentLoaded', function() {
@@ -75,7 +74,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 realContent.classList.remove('hidden');
                 DATA_AKADEMIK = data.konstanta?.akademik || [];
                 UNIT_KERJA_LAYANAN = data.konstanta?.unitKerja || [];
-                DATA_SEMESTER = data.konstanta?.semester || []; // PENAMBAHAN: Mengisi data semester dari backend
                 onLayananSuccess(data.layanan || []);
                 onInfoSuccess(data.info || []);
                 if ('requestIdleCallback' in window) {
@@ -871,6 +869,91 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
+    // --- PENAMBAHAN FUNGSI BARU UNTUK FORM SUKET BEBAS BEASISWA ---
+    function renderBebasBeasiswaForm(allFields, pengolah, layananName) {
+        let formHtml = `<input type="hidden" name="Pengolah" value="${pengolah}" />`;
+        formHtml += `<input type="hidden" name="Jenis Layanan" value="${layananName}" />`;
+        let fieldsHtml = '';
+
+        const prodiOptions = DATA_AKADEMIK.map(item => `<option value="${item.prodi}">${item.prodi}</option>`).join('');
+
+        allFields.forEach(field => {
+            const fieldId = `form-input-${field.replace(/\s+/g, '-')}`;
+            const fieldLower = field.toLowerCase().trim();
+            
+            let isRequired = !['email', 'telepon'].includes(fieldLower);
+            let inputHtml = '';
+            let wrapperClass = 'mb-4';
+            let fieldLabel = field;
+            if (isRequired) {
+                fieldLabel += ` <span class="text-red-500">*</span>`;
+            }
+
+            switch (fieldLower) {
+                case 'prodi':
+                    inputHtml = `<select id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm">
+                                    <option value="" disabled selected>-- Pilih Prodi --</option>
+                                    ${prodiOptions}
+                                </select>`;
+                    break;
+                case 'fakultas':
+                    inputHtml = `<input type="text" id="${fieldId}" name="${field}" readonly class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm bg-gray-100" />`;
+                    break;
+                case 'jenis kelamin':
+                    inputHtml = `<select id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm">
+                                    <option value="" disabled selected>-- Pilih --</option>
+                                    <option value="Laki-laki">Laki-laki</option>
+                                    <option value="Perempuan">Perempuan</option>
+                                </select>`;
+                    break;
+                case 'tempat lahir':
+                    inputHtml = `<input type="text" id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" />`;
+                    break;
+                case 'tanggal lahir':
+                    inputHtml = `<input type="date" id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" />`;
+                    break;
+                case 'alamat':
+                    inputHtml = `<textarea id="${fieldId}" name="${field}" required rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm"></textarea>`;
+                    wrapperClass += ' md:col-span-2';
+                    break;
+                 case 'nama beasiswa':
+                    inputHtml = `<input type="text" id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" placeholder="Contoh: KIP Kuliah, Beasiswa Bank Indonesia" />`;
+                    break;
+                case 'periode penerimaan':
+                    inputHtml = `<input type="text" id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" placeholder="Contoh: 2024" />`;
+                    break;
+                default:
+                    inputHtml = `<input type="text" id="${fieldId}" name="${field}" ${isRequired ? 'required' : ''} class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" />`;
+                    break;
+            }
+                fieldsHtml += `
+                <div class="${wrapperClass}">
+                    <label for="${fieldId}" class="block text-sm font-medium text-gray-700 mb-1">${fieldLabel}</label>
+                    ${inputHtml}
+                </div>`;
+        });
+        
+        formHtml += `<div class="grid grid-cols-1 md:grid-cols-2 gap-x-4">${fieldsHtml}</div>`;
+        permohonanForm.innerHTML = formHtml;
+        
+        const prodiSelect = permohonanForm.querySelector('[name="Prodi"]');
+        const fakultasInput = permohonanForm.querySelector('[name="Fakultas"]');
+        
+        if(prodiSelect && fakultasInput) {
+            prodiSelect.addEventListener('change', function() {
+                const selectedProdi = this.value;
+                const match = DATA_AKADEMIK.find(item => item.prodi === selectedProdi);
+                if (match) {
+                    fakultasInput.value = match.fakultas;
+                }
+            });
+        }
+    }
+
+
+    // ... Sisa fungsi (renderSuketLulusForm, dll) tetap sama ...
+    // ... (Kode tidak ditampilkan untuk keringkasan, tetapi tidak dihapus) ...
+    // --- Sisa file tetap tidak berubah ---
     function renderSuketLulusForm(allFields, layananName) { 
         let formHtml = `
             <div class="mb-4 text-sm bg-yellow-50 border-l-4 border-yellow-400 text-yellow-800 p-4" role="alert">
@@ -1070,10 +1153,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     wrapperClass += ' md:col-span-2';
                     break;
                 case 'semester':
-                    const semesterOptions = DATA_SEMESTER.map(o => `<option value="${o}">${o}</option>`).join('');
+                    const semesterOptions = ['I (Satu)', 'II (Dua)', 'III (Tiga)', 'IV (Empat)', 'V (Lima)', 'VI (Enam)', 'VII (Tujuh)', 'VIII (Delapan)', 'IX (Sembilan)', 'X (Sepuluh)', 'XI (Sebelas)', 'XII (Dua Belas)', 'XIII (Tiga Belas)', 'XIV (Empat Belas)'];
                     inputHtml = `<select id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm">
                                     <option value="" disabled selected>-- Pilih --</option>
-                                    ${semesterOptions}
+                                    ${semesterOptions.map(o => `<option value="${o}">${o}</option>`).join('')}
                                 </select>`;
                     break;
                 case 'jenis kelamin':
@@ -1399,7 +1482,12 @@ document.addEventListener('DOMContentLoaded', function() {
             renderSuketLulusForm(allFields, layananName);
         } else if (lowerLayananName.includes('lacak sk')) {
             renderLacakSkSeForm(allFields, pengolah, layananName);
-        } else if (lowerLayananName.includes('suket')) {
+        } 
+        // --- PENAMBAHAN KONDISI BARU ---
+        else if (lowerLayananName.includes('bebas beasiswa')) {
+            renderBebasBeasiswaForm(allFields, pengolah, layananName);
+        }
+        else if (lowerLayananName.includes('suket')) {
             renderSuketKuliahForm(allFields, pengolah, layananName);
         } else if (lowerLayananName.includes('peminjaman')) {
             renderPeminjamanForm(allFields, pengolah, layananName);
