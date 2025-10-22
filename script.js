@@ -1,5 +1,5 @@
 // URL Web App Google Apps Script Anda (tetap diperlukan untuk tracking, submit, dll)
-const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby7nPw3kz_inmnpoG0Od-oOPafXNgZ9Hcm6yW4xGQM-oPfo9h2eDsxqoQLjAmK3nalvHA/exec';
+const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbx31cH8X54AaLRxYHK9wHhjJ7-NUh0EgVWd2JHcrxRHWlcQoOMmUGG092IPZZ_V2SXQPQ/exec';
 
 // --- DATA KONSTAN (akan diisi dari data.json) ---
 let DATA_AKADEMIK = [];
