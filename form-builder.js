@@ -527,6 +527,16 @@ function renderBebasBeasiswaForm(allFields, layananName) {
                                 ${semesterOptions}
                             </select>`;
                 break;
+
+                // TAMBAHKAN BAGIAN INI
+    case 'jenis kelamin':
+        inputHtml = `<select id="${fieldId}" name="${field}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm">
+                        <option value="" disabled selected>-- Pilih --</option>
+                        <option value="Laki-laki">Laki-laki</option>
+                        <option value="Perempuan">Perempuan</option>
+                    </select>`;
+        break;
+                
             default:
                 inputHtml = `<input type="text" id="${fieldId}" name="${field}" ${isRequired ? 'required' : ''} class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm" />`;
                 break;
