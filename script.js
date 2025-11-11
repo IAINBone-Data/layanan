@@ -960,7 +960,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     // --- TAMBAHAN UNTUK REDIRECT WA ---
                     try {
-                        const waNumber = '628511776733'; // Nomor tujuan WA Anda
+                        const waNumber = '6285117769733'; // Nomor tujuan WA Anda
                         
                         // Ambil data dari variabel 'dataObject' yang ada di scope atas fungsi ini
                         // CATATAN: Pastikan name="" di HTML Anda sesuai (lihat penjelasan di bawah)
