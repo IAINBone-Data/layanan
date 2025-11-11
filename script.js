@@ -955,13 +955,42 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(res => res.json())
             .then(response => {
-                helpdeskModal.classList.add('hidden');
-                if (response.success) {
-                    showNotificationModal('Berhasil', 'Pesan Anda telah terkirim. Terima kasih.', 'success');
-                    helpdeskForm.reset();
-                } else {
-                    showNotificationModal('Gagal', `Gagal mengirim pesan: ${response.message}`, 'error');
-                }
+                helpdeskModal.classList.add('hidden');
+                if (response.success) {
+
+                    // --- TAMBAHAN UNTUK REDIRECT WA ---
+                    try {
+                        const waNumber = '628511776733'; // Nomor tujuan WA Anda
+                        
+                        // Ambil data dari variabel 'dataObject' yang ada di scope atas fungsi ini
+                        // CATATAN: Pastikan name="" di HTML Anda sesuai (lihat penjelasan di bawah)
+                        const nama = dataObject['Nama'] || '[Nama tidak diisi]';
+                        const kontak = dataObject['Kontak'] || '[Kontak tidak diisi]';
+                        const pesan = dataObject['Pesan'] || '[Pesan tidak diisi]';
+
+                        // Format pesan (\n adalah untuk baris baru)
+                       const waMessageText = `--- Laporan Help Desk ---\n\n` +
+                            `Nama: ${nama}\n` +
+                            `Kontak: ${kontak}\n\n` +
+                            `Pesan:\n${pesan}`;
+                        
+                        // Buat URL dan encode pesannya agar aman di URL
+                        const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(waMessageText)}`;
+                        
+                        // Buka WA di tab baru
+                        window.open(waUrl, '_blank');
+
+                    } catch (waError) {
+                        console.error("Gagal mengarahkan ke WA:", waError);
+                    }
+                    // --- AKHIR TAMBAHAN ---
+
+                    // Pesan notifikasi diubah sedikit untuk memberitahu pengguna
+                    showNotificationModal('Berhasil', 'Pesan Anda telah terkirim. Anda akan diarahkan ke WhatsApp.', 'success');
+                    helpdeskForm.reset();
+                } else {
+                    showNotificationModal('Gagal', `Gagal mengirim pesan: ${response.message}`, 'error');
+                }
                 btn.textContent = 'Kirim';
                 btn.disabled = false;
             })
