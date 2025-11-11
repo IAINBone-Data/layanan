@@ -8,7 +8,7 @@ https://script.google.com/macros/s/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/exec
 
 Tambahkan parameter ?action=getInitialData di akhir URL tersebut. URL lengkap yang akan Anda gunakan untuk sinkronisasi adalah:
 
-https://script.google.com/macros/s/AKfycbxayAR8zZYPCZtt2jp2MQp5RcuGger_ugqQtavyA3IDzW9r8n0k8dLlZ3mca0q9BzKqXQ/exec?action=getInitialData
+https://script.google.com/macros/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/exec?action=getInitialData
 
 2. Tambahkan URL sebagai "Secret" di GitHub
 Ini adalah langkah paling penting untuk menjaga URL Anda tetap aman.
