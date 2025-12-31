@@ -819,7 +819,7 @@
       "highlight": false
     },
     {
-      "name": "no_surat",
+      "name": "no_surat_pemohon",
       "label": "Nomor Surat",
       "type": "text",
       "options": [],
