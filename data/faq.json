@@ -1,0 +1,18 @@
+[
+  {
+    "id": "FAQ-001",
+    "question": "Bagaimana cara melakukan Pelacakan layanan ?",
+    "answer": "Untuk mengetahui status proses layanan, silakan masukkan kode pelacakan yang Anda peroleh setelah berhasil mengisi formulir layanan. Kode tersebut dapat digunakan pada menu Pelacakan Layanan di halaman utama dibawah Gambar Slider",
+    "category": "Pelacakan",
+    "order": 1,
+    "link": "https://www.youtube.com/watch?v=tK77zh0xW9s"
+  },
+  {
+    "id": "FAQ-002",
+    "question": "fwe",
+    "answer": "Untuk mengetahui status proses layanan, silakan masukkan kode pelacakan yang Anda peroleh setelah berhasil mengisi formulir layanan. Kode tersebut dapat digunakan pada menu Pelacakan Layanan di halaman utama dibawah Gambar Slider",
+    "category": "Pelacakan",
+    "order": 2,
+    "link": "https://layanan.iain-bone.ac.id/"
+  }
+]
