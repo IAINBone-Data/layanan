@@ -22,7 +22,7 @@
     "target_ss_id": "1MxAG9g_y-VZuDPhipuGNxVHHiht97wg_M3xGiYPLZ3w",
     "target_sheet_name": "suket-kuliah",
     "unit_tujuan": [
-      "Layanan Akademik",
+      "Subbagian Layanan Akademik",
       "Fakultas Syariah dan Hukum Islam",
       "Fakultas Tarbiyah",
       "Fakultas Ekonomi dan Bisnis Islam",
@@ -55,7 +55,7 @@
     "target_ss_id": "1MxAG9g_y-VZuDPhipuGNxVHHiht97wg_M3xGiYPLZ3w",
     "target_sheet_name": "suket-lulus",
     "unit_tujuan": [
-      "Layanan Akademik",
+      "Subbagian Layanan Akademik",
       "Fakultas Syariah dan Hukum Islam",
       "Fakultas Tarbiyah",
       "Fakultas Ekonomi dan Bisnis Islam",
@@ -84,7 +84,7 @@
     "target_ss_id": "1MxAG9g_y-VZuDPhipuGNxVHHiht97wg_M3xGiYPLZ3w",
     "target_sheet_name": "suket-alumni",
     "unit_tujuan": [
-      "Layanan Akademik"
+      "Subbagian Layanan Akademik"
     ]
   },
   {
@@ -110,7 +110,7 @@
     "target_ss_id": "1MxAG9g_y-VZuDPhipuGNxVHHiht97wg_M3xGiYPLZ3w",
     "target_sheet_name": "suket_bebas_beasiswa",
     "unit_tujuan": [
-      "Layanan Akademik"
+      "Subbagian Layanan Akademik"
     ]
   },
   {
@@ -133,10 +133,10 @@
     "biaya": "Gratis",
     "waktu": "2 Hari Kerja",
     "is_active": true,
-    "target_ss_id": "13691osFsrWbQBJvCsvgZdiupKRIbna7ApXTsTwG2aDE",
+    "target_ss_id": "1z7mcaibVSUlYs_BYUdjZFwSqGTaj84jrU1dVsj2Z__8",
     "target_sheet_name": "ijin_peminjaman",
     "unit_tujuan": [
-      "Tata Usaha, Perlengkapan dan Rumah Tangga",
+      "Subbagian Tata Usaha Perlengkapan dan Rumah Tangga",
       "Fakultas Syariah dan Hukum Islam",
       "Fakultas Tarbiyah",
       "Fakultas Ekonomi dan Bisnis Islam",
