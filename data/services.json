@@ -144,6 +144,36 @@
     ]
   },
   {
+    "id": "izin_penelitian",
+    "singkatan": "SPL",
+    "jenis_layanan": "Izin Penelitian",
+    "unit": "Akademik",
+    "kategori": "Akademik",
+    "jenis": "Dokumen",
+    "form_type": "izin_penelitian",
+    "link_template": "",
+    "icon": "file-text",
+    "folder_drive_id": "",
+    "variabel_folder": "",
+    "variabel_nama": "",
+    "keterangan": "Layanan Penerbitan Permohonan dan/atau Izin Penelitian",
+    "persyaratan": [
+      "Surat permohonan dari mahasiswa yang bersangkutan",
+      "Proposal Penelitian apabila buka mahasiswa IAIN Bone",
+      "Surat permohonan izin penelitian resmi dari institusi yang bersangkutan apabila bukan mahasiswa IAIN Bone",
+      "Identitas Kartu Mahasiswa/KTP",
+      "Proposal penelitian yang ditandatangani dosen pembimbing"
+    ],
+    "biaya": "Gratis",
+    "waktu": "2 Hari Kerja",
+    "is_active": true,
+    "target_ss_id": "1QSkjY-yCcUQHWNs1d9HnQYSgW_hdmJiAa52dM0MIIJI",
+    "target_sheet_name": "izin_penelitian",
+    "unit_tujuan": [
+      "Subbagian Layanan Akademik"
+    ]
+  },
+  {
     "id": "suket_ukt",
     "singkatan": "SKP",
     "jenis_layanan": "Surat Keterangan Pembayaran UKT",

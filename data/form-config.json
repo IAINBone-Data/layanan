@@ -926,5 +926,264 @@
       "dependency": "",
       "highlight": false
     }
+  ],
+  "izin_penelitian": [
+    {
+      "name": "unit_kerja",
+      "label": "Pilih Unit Kerja yang akan menjadi tempat penerbitan Dokumen",
+      "type": "select",
+      "options": [
+        "Subbagian Tata Usaha Perlengkapan dan Rumah Tangga",
+        "Fakultas Syariah dan Hukum Islam",
+        "Fakultas Tarbiyah",
+        "Fakultas Ekonomi dan Bisnis Islam",
+        "Fakultas Ushuluddin dan Dakwah",
+        "Pascasarjana"
+      ],
+      "required": true,
+      "width": "full",
+      "placeholder": "",
+      "description": "Pilih Sesuai dimana Dokumen akan diproses",
+      "dependency": "",
+      "highlight": false
+    },
+    {
+      "name": "jenis_permohonan",
+      "label": "Jenis Permohonan",
+      "type": "select",
+      "options": [
+        "Izin Penelitian",
+        "Permohonan Izin Penelitian"
+      ],
+      "required": true,
+      "width": "full",
+      "placeholder": "",
+      "description": "Pilih Permohonan Izin Penelitian jika anda Mahasiswa IAIN Bone dan Ingin Meneliti di luar IAIN Bone",
+      "dependency": "",
+      "highlight": true
+    },
+    {
+      "name": "email",
+      "label": "Email",
+      "type": "email",
+      "options": [],
+      "required": false,
+      "width": "half",
+      "placeholder": "",
+      "description": "Silakan mengisi Email atau Telepon untuk memudahkan penyampaian informasi pelayanan.",
+      "dependency": "",
+      "highlight": false
+    },
+    {
+      "name": "no_wa",
+      "label": "No Whatsapp",
+      "type": "number",
+      "options": [],
+      "required": false,
+      "width": "half",
+      "placeholder": "0832xxxxxxxxx",
+      "description": "Silakan mengisi Email atau Telepon untuk memudahkan penyampaian informasi pelayanan.",
+      "dependency": "",
+      "highlight": false
+    },
+    {
+      "name": "pemohon",
+      "label": "Nama Lengkap Tanpa Gelar",
+      "type": "text",
+      "options": [],
+      "required": true,
+      "width": "half",
+      "placeholder": "",
+      "description": "Tanpa Gelar",
+      "dependency": "",
+      "highlight": false
+    },
+    {
+      "name": "identitas",
+      "label": "NIM/NIK",
+      "type": "number",
+      "options": [],
+      "required": true,
+      "width": "half",
+      "placeholder": "",
+      "description": "",
+      "dependency": "",
+      "highlight": false
+    },
+    {
+      "name": "ttl",
+      "label": "Tempat, Tanggal Lahir",
+      "type": "text",
+      "options": [],
+      "required": true,
+      "width": "half",
+      "placeholder": " Contoh : Watampone, 20 September 2000",
+      "description": "Tempat Tanggal Lahir sesuai KTP, Contoh : Watampone, 20 September 2000",
+      "dependency": "",
+      "highlight": false
+    },
+    {
+      "name": "kelamin",
+      "label": "Jenis Kelamin ",
+      "type": "select",
+      "options": [
+        "Laki-laki",
+        "Perempuan"
+      ],
+      "required": true,
+      "width": "half",
+      "placeholder": "",
+      "description": "",
+      "dependency": "",
+      "highlight": false
+    },
+    {
+      "name": "alamat",
+      "label": "Alamat",
+      "type": "textarea",
+      "options": [],
+      "required": true,
+      "width": "full",
+      "placeholder": "",
+      "description": "Alamat Tinggal Sesuai KTP",
+      "dependency": "",
+      "highlight": false
+    },
+    {
+      "name": "prodi",
+      "label": "Prodi",
+      "type": "select",
+      "options": [],
+      "required": true,
+      "width": "half",
+      "placeholder": "",
+      "description": "",
+      "dependency": "jenis_permohonan:Permohonan Izin Penelitian",
+      "highlight": false
+    },
+    {
+      "name": "fakultas",
+      "label": "Fakultas",
+      "type": "select",
+      "options": [],
+      "required": true,
+      "width": "half",
+      "placeholder": "",
+      "description": "",
+      "dependency": "jenis_permohonan:Permohonan Izin Penelitian",
+      "highlight": false
+    },
+    {
+      "name": "judul_penelitian",
+      "label": "Judul Penelitian",
+      "type": "textarea",
+      "options": [],
+      "required": true,
+      "width": "full",
+      "placeholder": "",
+      "description": "",
+      "dependency": "",
+      "highlight": false
+    },
+    {
+      "name": "lokasi_penelitian",
+      "label": "Lokasi Penelitian",
+      "type": "textarea",
+      "options": [],
+      "required": true,
+      "width": "full",
+      "placeholder": "",
+      "description": "Tulis Tempat atau Instansi Tujuan Meneliti",
+      "dependency": "",
+      "highlight": false
+    },
+    {
+      "name": "waktu_penelitian",
+      "label": "Waktu Penelitian",
+      "type": "text",
+      "options": [],
+      "required": true,
+      "width": "half",
+      "placeholder": "",
+      "description": "Waktu / Periode yang dibutuhkan dalam meneliti",
+      "dependency": "",
+      "highlight": false
+    },
+    {
+      "name": "tingkat_pendidikan",
+      "label": "Tingkat Pendidikan",
+      "type": "select",
+      "options": [
+        "Sarjana (S1)",
+        "Magister (S2)",
+        "Doktoral (S3)"
+      ],
+      "required": true,
+      "width": "half",
+      "placeholder": "",
+      "description": "",
+      "dependency": "",
+      "highlight": false
+    },
+    {
+      "name": "pembimbing_1",
+      "label": "Nama Pembimbing Satu",
+      "type": "select",
+      "options": [],
+      "required": true,
+      "width": "half",
+      "placeholder": "",
+      "description": "",
+      "dependency": "jenis_permohonan:Permohonan Izin Penelitian",
+      "highlight": false
+    },
+    {
+      "name": "pembimbing_2",
+      "label": "Nama Pembimbing Dua",
+      "type": "select",
+      "options": [],
+      "required": true,
+      "width": "half",
+      "placeholder": "",
+      "description": "",
+      "dependency": "jenis_permohonan:Permohonan Izin Penelitian",
+      "highlight": false
+    },
+    {
+      "name": "no_surat_pemohon",
+      "label": "Nomor Surat",
+      "type": "text",
+      "options": [],
+      "required": true,
+      "width": "half",
+      "placeholder": "",
+      "description": "",
+      "dependency": "jenis_permohonan:Izin Penelitian",
+      "highlight": false
+    },
+    {
+      "name": "tgl_surat_pemohon",
+      "label": "Tanggal Surat",
+      "type": "date",
+      "options": [],
+      "required": true,
+      "width": "half",
+      "placeholder": "",
+      "description": "",
+      "dependency": "jenis_permohonan:Izin Penelitian",
+      "highlight": false
+    },
+    {
+      "name": "instansi_peneliti",
+      "label": "Instansi Peneliti",
+      "type": "text",
+      "options": [],
+      "required": true,
+      "width": "full",
+      "placeholder": "",
+      "description": "Tulis Nama Instansi atau lembaga anda",
+      "dependency": "jenis_permohonan:Izin Penelitian",
+      "highlight": false
+    }
   ]
 }
