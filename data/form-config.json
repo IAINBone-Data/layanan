@@ -933,12 +933,7 @@
       "label": "Pilih Unit Kerja yang akan menjadi tempat penerbitan Dokumen",
       "type": "select",
       "options": [
-        "Subbagian Tata Usaha Perlengkapan dan Rumah Tangga",
-        "Fakultas Syariah dan Hukum Islam",
-        "Fakultas Tarbiyah",
-        "Fakultas Ekonomi dan Bisnis Islam",
-        "Fakultas Ushuluddin dan Dakwah",
-        "Pascasarjana"
+        "Subbagian Layanan Akademik"
       ],
       "required": true,
       "width": "full",
