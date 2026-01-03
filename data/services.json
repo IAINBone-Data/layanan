@@ -174,6 +174,128 @@
     ]
   },
   {
+    "id": "rekomendasi_mhs",
+    "singkatan": "SRM",
+    "jenis_layanan": "Surat Rekomendasi Mahasiswa",
+    "unit": "Mahasiswa",
+    "kategori": "Mahasiswa",
+    "jenis": "Dokumen",
+    "form_type": "rekomendasi_mhs",
+    "link_template": "",
+    "icon": "receipt-text",
+    "folder_drive_id": "",
+    "variabel_folder": "",
+    "variabel_nama": "",
+    "keterangan": "Penerbitan Surat Rekomendasi Mahasiswa",
+    "persyaratan": [
+      "Terdaftar Mahasiswa IAIN Bone aktif",
+      "Surat permohonan",
+      "Data dukung dari kegiatan"
+    ],
+    "biaya": "Gratis",
+    "waktu": "3 Hari Kerja",
+    "is_active": true,
+    "target_ss_id": "1ge3QEMcvnRUo70cXUVSxFU8b5f93JXWkHo8h-RoRBDM",
+    "target_sheet_name": "rekomendasi_mhs",
+    "unit_tujuan": [
+      "Subbagian Tata Usaha Perlengkapan dan Rumah Tangga",
+      "Fakultas Syariah dan Hukum Islam",
+      "Fakultas Tarbiyah",
+      "Fakultas Ekonomi dan Bisnis Islam",
+      "Fakultas Ushuluddin dan Dakwah",
+      "Pascasarjana"
+    ]
+  },
+  {
+    "id": "surat_tugas_mhs",
+    "singkatan": "STM",
+    "jenis_layanan": "Permohonan Delegasi Mahasiswa",
+    "unit": "Mahasiswa",
+    "kategori": "Mahasiswa",
+    "jenis": "Dokumen",
+    "form_type": "surat_tugas_mhs",
+    "link_template": "",
+    "icon": "receipt-text",
+    "folder_drive_id": "",
+    "variabel_folder": "",
+    "variabel_nama": "",
+    "keterangan": "Permohonan Surat Delegasi / Surat Tugas Mahasiswa",
+    "persyaratan": [
+      "Terdaftar Mahasiswa IAIN Bone aktif",
+      "Surat permohonan",
+      "Data dukung dari kegiatan"
+    ],
+    "biaya": "Gratis",
+    "waktu": "3 Hari Kerja",
+    "is_active": true,
+    "target_ss_id": "1ge3QEMcvnRUo70cXUVSxFU8b5f93JXWkHo8h-RoRBDM",
+    "target_sheet_name": "surat_tugas_mhs",
+    "unit_tujuan": [
+      "Subbagian Layanan Akademik"
+    ]
+  },
+  {
+    "id": "izin_kegiatan_mhs",
+    "singkatan": "SKM",
+    "jenis_layanan": "Izin Kegiatan Mahasiswa",
+    "unit": "Mahasiswa",
+    "kategori": "Mahasiswa",
+    "jenis": "Dokumen",
+    "form_type": "izin_kegiatan_mhs",
+    "link_template": "",
+    "icon": "file-user",
+    "folder_drive_id": "",
+    "variabel_folder": "",
+    "variabel_nama": "",
+    "keterangan": "Permohonan Surat Izin Kegiatan Mahasiswa",
+    "persyaratan": [
+      "Surat Permohonan",
+      "Surat Keterangan dari Pembinan UKK/UKM",
+      "Mematuhi Jam Kerja pada Area Kampus"
+    ],
+    "biaya": "Gratis",
+    "waktu": "2 Hari Kerja",
+    "is_active": true,
+    "target_ss_id": "1ge3QEMcvnRUo70cXUVSxFU8b5f93JXWkHo8h-RoRBDM",
+    "target_sheet_name": "izin_kegiatan_mhs",
+    "unit_tujuan": [
+      "Subbagian Tata Usaha Perlengkapan dan Rumah Tangga",
+      "Fakultas Syariah dan Hukum Islam",
+      "Fakultas Tarbiyah",
+      "Fakultas Ekonomi dan Bisnis Islam",
+      "Fakultas Ushuluddin dan Dakwah",
+      "Pascasarjana"
+    ]
+  },
+  {
+    "id": "izin_akademik_mhs",
+    "singkatan": "SAM",
+    "jenis_layanan": "Izin Akademik Mahasiswa",
+    "unit": "Mahasiswa",
+    "kategori": "Mahasiswa",
+    "jenis": "Dokumen",
+    "form_type": "izin_akademik_mhs",
+    "link_template": "",
+    "icon": "receipt-text",
+    "folder_drive_id": "",
+    "variabel_folder": "",
+    "variabel_nama": "",
+    "keterangan": "Permohonan Peneribtan Izin Akademik untuk Mahasiswa",
+    "persyaratan": [],
+    "biaya": "Gratis",
+    "waktu": "2 Hari Kerja",
+    "is_active": true,
+    "target_ss_id": "1ge3QEMcvnRUo70cXUVSxFU8b5f93JXWkHo8h-RoRBDM",
+    "target_sheet_name": "izin_akademik_mhs",
+    "unit_tujuan": [
+      "Fakultas Syariah dan Hukum Islam",
+      "Fakultas Tarbiyah",
+      "Fakultas Ekonomi dan Bisnis Islam",
+      "Fakultas Ushuluddin dan Dakwah",
+      "Pascasarjana"
+    ]
+  },
+  {
     "id": "suket_ukt",
     "singkatan": "SKP",
     "jenis_layanan": "Surat Keterangan Pembayaran UKT",
