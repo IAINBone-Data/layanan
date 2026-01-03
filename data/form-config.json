@@ -1312,8 +1312,13 @@
     {
       "name": "tabel_data",
       "label": "Tambahkan Mahasiswa",
-      "type": "text",
-      "options": [],
+      "type": "table",
+      "options": [
+        "Nama",
+        "NIM",
+        "Fakultas",
+        "Prodi"
+      ],
       "required": true,
       "width": "full",
       "placeholder": "",
@@ -1448,8 +1453,13 @@
     {
       "name": "tabel_data",
       "label": "Tambahkan Mahasiswa",
-      "type": "text",
-      "options": [],
+      "type": "table",
+      "options": [
+        "Nama",
+        "NIM",
+        "Fakultas",
+        "Prodi"
+      ],
       "required": true,
       "width": "full",
       "placeholder": "",
@@ -1717,8 +1727,13 @@
     {
       "name": "tabel_data",
       "label": "Tambahkan Mahasiswa",
-      "type": "text",
-      "options": [],
+      "type": "table",
+      "options": [
+        "Nama",
+        "NIM",
+        "Fakultas",
+        "Prodi"
+      ],
       "required": true,
       "width": "full",
       "placeholder": "",
