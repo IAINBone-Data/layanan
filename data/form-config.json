@@ -44,7 +44,7 @@
       "width": "full",
       "placeholder": "",
       "description": "",
-      "dependency": "unit_kerja:Layanan Akademik",
+      "dependency": "unit_kerja:Subbagian Layanan Akademik",
       "highlight": false
     },
     {
