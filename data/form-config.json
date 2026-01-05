@@ -1170,14 +1170,26 @@
     },
     {
       "name": "instansi_peneliti",
-      "label": "Pimpinan Instansi Tujuan/Instansi Peneliti",
+      "label": "Pimpinan Instansi Tujuan tempat meneliti",
       "type": "text",
       "options": [],
       "required": true,
       "width": "full",
       "placeholder": "Contoh : Kepala Kantor Kementerian Agama Kab. Bone",
+      "description": "Tulis Nama Instansi atau lembaga tujuan Penelitian, Contoh : BNN Kab. Bone",
+      "dependency": "jenis_permohonan:Permohonan Izin Penelitian",
+      "highlight": false
+    },
+    {
+      "name": "instansi_peneliti_internal",
+      "label": "Asal Instansi Peneliti",
+      "type": "text",
+      "options": [],
+      "required": true,
+      "width": "full",
+      "placeholder": "Kantor Kementerian Agama Kab. Bone",
       "description": "Tulis Nama Instansi atau lembaga tujuan atau asal anda",
-      "dependency": "",
+      "dependency": "jenis_permohonan:Izin Penelitian",
       "highlight": false
     }
   ],
