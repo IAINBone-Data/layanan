@@ -15,6 +15,157 @@
       "highlight": false
     }
   ],
+  "suket_bebas_beasiswa": [
+    {
+      "name": "maksud_permohonan",
+      "label": "Tujuan/Maksud Penerbitan Ketarangan Bebas Beasiswa",
+      "type": "textarea",
+      "options": [],
+      "required": true,
+      "width": "full",
+      "placeholder": "",
+      "description": "Tuliskan tujuan penerbitan Surat, Contoh : Untuk Mengikuti Kegiatan Rekrutmen Beasiswa A",
+      "dependency": "",
+      "highlight": false
+    },
+    {
+      "name": "unit_kerja",
+      "label": "Pilih Unit Kerja yang akan menjadi tempat penerbitan Dokumen",
+      "type": "select",
+      "options": [
+        "Subbagian Layanan Akademik"
+      ],
+      "required": true,
+      "width": "full",
+      "placeholder": "",
+      "description": "Pilih Sesuai dimana Dokumen akan diproses",
+      "dependency": "",
+      "highlight": false
+    },
+    {
+      "name": "email",
+      "label": "Email",
+      "type": "email",
+      "options": [],
+      "required": false,
+      "width": "half",
+      "placeholder": "",
+      "description": "Silakan mengisi Email atau Telepon untuk memudahkan penyampaian informasi pelayanan.",
+      "dependency": "",
+      "highlight": false
+    },
+    {
+      "name": "no_wa",
+      "label": "No Whatsapp",
+      "type": "number",
+      "options": [],
+      "required": false,
+      "width": "half",
+      "placeholder": "0832xxxxxxxxx",
+      "description": "Silakan mengisi Email atau Telepon untuk memudahkan penyampaian informasi pelayanan.",
+      "dependency": "",
+      "highlight": false
+    },
+    {
+      "name": "pemohon",
+      "label": "Nama Lengkap Tanpa Gelar",
+      "type": "text",
+      "options": [],
+      "required": true,
+      "width": "half",
+      "placeholder": "",
+      "description": "Tanpa Gelar",
+      "dependency": "",
+      "highlight": false
+    },
+    {
+      "name": "identitas",
+      "label": "NIM",
+      "type": "number",
+      "options": [],
+      "required": true,
+      "width": "half",
+      "placeholder": "",
+      "description": "",
+      "dependency": "",
+      "highlight": false
+    },
+    {
+      "name": "kelamin",
+      "label": "NIM",
+      "type": "select",
+      "options": [
+        "Laki-laki",
+        "Perempuan"
+      ],
+      "required": true,
+      "width": "half",
+      "placeholder": "",
+      "description": "",
+      "dependency": "",
+      "highlight": false
+    },
+    {
+      "name": "prodi",
+      "label": "Prodi",
+      "type": "select",
+      "options": [],
+      "required": true,
+      "width": "half",
+      "placeholder": "",
+      "description": "",
+      "dependency": "",
+      "highlight": false
+    },
+    {
+      "name": "fakultas",
+      "label": "Fakultas",
+      "type": "select",
+      "options": [],
+      "required": true,
+      "width": "half",
+      "placeholder": "",
+      "description": "",
+      "dependency": "",
+      "highlight": false
+    },
+    {
+      "name": "semester",
+      "label": "Semester",
+      "type": "select",
+      "options": [],
+      "required": true,
+      "width": "half",
+      "placeholder": "",
+      "description": "",
+      "dependency": "",
+      "highlight": false
+    },
+    {
+      "name": "no_surat_pemohon",
+      "label": "Nomor Surat",
+      "type": "text",
+      "options": [],
+      "required": true,
+      "width": "half",
+      "placeholder": "",
+      "description": "",
+      "dependency": "",
+      "highlight": false
+    },
+    {
+      "name": "tgl_surat_pemohon",
+      "label": "Tanggal Surat",
+      "type": "date",
+      "options": [],
+      "required": true,
+      "width": "half",
+      "placeholder": "",
+      "description": "",
+      "dependency": "",
+      "highlight": false
+    }
+  ],
   "suket-kuliah": [
     {
       "name": "unit_kerja",
@@ -625,121 +776,6 @@
       "options": [],
       "required": true,
       "width": "full",
-      "placeholder": "",
-      "description": "",
-      "dependency": "",
-      "highlight": false
-    }
-  ],
-  "suket_bebas_beasiswa": [
-    {
-      "name": "unit_kerja",
-      "label": "Pilih Unit Kerja yang akan menjadi tempat penerbitan Dokumen",
-      "type": "select",
-      "options": [
-        "Subbagian Layanan Akademik"
-      ],
-      "required": true,
-      "width": "full",
-      "placeholder": "",
-      "description": "Pilih Sesuai dimana Dokumen akan diproses",
-      "dependency": "",
-      "highlight": false
-    },
-    {
-      "name": "email",
-      "label": "Email",
-      "type": "email",
-      "options": [],
-      "required": false,
-      "width": "half",
-      "placeholder": "",
-      "description": "Silakan mengisi Email atau Telepon untuk memudahkan penyampaian informasi pelayanan.",
-      "dependency": "",
-      "highlight": false
-    },
-    {
-      "name": "no_wa",
-      "label": "No Whatsapp",
-      "type": "number",
-      "options": [],
-      "required": false,
-      "width": "half",
-      "placeholder": "0832xxxxxxxxx",
-      "description": "Silakan mengisi Email atau Telepon untuk memudahkan penyampaian informasi pelayanan.",
-      "dependency": "",
-      "highlight": false
-    },
-    {
-      "name": "pemohon",
-      "label": "Nama Lengkap Tanpa Gelar",
-      "type": "text",
-      "options": [],
-      "required": true,
-      "width": "half",
-      "placeholder": "",
-      "description": "Tanpa Gelar",
-      "dependency": "",
-      "highlight": false
-    },
-    {
-      "name": "identitas",
-      "label": "NIM",
-      "type": "number",
-      "options": [],
-      "required": true,
-      "width": "half",
-      "placeholder": "",
-      "description": "",
-      "dependency": "",
-      "highlight": false
-    },
-    {
-      "name": "kelamin",
-      "label": "Jenis Kelamin ",
-      "type": "select",
-      "options": [
-        "Laki-laki",
-        "Perempuan"
-      ],
-      "required": true,
-      "width": "half",
-      "placeholder": "",
-      "description": "",
-      "dependency": "",
-      "highlight": false
-    },
-    {
-      "name": "prodi",
-      "label": "Prodi",
-      "type": "select",
-      "options": [],
-      "required": true,
-      "width": "half",
-      "placeholder": "",
-      "description": "",
-      "dependency": "",
-      "highlight": false
-    },
-    {
-      "name": "fakultas",
-      "label": "Fakultas",
-      "type": "select",
-      "options": [],
-      "required": true,
-      "width": "half",
-      "placeholder": "",
-      "description": "",
-      "dependency": "",
-      "highlight": false
-    },
-    {
-      "name": "semester",
-      "label": "Semester",
-      "type": "select",
-      "options": [],
-      "required": true,
-      "width": "half",
       "placeholder": "",
       "description": "",
       "dependency": "",
