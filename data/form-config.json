@@ -816,7 +816,7 @@
       "placeholder": "",
       "description": "",
       "dependency": "",
-      "highlight": false
+      "highlight": true
     },
     {
       "name": "email",
