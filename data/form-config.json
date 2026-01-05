@@ -45,7 +45,7 @@
       "placeholder": "",
       "description": "",
       "dependency": "unit_kerja:Subbagian Layanan Akademik",
-      "highlight": false
+      "highlight": true
     },
     {
       "name": "email",
