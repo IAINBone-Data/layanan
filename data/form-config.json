@@ -991,7 +991,21 @@
       "width": "full",
       "placeholder": "",
       "description": "Pilih Permohonan Izin Penelitian jika anda Mahasiswa IAIN Bone dan Ingin Meneliti di luar IAIN Bone",
-      "dependency": "",
+      "dependency": "unit_kerja:Subbagian Layanan Akademik",
+      "highlight": true
+    },
+    {
+      "name": "jenis_permohonan_pasca",
+      "label": "Jenis Permohonan",
+      "type": "select",
+      "options": [
+        "Permohonan Izin Penelitian"
+      ],
+      "required": true,
+      "width": "full",
+      "placeholder": "",
+      "description": "Pilih Permohonan Izin Penelitian jika anda Mahasiswa IAIN Bone dan Ingin Meneliti di luar IAIN Bone",
+      "dependency": "unit_kerja:Pascasarjana",
       "highlight": true
     },
     {
