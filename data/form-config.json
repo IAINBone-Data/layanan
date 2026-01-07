@@ -969,7 +969,8 @@
       "label": "Pilih Unit Kerja yang akan menjadi tempat penerbitan Dokumen",
       "type": "select",
       "options": [
-        "Subbagian Layanan Akademik"
+        "Subbagian Layanan Akademik",
+        "Pascasarjana"
       ],
       "required": true,
       "width": "full",
