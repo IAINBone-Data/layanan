@@ -12,7 +12,8 @@
       "placeholder": "placeholder",
       "description": "description",
       "dependency": "Dependency",
-      "highlight": false
+      "highlight": false,
+      "if_select": "if_select"
     }
   ],
   "suket_bebas_beasiswa": [
@@ -26,7 +27,8 @@
       "placeholder": "",
       "description": "Tuliskan tujuan penerbitan Surat, Contoh : Untuk Mengikuti Kegiatan Rekrutmen Beasiswa A",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "unit_kerja",
@@ -40,7 +42,8 @@
       "placeholder": "",
       "description": "Pilih Sesuai dimana Dokumen akan diproses",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "email",
@@ -52,7 +55,8 @@
       "placeholder": "",
       "description": "Silakan mengisi Email atau Telepon untuk memudahkan penyampaian informasi pelayanan.",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "no_wa",
@@ -64,7 +68,8 @@
       "placeholder": "0832xxxxxxxxx",
       "description": "Silakan mengisi Email atau Telepon untuk memudahkan penyampaian informasi pelayanan.",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "pemohon",
@@ -76,7 +81,8 @@
       "placeholder": "",
       "description": "Tanpa Gelar",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "identitas",
@@ -88,7 +94,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "kelamin",
@@ -103,7 +110,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "prodi",
@@ -115,7 +123,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "fakultas",
@@ -127,7 +136,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "semester",
@@ -139,7 +149,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "no_surat_pemohon",
@@ -151,7 +162,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "tgl_surat_pemohon",
@@ -163,7 +175,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     }
   ],
   "suket-kuliah": [
@@ -184,7 +197,8 @@
       "placeholder": "",
       "description": "Pilih Sesuai dimana Dokumen akan diproses",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "untuk_ortu",
@@ -196,7 +210,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "unit_kerja:Subbagian Layanan Akademik",
-      "highlight": true
+      "highlight": true,
+      "if_select": ""
     },
     {
       "name": "email",
@@ -208,7 +223,8 @@
       "placeholder": "",
       "description": "Silakan mengisi Email atau Telepon untuk memudahkan penyampaian informasi pelayanan.",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "no_wa",
@@ -220,7 +236,8 @@
       "placeholder": "0832xxxxxxxxx",
       "description": "Silakan mengisi Email atau Telepon untuk memudahkan penyampaian informasi pelayanan.",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "pemohon",
@@ -232,7 +249,8 @@
       "placeholder": "",
       "description": "Tanpa Gelar",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "identitas",
@@ -244,7 +262,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "ttl",
@@ -256,7 +275,8 @@
       "placeholder": " Contoh : Watampone, 20 September 2000",
       "description": "Tempat Tanggal Lahir sesuai KTP, Contoh : Watampone, 20 September 2000",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "kelamin",
@@ -271,7 +291,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "alamat",
@@ -283,7 +304,8 @@
       "placeholder": "",
       "description": "Alamat Tinggal Sesuai KTP",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "prodi",
@@ -295,7 +317,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "fakultas",
@@ -307,7 +330,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "semester",
@@ -319,7 +343,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "tahun_akademik",
@@ -331,7 +356,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "ortu",
@@ -343,7 +369,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "untuk_ortu:Ya",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "nip_ortu",
@@ -355,7 +382,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "untuk_ortu:Ya",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "pangkat_gol",
@@ -385,7 +413,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "untuk_ortu:Ya",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "instansi",
@@ -397,7 +426,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "untuk_ortu:Ya",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     }
   ],
   "suket-lulus": [
@@ -413,7 +443,8 @@
       "placeholder": "",
       "description": "Pilih Sesuai dimana Dokumen akan diproses",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "email",
@@ -425,7 +456,8 @@
       "placeholder": "",
       "description": "Silakan mengisi Email atau Telepon untuk memudahkan penyampaian informasi pelayanan.",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "no_wa",
@@ -437,7 +469,8 @@
       "placeholder": "0832xxxxxxxxx",
       "description": "Silakan mengisi Email atau Telepon untuk memudahkan penyampaian informasi pelayanan.",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "pemohon",
@@ -449,7 +482,8 @@
       "placeholder": "",
       "description": "Tanpa Gelar",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "identitas",
@@ -461,7 +495,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "ttl",
@@ -473,7 +508,8 @@
       "placeholder": " Contoh : Watampone, 20 September 2000",
       "description": "Tempat Tanggal Lahir sesuai KTP, Contoh : Watampone, 20 September 2000",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "kelamin",
@@ -488,7 +524,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "alamat",
@@ -500,7 +537,8 @@
       "placeholder": "",
       "description": "Alamat Tinggal Sesuai KTP",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "prodi",
@@ -512,7 +550,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "fakultas",
@@ -524,7 +563,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "tgl_yudis",
@@ -536,7 +576,8 @@
       "placeholder": "",
       "description": "Contoh : 12 Agustus 2025",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "ipk",
@@ -548,7 +589,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "predikat",
@@ -565,7 +607,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "pin_ijazah",
@@ -577,7 +620,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     }
   ],
   "suket-alumni": [
@@ -593,7 +637,8 @@
       "placeholder": "",
       "description": "Pilih Sesuai dimana Dokumen akan diproses",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "lulusan",
@@ -608,7 +653,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "",
-      "highlight": true
+      "highlight": true,
+      "if_select": ""
     },
     {
       "name": "email",
@@ -620,7 +666,8 @@
       "placeholder": "",
       "description": "Silakan mengisi Email atau Telepon untuk memudahkan penyampaian informasi pelayanan.",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "no_wa",
@@ -632,7 +679,8 @@
       "placeholder": "0832xxxxxxxxx",
       "description": "Silakan mengisi Email atau Telepon untuk memudahkan penyampaian informasi pelayanan.",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "pemohon",
@@ -644,7 +692,8 @@
       "placeholder": "",
       "description": "Tanpa Gelar",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "identitas",
@@ -656,7 +705,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "ttl",
@@ -668,7 +718,8 @@
       "placeholder": " Contoh : Watampone, 20 September 2000",
       "description": "Tempat Tanggal Lahir sesuai KTP, Contoh : Watampone, 20 September 2000",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "kelamin",
@@ -683,7 +734,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "alamat",
@@ -695,7 +747,8 @@
       "placeholder": "",
       "description": "Alamat Tinggal Sesuai KTP",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "prodi",
@@ -707,7 +760,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "lulusan:Institut Agama Islam Negeri Bone (IAIN Bone)",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "fakultas",
@@ -719,7 +773,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "lulusan:Institut Agama Islam Negeri Bone (IAIN Bone)",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "prodi_stain",
@@ -731,7 +786,8 @@
       "placeholder": "",
       "description": "CANTUMKAN TULISAN FAKULTAS / JURUSAN DI DEPAN NAMA FAKULTAS / JURUSAN YBS.\r\nContoh : Fakultas Syariah / Jurusan Syariah dll.",
       "dependency": "lulusan:Sekolah Tinggi Agama Islam Negeri Watampone (STAIN Watampone)",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "fakultas_stain",
@@ -743,7 +799,8 @@
       "placeholder": "",
       "description": "CANTUMKAN TULISAN FAKULTAS / JURUSAN DI DEPAN NAMA FAKULTAS / JURUSAN YBS.\r\nContoh: Fakultas Syariah / Jurusan Syariah",
       "dependency": "lulusan:Sekolah Tinggi Agama Islam Negeri Watampone (STAIN Watampone)",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "tahun_masuk",
@@ -755,7 +812,8 @@
       "placeholder": 2025,
       "description": "",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "tahun_lulus",
@@ -767,7 +825,8 @@
       "placeholder": 2016,
       "description": "",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "no_ijazah",
@@ -779,7 +838,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     }
   ],
   "ijin_peminjaman": [
@@ -800,7 +860,8 @@
       "placeholder": "",
       "description": "Pilih Sesuai dimana Dokumen akan diproses",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "jenis_pinjam",
@@ -816,7 +877,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "",
-      "highlight": true
+      "highlight": true,
+      "if_select": ""
     },
     {
       "name": "email",
@@ -828,7 +890,8 @@
       "placeholder": "",
       "description": "Silakan mengisi Email atau Telepon untuk memudahkan penyampaian informasi pelayanan.",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "no_wa",
@@ -840,7 +903,8 @@
       "placeholder": "0832xxxxxxxxx",
       "description": "Silakan mengisi Email atau Telepon untuk memudahkan penyampaian informasi pelayanan.",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "pemohon",
@@ -852,7 +916,8 @@
       "placeholder": "",
       "description": "Nama Unit Kerja, UKK/UKM, Organisasi atau Individu",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "no_surat_pemohon",
@@ -864,7 +929,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "perihal",
@@ -876,7 +942,8 @@
       "placeholder": "",
       "description": "Contoh: Permohonan Peminjaman Aula Utama / Bus",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "Kegiatan",
@@ -888,7 +955,8 @@
       "placeholder": "",
       "description": "Contoh: FESTASI III Biru 17 Kampus V UNM Parepare di Pare Pare",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "tgl_surat_pemohon",
@@ -900,7 +968,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "tgl mulai",
@@ -912,7 +981,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "tgl selesai",
@@ -924,7 +994,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "barang",
@@ -936,7 +1007,8 @@
       "placeholder": "",
       "description": "Pisahkan dengan tanda koma setiap barang/aset, Contoh : Kursi, Meja, Gorden, Papan",
       "dependency": "jenis_pinjam:Aset",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "jam mulai",
@@ -948,7 +1020,8 @@
       "placeholder": "",
       "description": "Waktu Peminjaman (Pilihan). Kolom ini tidak wajib diisi",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "jam selesai",
@@ -960,7 +1033,8 @@
       "placeholder": "",
       "description": "Waktu Peminjaman (Pilihan). Kolom ini tidak wajib diisi",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     }
   ],
   "izin_penelitian": [
@@ -977,7 +1051,8 @@
       "placeholder": "",
       "description": "Pilih Sesuai dimana Dokumen akan diproses",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "jenis_permohonan",
@@ -992,7 +1067,8 @@
       "placeholder": "",
       "description": "Pilih Permohonan Izin Penelitian jika anda Mahasiswa IAIN Bone dan Ingin Meneliti di luar IAIN Bone",
       "dependency": "",
-      "highlight": true
+      "highlight": true,
+      "if_select": "unit_kerja:Pascasarjana, jenis_permohonan:Permohonan Izin Penelitian"
     },
     {
       "name": "email",
@@ -1004,7 +1080,8 @@
       "placeholder": "",
       "description": "Silakan mengisi Email atau Telepon untuk memudahkan penyampaian informasi pelayanan.",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "no_wa",
@@ -1016,7 +1093,8 @@
       "placeholder": "0832xxxxxxxxx",
       "description": "Silakan mengisi Email atau Telepon untuk memudahkan penyampaian informasi pelayanan.",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "pemohon",
@@ -1028,7 +1106,8 @@
       "placeholder": "",
       "description": "Tanpa Gelar",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "identitas",
@@ -1040,7 +1119,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "ttl",
@@ -1052,7 +1132,8 @@
       "placeholder": " Contoh : Watampone, 20 September 2000",
       "description": "Tempat Tanggal Lahir sesuai KTP, Contoh : Watampone, 20 September 2000",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "kelamin",
@@ -1067,7 +1148,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "alamat",
@@ -1079,7 +1161,8 @@
       "placeholder": "",
       "description": "Alamat Tinggal Sesuai KTP",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "prodi",
@@ -1091,7 +1174,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "jenis_permohonan:Permohonan Izin Penelitian",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "fakultas",
@@ -1103,7 +1187,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "jenis_permohonan:Permohonan Izin Penelitian",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "judul_penelitian",
@@ -1115,7 +1200,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "lokasi_penelitian",
@@ -1127,7 +1213,8 @@
       "placeholder": "",
       "description": "Tulis Tempat atau Instansi Tujuan Meneliti",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "waktu_penelitian",
@@ -1139,7 +1226,8 @@
       "placeholder": "",
       "description": "Waktu / Periode yang dibutuhkan dalam meneliti",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "tingkat_pendidikan",
@@ -1155,7 +1243,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "pembimbing_1",
@@ -1167,7 +1256,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "jenis_permohonan:Permohonan Izin Penelitian",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "pembimbing_2",
@@ -1179,7 +1269,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "jenis_permohonan:Permohonan Izin Penelitian",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "no_surat_pemohon",
@@ -1191,7 +1282,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "jenis_permohonan:Izin Penelitian",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "tgl_surat_pemohon",
@@ -1203,7 +1295,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "jenis_permohonan:Izin Penelitian",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "instansi_peneliti",
@@ -1215,7 +1308,8 @@
       "placeholder": "Contoh : Kepala Kantor Kementerian Agama Kab. Bone",
       "description": "Tulis Nama Instansi atau lembaga tujuan Penelitian, Contoh : Kepala BNN Kab. Bone",
       "dependency": "jenis_permohonan:Permohonan Izin Penelitian",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "instansi_peneliti_internal",
@@ -1227,7 +1321,8 @@
       "placeholder": "Kantor Kementerian Agama Kab. Bone",
       "description": "Tulis Nama Instansi atau lembaga asal anda",
       "dependency": "jenis_permohonan:Izin Penelitian",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     }
   ],
   "rekomendasi_mhs": [
@@ -1248,7 +1343,8 @@
       "placeholder": "",
       "description": "Pilih Sesuai dimana Dokumen akan diproses",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "email",
@@ -1260,7 +1356,8 @@
       "placeholder": "",
       "description": "Silakan mengisi Email atau Telepon untuk memudahkan penyampaian informasi pelayanan.",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "no_wa",
@@ -1272,7 +1369,8 @@
       "placeholder": "0832xxxxxxxxx",
       "description": "Silakan mengisi Email atau Telepon untuk memudahkan penyampaian informasi pelayanan.",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "pemohon",
@@ -1284,7 +1382,8 @@
       "placeholder": "",
       "description": "Tanpa Gelar",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "identitas",
@@ -1296,7 +1395,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "Kegiatan",
@@ -1308,7 +1408,8 @@
       "placeholder": "",
       "description": "Tulis nama kegiatan yang akan diikuti Secara Lengkap",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "jadwal",
@@ -1320,7 +1421,8 @@
       "placeholder": "",
       "description": "Tulis Jadwal Pelaksanaan Kegiatan, Contoh 12 s.d. 15 Januari 2026",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "tempat",
@@ -1332,7 +1434,8 @@
       "placeholder": "",
       "description": "Tulis Tempat/Venue Pelaksanaan Kegiatan, Contoh GOR Lapatau Watampone",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "no_surat_pemohon",
@@ -1344,7 +1447,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "tgl_surat_pemohon",
@@ -1356,7 +1460,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "tabel_data",
@@ -1373,7 +1478,8 @@
       "placeholder": "",
       "description": "Tambahkan Tim Yang akan mengikuti kegiatan, Tulis Juga Nama Anda",
       "dependency": "",
-      "highlight": true
+      "highlight": true,
+      "if_select": ""
     }
   ],
   "surat_tugas_mhs": [
@@ -1389,7 +1495,8 @@
       "placeholder": "",
       "description": "Pilih Sesuai dimana Dokumen akan diproses",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "email",
@@ -1401,7 +1508,8 @@
       "placeholder": "",
       "description": "Silakan mengisi Email atau Telepon untuk memudahkan penyampaian informasi pelayanan.",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "no_wa",
@@ -1413,7 +1521,8 @@
       "placeholder": "0832xxxxxxxxx",
       "description": "Silakan mengisi Email atau Telepon untuk memudahkan penyampaian informasi pelayanan.",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "pemohon",
@@ -1425,7 +1534,8 @@
       "placeholder": "",
       "description": "Tanpa Gelar",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "identitas",
@@ -1437,7 +1547,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "Kegiatan",
@@ -1449,7 +1560,8 @@
       "placeholder": "",
       "description": "Tulis nama kegiatan yang akan diikuti Secara Lengkap",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "jadwal",
@@ -1461,7 +1573,8 @@
       "placeholder": "",
       "description": "Tulis Jadwal Pelaksanaan Kegiatan, Contoh 12 s.d. 15 Januari 2026",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "tempat",
@@ -1473,7 +1586,8 @@
       "placeholder": "",
       "description": "Tulis Tempat/Venue Pelaksanaan Kegiatan, Contoh GOR Lapatau Watampone",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "no_surat_pemohon",
@@ -1485,7 +1599,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "tgl_surat_pemohon",
@@ -1497,7 +1612,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "tabel_data",
@@ -1514,7 +1630,8 @@
       "placeholder": "",
       "description": "Tambahkan Tim Yang akan mengikuti kegiatan, Tulis Juga Nama Anda",
       "dependency": "",
-      "highlight": true
+      "highlight": true,
+      "if_select": ""
     }
   ],
   "izin_kegiatan_mhs": [
@@ -1535,7 +1652,8 @@
       "placeholder": "",
       "description": "Pilih Sesuai dimana Dokumen akan diproses",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "email",
@@ -1547,7 +1665,8 @@
       "placeholder": "",
       "description": "Silakan mengisi Email atau Telepon untuk memudahkan penyampaian informasi pelayanan.",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "no_wa",
@@ -1559,7 +1678,8 @@
       "placeholder": "0832xxxxxxxxx",
       "description": "Silakan mengisi Email atau Telepon untuk memudahkan penyampaian informasi pelayanan.",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "pemohon",
@@ -1571,7 +1691,8 @@
       "placeholder": "",
       "description": "Tanpa Gelar",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "identitas",
@@ -1583,7 +1704,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "Kegiatan",
@@ -1595,7 +1717,8 @@
       "placeholder": "",
       "description": "Tulis nama kegiatan yang akan diikuti Secara Lengkap",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "jadwal",
@@ -1607,7 +1730,8 @@
       "placeholder": "",
       "description": "Tulis Jadwal Pelaksanaan Kegiatan, Contoh 12 s.d. 15 Januari 2026",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "tempat",
@@ -1619,7 +1743,8 @@
       "placeholder": "",
       "description": "Tulis Tempat/Venue Pelaksanaan Kegiatan, Contoh GOR Lapatau Watampone",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "no_surat_pemohon",
@@ -1631,7 +1756,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "tgl_surat_pemohon",
@@ -1643,7 +1769,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     }
   ],
   "izin_akademik_mhs": [
@@ -1663,7 +1790,8 @@
       "placeholder": "",
       "description": "Pilih Sesuai dimana Dokumen akan diproses",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "email",
@@ -1675,7 +1803,8 @@
       "placeholder": "",
       "description": "Silakan mengisi Email atau Telepon untuk memudahkan penyampaian informasi pelayanan.",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "no_wa",
@@ -1687,7 +1816,8 @@
       "placeholder": "0832xxxxxxxxx",
       "description": "Silakan mengisi Email atau Telepon untuk memudahkan penyampaian informasi pelayanan.",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "pemohon",
@@ -1699,7 +1829,8 @@
       "placeholder": "",
       "description": "Tanpa Gelar",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "identitas",
@@ -1711,7 +1842,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "Kegiatan",
@@ -1723,7 +1855,8 @@
       "placeholder": "",
       "description": "Tulis nama kegiatan yang akan diikuti Secara Lengkap",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "jadwal",
@@ -1735,7 +1868,8 @@
       "placeholder": "",
       "description": "Tulis Jadwal Pelaksanaan Kegiatan, Contoh 12 s.d. 15 Januari 2026",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "tempat",
@@ -1747,7 +1881,8 @@
       "placeholder": "",
       "description": "Tulis Tempat/Venue Pelaksanaan Kegiatan, Contoh GOR Lapatau Watampone",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "no_surat_pemohon",
@@ -1759,7 +1894,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "tgl_surat_pemohon",
@@ -1771,7 +1907,8 @@
       "placeholder": "",
       "description": "",
       "dependency": "",
-      "highlight": false
+      "highlight": false,
+      "if_select": ""
     },
     {
       "name": "tabel_data",
@@ -1788,7 +1925,8 @@
       "placeholder": "",
       "description": "Tambahkan Tim Yang akan mengikuti kegiatan, Tulis Juga Nama Anda",
       "dependency": "",
-      "highlight": true
+      "highlight": true,
+      "if_select": ""
     }
   ]
 }
