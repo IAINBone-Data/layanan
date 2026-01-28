@@ -1059,8 +1059,8 @@
       "label": "Jenis Permohonan",
       "type": "select",
       "options": [
-        "Izin Penelitian",
-        "Permohonan Izin Penelitian"
+        "Permohonan Izin Penelitian",
+        "Izin Penelitian"
       ],
       "required": true,
       "width": "full",
