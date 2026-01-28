@@ -284,12 +284,46 @@
     "variabel_folder": "",
     "variabel_nama": "",
     "keterangan": "Permohonan Peneribtan Izin Akademik untuk Mahasiswa",
-    "persyaratan": [],
+    "persyaratan": [
+      "Surat Permohonan"
+    ],
     "biaya": "Gratis",
     "waktu": "2 Hari Kerja",
     "is_active": true,
     "target_ss_id": "1ge3QEMcvnRUo70cXUVSxFU8b5f93JXWkHo8h-RoRBDM",
     "target_sheet_name": "izin_akademik_mhs",
+    "unit_tujuan": [
+      "Fakultas Syariah dan Hukum Islam",
+      "Fakultas Tarbiyah",
+      "Fakultas Ekonomi dan Bisnis Islam",
+      "Fakultas Ushuluddin dan Dakwah",
+      "Pascasarjana"
+    ]
+  },
+  {
+    "id": "pengantar_magang",
+    "singkatan": "SPM",
+    "jenis_layanan": "Surat Pengatar Magang",
+    "unit": "Mahasiswa",
+    "kategori": "Mahasiswa",
+    "jenis": "Dokumen",
+    "form_type": "pengantar_magang",
+    "link_template": "",
+    "icon": "receipt-text",
+    "folder_drive_id": "",
+    "variabel_folder": "",
+    "variabel_nama": "",
+    "keterangan": "Permohonan Penerbitan Surat Pengantar Magang ",
+    "persyaratan": [
+      "Surat Permohonan yang bersangkutan",
+      "Mahasiswa Aktif dan Semester 7",
+      "Melampirkan Izin Tertulis dari Orang Tua"
+    ],
+    "biaya": "Gratis",
+    "waktu": "2 Hari Kerja",
+    "is_active": true,
+    "target_ss_id": "1ge3QEMcvnRUo70cXUVSxFU8b5f93JXWkHo8h-RoRBDM",
+    "target_sheet_name": "pengantar_magang",
     "unit_tujuan": [
       "Fakultas Syariah dan Hukum Islam",
       "Fakultas Tarbiyah",
