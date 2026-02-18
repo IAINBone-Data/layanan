@@ -398,5 +398,27 @@
     "target_ss_id": "",
     "target_sheet_name": "",
     "unit_tujuan": []
+  },
+  {
+    "id": "kartu_tanda_mahasiswa",
+    "singkatan": "KTM",
+    "jenis_layanan": "Kartu Tanda Mahasiswa",
+    "unit": "Akademik",
+    "kategori": "Akademik",
+    "jenis": "link",
+    "form_type": "link",
+    "link_template": "https://docs.google.com/forms/d/e/1FAIpQLScFaYnOlY_ZhD_o5QIMOTEkJty4rSlnE5BpwmlZhe2O6aaTBw/viewform?usp=dialog",
+    "icon": "FaGraduationCap",
+    "folder_drive_id": "",
+    "variabel_folder": "",
+    "variabel_nama": "",
+    "keterangan": "Kartu Tanda Mahasiswa",
+    "persyaratan": [],
+    "biaya": "",
+    "waktu": "",
+    "is_active": true,
+    "target_ss_id": "",
+    "target_sheet_name": "",
+    "unit_tujuan": []
   }
 ]
