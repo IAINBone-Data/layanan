@@ -1,0 +1,18 @@
+[
+  {
+    "id": "FAQ-001",
+    "question": "Bagaimana menggunakan kode pelacakan ?",
+    "answer": "Tutorial Penggunaan Kode Pelacakan\nBantu kami meningkatkan kualitas LAYANAN IAIN BONE dengan ISI SURVEI LAYANAN",
+    "category": "Pelacakan",
+    "order": 1,
+    "link": "https://youtu.be/2yx5dPMwWas"
+  },
+  {
+    "id": "FAQ-002",
+    "question": "Pengajuan Permohonan Keterangan Aktif Kuliah",
+    "answer": "Tutorial Pengajuan Permohonan Surat Keterangan Aktif Kuliah\nBantu kami meningkatkan kualitas LAYANAN IAIN BONE dengan ISI SURVEI LAYANAN",
+    "category": "Akademik",
+    "order": 2,
+    "link": "https://youtu.be/lf0IDFAbOL8"
+  }
+]
